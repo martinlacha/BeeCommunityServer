@@ -1,0 +1,40 @@
+services:
+  postgres:
+    image: 'postgres:latest'
+    restart: always
+    networks:
+      server-network:
+        ipv4_address: 10.1.0.2
+    environment:
+      - 'POSTGRES_DB=beecommunity_db'
+      - 'POSTGRES_PASSWORD=admin'
+      - 'POSTGRES_USER=admin'
+      - 'TZ=Europe/Prague'
+    ports:
+      - '5432:5432'
+  app:
+    build: .
+    networks:
+      server-network:
+        ipv4_address: 10.1.0.4
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+  flyway:
+    image: flyway/flyway
+    command:
+      -url=jdbc:postgresql://10.1.0.2:5432/beecommunity_db -schemas=public -user=admin -password=admin migrate
+    volumes:
+      - ./src/main/resources/db/migration:/flyway/sql
+    depends_on:
+      - postgres
+    networks:
+      server-network:
+        ipv4_address: 10.1.0.3
+networks:
+  server-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.1.0.0/16
