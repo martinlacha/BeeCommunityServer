@@ -53,7 +53,6 @@ public class NewUserInfoDto {
         address.setState(state);
         address.setCountry(country);
         address.setTown(town);
-        address.setZip(zip);
         address.setStreet(street);
         address.setNumber(number);
     }

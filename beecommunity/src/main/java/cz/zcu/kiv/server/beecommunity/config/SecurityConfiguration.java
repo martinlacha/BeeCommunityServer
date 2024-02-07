@@ -46,7 +46,9 @@ public class SecurityConfiguration implements WebMvcConfigurer {
                 .requestMatchers(
                     "/api-docs",
                     "/api/v1/user/sign-up",
-                    "/api/v1/user/all"
+                    "/api/v1/user/all",
+                    "/api/v1/user/update-password",
+                    "/api/v1/user/reset-password"
                 )
                 .permitAll()
                 .requestMatchers("/api/v1/user/info").hasAnyAuthority("USER", "ADMIN")

@@ -1,19 +1,20 @@
 package cz.zcu.kiv.server.beecommunity.services.impl;
 
-import cz.zcu.kiv.server.beecommunity.jpa.dto.NewUserDto;
-import cz.zcu.kiv.server.beecommunity.jpa.dto.NewUserInfoDto;
-import cz.zcu.kiv.server.beecommunity.jpa.dto.ResetPasswordDto;
-import cz.zcu.kiv.server.beecommunity.jpa.dto.UpdateUserInfoDto;
+import cz.zcu.kiv.server.beecommunity.config.PropertiesConfiguration;
+import cz.zcu.kiv.server.beecommunity.jpa.dto.*;
 import cz.zcu.kiv.server.beecommunity.jpa.entity.RoleEntity;
 import cz.zcu.kiv.server.beecommunity.jpa.entity.UserEntity;
 import cz.zcu.kiv.server.beecommunity.jpa.repository.RoleRepository;
 import cz.zcu.kiv.server.beecommunity.jpa.repository.UserRepository;
 import cz.zcu.kiv.server.beecommunity.services.IUserService;
+import cz.zcu.kiv.server.beecommunity.utils.ConfirmCodeGenerator;
 import cz.zcu.kiv.server.beecommunity.utils.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,7 +25,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -40,6 +43,12 @@ public class UserServiceImpl implements UserDetailsService, IUserService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     private final ObjectMapper objectMapper;
+
+    private final JavaMailSender emailSender;
+
+    private final PropertiesConfiguration propertiesConfiguration;
+
+    private final Map<String, String> RESET_PASSWORD_CODES_MAP = new HashMap<>();
 
 
     @Override
@@ -69,10 +78,19 @@ public class UserServiceImpl implements UserDetailsService, IUserService {
     public ResponseEntity<Void> resetUserPassword(ResetPasswordDto resetPasswordDto) {
         Optional<UserEntity> optionalUser = userRepository.findByEmail(resetPasswordDto.getEmail());
         if (optionalUser.isEmpty()) {
+            log.warn("Reset password failed for {}", resetPasswordDto.getEmail());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        //TODO resetovat heslo a poslat na email
-        optionalUser.get().setPassword("");
+
+        String code = ConfirmCodeGenerator.generateCode();
+        RESET_PASSWORD_CODES_MAP.put(optionalUser.get().getEmail(), code);
+
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setFrom("noreplay@seznam.cz");
+        mailMessage.setTo(resetPasswordDto.getEmail());
+        mailMessage.setSubject("BeeCommunity: Reset password code");
+        mailMessage.setText("Code: " + code);
+        emailSender.send(mailMessage);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
@@ -87,6 +105,25 @@ public class UserServiceImpl implements UserDetailsService, IUserService {
     @Override
     public ResponseEntity<Void> updateUserInfo(UpdateUserInfoDto userInfoDto) {
 
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @Override
+    public ResponseEntity<Void> updatePassword(UpdatePasswordDto updatePasswordDto) {
+        Optional<UserEntity> optionalUser = userRepository.findByEmail(updatePasswordDto.getEmail());
+        if (optionalUser.isEmpty()) {
+            log.warn("Account {} not found", updatePasswordDto.getEmail());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        String code = RESET_PASSWORD_CODES_MAP.get(updatePasswordDto.getEmail());
+        if (!updatePasswordDto.getCode().equals(code)) {
+            log.warn("{} enter invalid confirm code for reset password.", updatePasswordDto.getEmail());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+
+        optionalUser.get().setPassword(bCryptPasswordEncoder.encode(updatePasswordDto.getNewPassword()));
+        optionalUser.get().setLogin_attempts(0);
+        userRepository.save(optionalUser.get());
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 }
