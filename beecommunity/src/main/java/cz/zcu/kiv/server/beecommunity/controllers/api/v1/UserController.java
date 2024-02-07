@@ -1,9 +1,6 @@
 package cz.zcu.kiv.server.beecommunity.controllers.api.v1;
 
-import cz.zcu.kiv.server.beecommunity.jpa.dto.NewUserInfoDto;
-import cz.zcu.kiv.server.beecommunity.jpa.dto.ResetPasswordDto;
-import cz.zcu.kiv.server.beecommunity.jpa.dto.NewUserDto;
-import cz.zcu.kiv.server.beecommunity.jpa.dto.UpdateUserInfoDto;
+import cz.zcu.kiv.server.beecommunity.jpa.dto.*;
 import cz.zcu.kiv.server.beecommunity.services.IUserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -21,17 +18,6 @@ public class UserController {
 
     private final IUserService userService;
 
-    /*
-    @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestParam String username, @RequestParam String password) {
-        SecurityContext securityContext = SecurityContextHolder.getContext();
-        Authentication authentication = securityContext.getAuthentication();
-        UserEntity user = (UserEntity) authentication.getPrincipal();
-        var token = jwtService.generateToken(user);
-        return ResponseEntity.status(HttpStatus.OK).header("Authentication", token).build();
-    }
-    */
-
     /**
      * Create a new user account
      * @param user dto with login
@@ -47,9 +33,19 @@ public class UserController {
      * @param resetPasswordDto dto with email of account to reset password
      * @return Response with status code
      */
-    @PostMapping("/reset")
+    @PostMapping("/reset-password")
     ResponseEntity<Void> resetPassword(@RequestBody @Valid ResetPasswordDto resetPasswordDto) {
         return userService.resetUserPassword(resetPasswordDto);
+    }
+
+    /**
+     * Endpoint to update user password
+     * @param updatePasswordDto dto with email and confirm code send to mail
+     * @return Response with status code
+     */
+    @PostMapping("/update-password")
+    ResponseEntity<Void> updatePassword(@RequestBody @Valid UpdatePasswordDto updatePasswordDto) {
+        return userService.updatePassword(updatePasswordDto);
     }
 
     /**

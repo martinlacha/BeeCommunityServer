@@ -1,9 +1,6 @@
 package cz.zcu.kiv.server.beecommunity.services;
 
-import cz.zcu.kiv.server.beecommunity.jpa.dto.NewUserDto;
-import cz.zcu.kiv.server.beecommunity.jpa.dto.NewUserInfoDto;
-import cz.zcu.kiv.server.beecommunity.jpa.dto.ResetPasswordDto;
-import cz.zcu.kiv.server.beecommunity.jpa.dto.UpdateUserInfoDto;
+import cz.zcu.kiv.server.beecommunity.jpa.dto.*;
 import org.springframework.http.ResponseEntity;
 
 public interface IUserService {
@@ -14,4 +11,6 @@ public interface IUserService {
     ResponseEntity<Void> createNewUserInfo(NewUserInfoDto userIntoDto);
 
     ResponseEntity<Void> updateUserInfo(UpdateUserInfoDto userInfoDto);
+
+    ResponseEntity<Void> updatePassword(UpdatePasswordDto updatePasswordDto);
 }
