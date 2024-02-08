@@ -45,6 +45,7 @@ public class SecurityConfiguration implements WebMvcConfigurer {
             .authorizeHttpRequests(request -> request
                 .requestMatchers(
                     "/api-docs",
+                    "/api/v1/test-connection",
                     "/api/v1/user/sign-up",
                     "/api/v1/user/all",
                     "/api/v1/user/update-password",
@@ -76,6 +77,12 @@ public class SecurityConfiguration implements WebMvcConfigurer {
         return http.build();
     }
 
+    /**
+     * Bean for Authentication manager
+     * @param userDetailsService service for user details
+     * @param passwordEncoder password encoder
+     * @return instance of authentication manager
+     */
     @Bean
     public AuthenticationManager authenticationManager(
             UserDetailsService userDetailsService,
