@@ -9,6 +9,9 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
+/**
+ * Entity of personal user information
+ */
 @Getter
 @Entity
 @Table(name = "USER_INFO", schema = "public")

@@ -6,6 +6,9 @@ import lombok.Data;
 
 import java.time.LocalDate;
 
+/**
+ * Dto with information about new user
+ */
 @Data
 public class NewUserInfoDto {
     @NotEmpty(message = "Name can't be empty.")
@@ -48,6 +51,9 @@ public class NewUserInfoDto {
 
     private AddressDto address;
 
+    /**
+     * Method to fill address dto for correct object mapper
+     */
     public void fillAddress() {
         address = new AddressDto();
         address.setState(state);

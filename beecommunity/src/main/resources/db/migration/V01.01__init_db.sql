@@ -3,7 +3,6 @@ CREATE TABLE ADDRESS (
     country TEXT NOT NULL,
     state TEXT,
     town TEXT NOT NULL,
-    zip_code TEXT NOT NULL,
     street TEXT,
     house_number TEXT NOT NULL
 );

@@ -10,7 +10,9 @@ public interface IUserService {
 
     ResponseEntity<Void> createNewUserInfo(NewUserInfoDto userIntoDto);
 
-    ResponseEntity<Void> updateUserInfo(UpdateUserInfoDto userInfoDto);
+    ResponseEntity<Void> updateUserInfo(GetUpdateUserInfoDto userInfoDto);
 
     ResponseEntity<Void> updatePassword(UpdatePasswordDto updatePasswordDto);
+
+    ResponseEntity<GetUpdateUserInfoDto> getUserInfo();
 }

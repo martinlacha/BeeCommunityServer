@@ -6,6 +6,10 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+/**
+ * Dto to update password of user
+ * Code is sent on email of user to authenticate
+ */
 @Data
 public class UpdatePasswordDto {
     @Email(message = "Not valid email address")

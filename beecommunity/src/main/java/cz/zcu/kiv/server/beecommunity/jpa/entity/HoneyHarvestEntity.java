@@ -9,6 +9,9 @@ import org.springframework.data.util.Lazy;
 import java.time.LocalDate;
 import java.util.List;
 
+/**
+ * Entity of honey harvest records
+ */
 @Entity
 @Table(name = "HONEY_HARVEST", schema = "public")
 @Data

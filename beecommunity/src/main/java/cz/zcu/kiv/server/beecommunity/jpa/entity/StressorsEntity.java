@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Entity of stressors for hive inspection
+ */
 @Entity
 @Table(name = "STRESSORS", schema = "public")
 @Data

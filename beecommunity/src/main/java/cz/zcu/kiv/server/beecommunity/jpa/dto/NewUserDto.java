@@ -4,6 +4,9 @@ package cz.zcu.kiv.server.beecommunity.jpa.dto;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
+/**
+ * Dto for register new user
+ */
 @Data
 public class NewUserDto {
 

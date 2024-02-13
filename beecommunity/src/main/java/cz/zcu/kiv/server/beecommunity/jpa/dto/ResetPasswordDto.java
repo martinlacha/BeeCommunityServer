@@ -4,6 +4,9 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
+/**
+ * Dto to reset user password by email address
+ */
 @Data
 public class ResetPasswordDto {
     @NotEmpty(message = "Email can't be empty.")

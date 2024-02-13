@@ -1,5 +1,6 @@
 package cz.zcu.kiv.server.beecommunity.utils;
 
+import cz.zcu.kiv.server.beecommunity.enums.ResponseStatusCodes;
 import cz.zcu.kiv.server.beecommunity.services.IJwtService;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -26,6 +27,7 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final IJwtService jwtService;
+
     private final UserDetailsService userDetailsService;
 
     @Override
@@ -56,6 +58,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             userEmail = jwtService.extractUsernameFromToken(jwt);
             if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(userEmail);
+                if (!userDetails.isAccountNonLocked() || !userDetails.isEnabled()) {
+                    log.warn("Account {} is locked: {}, enabled: {}",
+                            userDetails.getUsername(), userDetails.isAccountNonLocked(), userDetails.isEnabled());
+                    response.setStatus(ResponseStatusCodes.ACCOUNT_LOCKED_STATUS_CODE.getCode());
+                    return;
+                }
+
                 if (jwtService.isTokenValid(jwt, userDetails)) {
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                             userDetails,

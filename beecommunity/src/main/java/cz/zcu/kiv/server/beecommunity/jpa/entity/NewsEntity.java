@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Entity of news and tips for beekeepers
+ */
 @Entity
 @Table(name = "NEWS", schema = "public")
 @Data

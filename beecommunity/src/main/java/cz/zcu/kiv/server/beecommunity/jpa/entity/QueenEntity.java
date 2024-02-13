@@ -6,6 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Entity for queen
+ */
 @Entity
 @Table(name = "QUEEN", schema = "public")
 @Data

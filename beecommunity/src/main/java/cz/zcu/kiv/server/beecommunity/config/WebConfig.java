@@ -9,7 +9,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
- * Configuration of class for beans in whole project
+ * Configuration of beans in project
  */
 
 @Configuration
@@ -20,7 +20,7 @@ public class WebConfig implements WebMvcConfigurer {
     private final ModelMapper modelMapper = new ModelMapper();
 
     /**
-     * Bean of password encoder
+     * Bean of password encoder to get hash to avoid password in plain text in database
      * @return BCryptPasswordEncoder
      */
     @Bean

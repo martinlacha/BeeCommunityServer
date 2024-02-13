@@ -14,6 +14,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
+/**
+ * Authentication handler which handling when user is unsuccessfully login by email and password
+ */
 @Slf4j
 @RequiredArgsConstructor
 @Component
@@ -21,8 +24,13 @@ public class AuthenticationUserFailureHandler implements AuthenticationFailureHa
 
     private final UserRepository userRepository;
 
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
-
+    /**
+     * Method called on unsuccessful authentication
+     * Increase login attempts if account exists
+     * @param request object from user with details
+     * @param response object that will be return to user
+     * @param exception object with details why authentication was unsuccessful
+     */
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) {
         String email = request.getParameter("username");
