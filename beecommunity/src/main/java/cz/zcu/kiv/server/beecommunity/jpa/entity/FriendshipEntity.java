@@ -6,6 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Entity of friendship between users
+ */
 @Entity
 @Table(name = "FRIENDSHIP", schema = "public")
 @Data

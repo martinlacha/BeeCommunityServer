@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Entity of possible symptoms when hive inspection
+ */
 @Entity
 @Table(name = "SYMPTOMS", schema = "public")
 @Data

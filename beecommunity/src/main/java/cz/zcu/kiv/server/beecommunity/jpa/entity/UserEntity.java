@@ -16,6 +16,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * Entity of user in database
+ */
 @Getter
 @Entity
 @Table(name = "AUTH_USER", schema = "public")
@@ -52,9 +55,13 @@ public class UserEntity implements UserDetails {
     @Column(name = "new_account")
     private boolean newAccount;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "role_id")
     private RoleEntity role;
+
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_info_id")
+    private UserInfoEntity userInfo;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -90,7 +97,7 @@ public class UserEntity implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return !suspended;
     }
 
     public void setId(Long id) {

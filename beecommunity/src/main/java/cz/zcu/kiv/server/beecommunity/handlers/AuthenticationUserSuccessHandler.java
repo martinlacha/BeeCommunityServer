@@ -2,7 +2,6 @@ package cz.zcu.kiv.server.beecommunity.handlers;
 
 import cz.zcu.kiv.server.beecommunity.enums.ResponseStatusCodes;
 import cz.zcu.kiv.server.beecommunity.jpa.entity.UserEntity;
-import cz.zcu.kiv.server.beecommunity.jpa.repository.UserRepository;
 import cz.zcu.kiv.server.beecommunity.services.IJwtService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,16 +14,26 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
+/**
+ * Authentication handler which handling when user is successfully login by email and password
+ */
+
 @Slf4j
 @RequiredArgsConstructor
 @Component
 public class AuthenticationUserSuccessHandler implements AuthenticationSuccessHandler {
 
-    private final UserRepository userRepository;
     private final IJwtService jwtService;
 
+    /**
+     * Method called on successful authentication and check the account is not locked
+     * Login attempts are reset and new JWT token is generated for this account
+     * @param request object from user with details
+     * @param response object that will be return to user with new JWT authentication token
+     * @param authentication object with details
+     */
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         String email = request.getParameter("email");
         log.info("User {} succesfully login", email);
         UserEntity user = (UserEntity) authentication.getPrincipal();

@@ -9,6 +9,9 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.util.List;
 
+/**
+ * Entity of hive
+ */
 @Entity
 @Table(name = "HIVE", schema = "public")
 @Data

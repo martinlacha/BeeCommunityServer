@@ -2,6 +2,9 @@ package cz.zcu.kiv.server.beecommunity.jpa.dto;
 
 import lombok.Data;
 
+/**
+ * Dto with information about user address
+ */
 @Data
 public class AddressDto {
     private String state;

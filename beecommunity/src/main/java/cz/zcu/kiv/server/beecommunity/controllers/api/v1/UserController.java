@@ -9,6 +9,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * Controller for user endpoints
+ */
+
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/user")
@@ -21,7 +25,7 @@ public class UserController {
     /**
      * Create a new user account
      * @param user dto with login
-     * @return status code
+     * @return created (201) if user was created, conflict (409) when email already exists otherwise bad request (400)
      */
     @PostMapping("/sign-up")
     ResponseEntity<Void> createUser(@RequestBody @Valid NewUserDto user) {
@@ -29,9 +33,9 @@ public class UserController {
     }
 
     /**
-     * Endpoint to reset password
+     * Endpoint to reset password and mail will be sent
      * @param resetPasswordDto dto with email of account to reset password
-     * @return Response with status code
+     * @return ok (200), when user not found (404), otherwise bad request (400)
      */
     @PostMapping("/reset-password")
     ResponseEntity<Void> resetPassword(@RequestBody @Valid ResetPasswordDto resetPasswordDto) {
@@ -50,8 +54,8 @@ public class UserController {
 
     /**
      * Create user info for new account
-     * @param userInfoDto
-     * @return
+     * @param userInfoDto object with details about user
+     * @return ok (200), conflict (409) info already exists, bad request (400) some field missing
      */
     @PutMapping("/info")
     ResponseEntity<Void> createNewUserInfo(@RequestBody @Valid NewUserInfoDto userInfoDto) {
@@ -59,11 +63,16 @@ public class UserController {
     }
 
     /**
-     * Update info about user
-     * @return Response with status code
+     * Update user information
+     * @return ok (200), conflict (409) user info not exists
      */
     @PostMapping("/info")
-    ResponseEntity<Void> updateUserInfo(@RequestBody UpdateUserInfoDto userInfoDto) {
+    ResponseEntity<Void> updateUserInfo(@RequestBody @Valid GetUpdateUserInfoDto userInfoDto) {
         return userService.updateUserInfo(userInfoDto);
+    }
+
+    @GetMapping("/info")
+    ResponseEntity<GetUpdateUserInfoDto> getUserInfo() {
+        return userService.getUserInfo();
     }
 }

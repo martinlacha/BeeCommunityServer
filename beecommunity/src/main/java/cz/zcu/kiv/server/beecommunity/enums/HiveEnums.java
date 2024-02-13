@@ -1,6 +1,10 @@
 package cz.zcu.kiv.server.beecommunity.enums;
 
 public class HiveEnums {
+
+    /**
+     * Color of hive
+     */
     public enum EColor {
         NONE,
         WHITE,
@@ -14,8 +18,11 @@ public class HiveEnums {
         GREEN
     }
 
+    /**
+     * Source where bees comes from
+     */
     public enum EBeeSource {
-        SWARN,
+        SWARM,
         NUC,
         PACKAGE,
         SPLIT,

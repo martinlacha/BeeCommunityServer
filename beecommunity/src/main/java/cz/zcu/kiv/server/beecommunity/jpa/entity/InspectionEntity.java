@@ -8,6 +8,9 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
+/**
+ * Entity of hive inspection with details of state in single hive
+ */
 @Entity
 @Table(name = "HIVE_INSPECTION", schema = "public")
 @Data

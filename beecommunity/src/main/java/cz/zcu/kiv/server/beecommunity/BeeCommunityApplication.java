@@ -5,10 +5,12 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
+/**
+ * Main function and entry point where start spring application
+ */
 @SpringBootApplication
 @EnableConfigurationProperties(PropertiesConfiguration.class)
 public class BeeCommunityApplication {
-
 	public static void main(String[] args) {
 		SpringApplication.run(BeeCommunityApplication.class, args);
 	}

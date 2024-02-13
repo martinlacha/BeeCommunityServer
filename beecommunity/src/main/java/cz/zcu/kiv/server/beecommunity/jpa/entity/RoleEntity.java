@@ -4,9 +4,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 /**
- * Entity of role in AUTH_ROLE table
+ * Entity of role
  */
-
 @Entity
 @Table(name = "AUTH_ROLE", schema = "public")
 @Data

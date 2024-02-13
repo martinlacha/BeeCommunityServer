@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Entity of user address
+ */
 @Entity
 @Table(name = "ADDRESS", schema = "public")
 @Data
@@ -27,9 +30,6 @@ public class AddressEntity {
 
     @Column(name = "town")
     private String town;
-
-    @Column(name = "zip_code")
-    private String zip;
 
     @Column(name = "street")
     private String street;

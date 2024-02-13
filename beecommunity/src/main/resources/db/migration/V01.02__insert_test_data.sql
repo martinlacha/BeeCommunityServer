@@ -1,6 +1,6 @@
-INSERT into ADDRESS(state, country, town, zip_code, street, house_number)
+INSERT into ADDRESS(state, country, town, street, house_number)
     values('Czech Republic', 'Czech Republic', 'Chlumany', '38422', '', 123);
-INSERT into ADDRESS(state, country, town, zip_code, street, house_number)
+INSERT into ADDRESS(state, country, town, street, house_number)
             values('USA', 'California', 'Los Angeles', '123456', 'Hollywood Boulevard', 654);
 
 INSERT into USER_INFO(name, surname, date_of_birth, address_id)

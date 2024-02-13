@@ -1,6 +1,10 @@
 package cz.zcu.kiv.server.beecommunity.enums;
 
 public class QueenEnums {
+
+    /**
+     * Breed of queen
+     */
     public enum EBreed {
         LOCAL,
         ALPINE,
@@ -15,6 +19,9 @@ public class QueenEnums {
         OTHER
     }
 
+    /**
+     * Color marked on queen
+     */
     public enum EColor {
         UNMARKED,
         WHITE,
@@ -22,6 +29,7 @@ public class QueenEnums {
         RED,
         GREEN,
         BLUE,
-        OTHER
+        OTHER,
+        NONE
     }
 }

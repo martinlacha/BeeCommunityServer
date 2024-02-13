@@ -8,6 +8,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for server endpoints
+ */
+
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/server")
@@ -15,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ServerController {
 
     /**
-     * Endpoint to test is connection is established
+     * Endpoint to test the connection is established
      * @return HttpStatus.OK if connection is established
      */
     @GetMapping("/test-connection")

@@ -8,6 +8,9 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+/**
+ * Entity of apiary
+ */
 @Entity
 @Table(name = "APIARY")
 @Data

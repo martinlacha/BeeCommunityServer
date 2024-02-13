@@ -4,7 +4,6 @@ import cz.zcu.kiv.server.beecommunity.utils.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Role;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -28,11 +27,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class SecurityConfiguration implements WebMvcConfigurer {
 
     private final AuthenticationFailureHandler authenticationUserFailureHandler;
+
     private final AuthenticationSuccessHandler authenticationUserSuccessHandler;
+
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     /**
-     *
+     * Security filter chain to check every http request
+     * First
      * More info about CSRF on <a href="https://www.baeldung.com/spring-security-csrf"/>
      * @param http Http request received to filter
      * @return Filtered http request
@@ -71,8 +73,6 @@ public class SecurityConfiguration implements WebMvcConfigurer {
                             httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
             .csrf(AbstractHttpConfigurer::disable)
-            // This is fixed in WebConfig class
-            //.cors(AbstractHttpConfigurer::disable)
             .logout(LogoutConfigurer::permitAll);
         return http.build();
     }

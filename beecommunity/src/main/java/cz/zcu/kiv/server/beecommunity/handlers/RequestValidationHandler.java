@@ -9,9 +9,16 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Validation handler for request when some required field is missing or requirements are not fulfilled
+ */
 @RestControllerAdvice
 public class RequestValidationHandler {
-    //This method get triggered whenever there is MethodArgumentNotValidException exception.
+    /**
+     * Method get triggered whenever there is MethodArgumentNotValidException exception.
+     * @param exception object with details why exception was raised
+     * @return error map with field why request is invalid
+     */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Map<String,String> handleInvalidArgument(MethodArgumentNotValidException exception)
@@ -21,16 +28,4 @@ public class RequestValidationHandler {
                 errorMap.put(error.getField(),error.getDefaultMessage()));
         return errorMap;
     }
-
-    /**
-    //This method get triggered whenever there is UserAlreadyExistException exception.
-    @ResponseStatus(HttpStatus.CONFLICT)
-    @ExceptionHandler(UserAlreadyExistException.class)
-    public Map<String,String>handleUserNotFoundException(UserAlreadyExistException exception)
-    {
-        Map<String,String>errorMap=new HashMap<>();
-        errorMap.put("message", exception.getMessage());
-        return errorMap;
-    }
-    */
 }
