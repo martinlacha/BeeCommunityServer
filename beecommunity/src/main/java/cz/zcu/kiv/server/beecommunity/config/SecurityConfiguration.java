@@ -1,6 +1,6 @@
 package cz.zcu.kiv.server.beecommunity.config;
 
-import cz.zcu.kiv.server.beecommunity.utils.JwtAuthenticationFilter;
+import cz.zcu.kiv.server.beecommunity.filters.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -47,14 +47,16 @@ public class SecurityConfiguration implements WebMvcConfigurer {
             .authorizeHttpRequests(request -> request
                 .requestMatchers(
                     "/api-docs",
-                    "/api/v1/test-connection",
+                    "/api/v1/server/test-connection",
                     "/api/v1/user/sign-up",
                     "/api/v1/user/all",
                     "/api/v1/user/update-password",
-                    "/api/v1/user/reset-password"
+                    "/api/v1/user/reset-password",
+                    "/api/v1/friends/find"
                 )
                 .permitAll()
                 .requestMatchers("/api/v1/user/info").hasAnyAuthority("USER", "ADMIN")
+                //.requestMatchers("/api/v1/friends/find").hasAnyAuthority("USER", "ADMIN")
                 // any other url paths must be authenticated
                 .anyRequest()
                 .authenticated()

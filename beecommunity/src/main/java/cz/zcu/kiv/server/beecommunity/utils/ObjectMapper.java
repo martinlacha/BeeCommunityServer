@@ -3,13 +3,18 @@ package cz.zcu.kiv.server.beecommunity.utils;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.GetUpdateUserInfoDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.NewUserDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.NewUserInfoDto;
+import cz.zcu.kiv.server.beecommunity.jpa.dto.friends.FoundUserDto;
 import cz.zcu.kiv.server.beecommunity.jpa.entity.AddressEntity;
 import cz.zcu.kiv.server.beecommunity.jpa.entity.UserEntity;
 import cz.zcu.kiv.server.beecommunity.jpa.entity.UserInfoEntity;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 @AllArgsConstructor
@@ -23,7 +28,10 @@ public class ObjectMapper {
 
     public UserInfoEntity convertToUserInfoEntity(NewUserInfoDto infoDto) {
         infoDto.fillAddress();
-        return modelMapper.map(infoDto, UserInfoEntity.class);
+        UserInfoEntity info =  modelMapper.map(infoDto, UserInfoEntity.class);
+        LocalDate dob = DateTimeUtils.getDateFromString(infoDto.getDateOfBirth());
+        info.setDateOfBirth(dob);
+        return info;
     }
 
     public GetUpdateUserInfoDto convertUserInfoDto(UserInfoEntity userInfo) {
@@ -35,5 +43,11 @@ public class ObjectMapper {
         infoDto.setStreet(address.getStreet());
         infoDto.setNumber(address.getNumber());
         return infoDto;
+    }
+
+    public List<FoundUserDto> convertListUserEntity(List<UserEntity> list) {
+        List<FoundUserDto> output = new ArrayList<>();
+        list.forEach(userEntity -> output.add(new FoundUserDto(userEntity.getEmail(), userEntity.getUserInfo().getName(), userEntity.getUserInfo().getSurname())));
+        return output;
     }
 }

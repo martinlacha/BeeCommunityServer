@@ -3,6 +3,7 @@ package cz.zcu.kiv.server.beecommunity.jpa.dto;
 import cz.zcu.kiv.server.beecommunity.enums.UserEnums;
 import jakarta.validation.constraints.*;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 
@@ -22,8 +23,7 @@ public class NewUserInfoDto {
     private String surname;
 
     @NotNull(message = "Surname can't be empty.")
-    @Past(message = "Date has to be in past.")
-    private LocalDate dateOfBirth;
+    private String dateOfBirth;
 
     @NotNull(message = "Experience can't be empty.")
     private UserEnums.EExperience experience;

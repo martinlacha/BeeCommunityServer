@@ -13,8 +13,7 @@ import java.time.LocalDate;
 public class GetUpdateUserInfoDto {
     private String name;
     private String surname;
-    @Past(message = "Date of birth has to be from past")
-    private LocalDate dateOfBirth;
+    private String dateOfBirth;
     private UserEnums.EExperience experience;
     private String state;
     private String country;

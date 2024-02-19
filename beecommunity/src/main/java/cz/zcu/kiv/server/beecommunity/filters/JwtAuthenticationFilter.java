@@ -1,4 +1,4 @@
-package cz.zcu.kiv.server.beecommunity.utils;
+package cz.zcu.kiv.server.beecommunity.filters;
 
 import cz.zcu.kiv.server.beecommunity.enums.ResponseStatusCodes;
 import cz.zcu.kiv.server.beecommunity.services.IJwtService;
@@ -11,6 +11,8 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.messaging.handler.annotation.Headers;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,6 +22,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 @Slf4j
 @Component
@@ -39,6 +42,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             final String header = request.getHeader(HttpHeaders.AUTHORIZATION);
             final String jwt;
             final String userEmail;
+
+            // Set charset and content type for response
+            response.addHeader(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name());
+            response.addHeader(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE);
             if (header == null || !header.startsWith("Bearer ")) {
                 filterChain.doFilter(request, response);
                 return;

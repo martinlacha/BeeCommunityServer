@@ -10,9 +10,11 @@ import cz.zcu.kiv.server.beecommunity.jpa.repository.UserInfoRepository;
 import cz.zcu.kiv.server.beecommunity.jpa.repository.UserRepository;
 import cz.zcu.kiv.server.beecommunity.services.IUserService;
 import cz.zcu.kiv.server.beecommunity.utils.ConfirmCodeGenerator;
+import cz.zcu.kiv.server.beecommunity.utils.DateTimeUtils;
 import cz.zcu.kiv.server.beecommunity.utils.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
@@ -96,6 +98,9 @@ public class UserServiceImpl implements UserDetailsService, IUserService {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
         UserInfoEntity userInfoEntity = objectMapper.convertToUserInfoEntity(userIntoDto);
+        if (userInfoEntity.getDateOfBirth() == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
         userInfoEntity.setCreated(LocalDate.now());
         user.setUserInfo(userInfoEntity);
         user.setNewAccount(false);
@@ -121,8 +126,12 @@ public class UserServiceImpl implements UserDetailsService, IUserService {
         if (userInfoDto.getSurname() != null && !userInfoDto.getSurname().isBlank()) {
             info.setSurname(userInfoDto.getSurname());
         }
-        if (userInfoDto.getDateOfBirth() != null) {
-            info.setDateOfBirth(userInfoDto.getDateOfBirth());
+        if (userInfoDto.getDateOfBirth() != null && !userInfoDto.getDateOfBirth().isBlank()) {
+            LocalDate dob = DateTimeUtils.getDateFromString(userInfoDto.getDateOfBirth());
+            if (dob == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+            info.setDateOfBirth(dob);
         }
         if (userInfoDto.getExperience() != null) {
             info.setExperience(userInfoDto.getExperience());

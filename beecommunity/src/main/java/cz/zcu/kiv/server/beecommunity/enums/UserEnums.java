@@ -16,6 +16,7 @@ public class UserEnums {
      * User experience level
      */
     public enum EExperience {
+        NONE,
         BEGINNER,
         INTERMEDIATE,
         ADVANCED,
