@@ -58,7 +58,7 @@ public class UserController {
      * @return ok (200), conflict (409) info already exists, bad request (400) some field missing
      */
     @PutMapping("/info")
-    ResponseEntity<Void> createNewUserInfo(@RequestBody @Valid NewUserInfoDto userInfoDto) {
+    ResponseEntity<Void> createNewUserInfo(@RequestBody NewUserInfoDto userInfoDto) {
         return userService.createNewUserInfo(userInfoDto);
     }
 
@@ -71,6 +71,10 @@ public class UserController {
         return userService.updateUserInfo(userInfoDto);
     }
 
+    /**
+     * Find a return user info
+     * @return user info
+     */
     @GetMapping("/info")
     ResponseEntity<GetUpdateUserInfoDto> getUserInfo() {
         return userService.getUserInfo();

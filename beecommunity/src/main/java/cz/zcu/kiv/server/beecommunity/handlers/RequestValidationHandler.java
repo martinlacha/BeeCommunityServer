@@ -1,5 +1,6 @@
 package cz.zcu.kiv.server.beecommunity.handlers;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -12,6 +13,8 @@ import java.util.Map;
 /**
  * Validation handler for request when some required field is missing or requirements are not fulfilled
  */
+
+@Slf4j
 @RestControllerAdvice
 public class RequestValidationHandler {
     /**
@@ -23,6 +26,7 @@ public class RequestValidationHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Map<String,String> handleInvalidArgument(MethodArgumentNotValidException exception)
     {
+        log.warn("Method argument is not valid: {}", exception.getMessage());
         Map<String,String>errorMap=new HashMap<>();
         exception.getBindingResult().getFieldErrors().forEach(error ->
                 errorMap.put(error.getField(),error.getDefaultMessage()));
