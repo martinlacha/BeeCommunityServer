@@ -29,3 +29,10 @@ INSERT into AUTH_USER(email, password, user_info_id, role_id)
     values('temporaryAccount@gmail.com', 'password', 4, 2);
 INSERT into AUTH_USER(email, password, role_id)
     values('newUser@gmail.com', 'password', 2);
+
+INSERT into FRIENDSHIP(status, sender_id, receiver_id) values('FRIEND', 1, 2);
+INSERT into FRIENDSHIP(status, sender_id, receiver_id) values('FRIEND', 3, 1);
+INSERT into FRIENDSHIP(status, sender_id, receiver_id) values('FRIEND', 1, 4);
+INSERT into FRIENDSHIP(status, sender_id, receiver_id) values('FRIEND', 2, 3);
+INSERT into FRIENDSHIP(status, sender_id, receiver_id) values('BLOCKED', 2, 4);
+INSERT into FRIENDSHIP(status, sender_id, receiver_id) values('BLOCKED', 3, 4);

@@ -24,7 +24,7 @@ public class FriendshipEntity {
     private Long id;
 
     @Column(name = "status")
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     private FriendshipEnums.EStatus status;
 
     @ManyToOne
