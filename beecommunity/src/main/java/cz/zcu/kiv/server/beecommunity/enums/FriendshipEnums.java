@@ -6,10 +6,6 @@ public class FriendshipEnums {
      * Status of friendship between users
      */
     public enum EStatus {
-        /**
-         * Other users. Users that can be search and send request for friendship
-         */
-        OTHER,
 
         /**
          * Friend users. Users after accept PENDING or SEND_TO_ME request
@@ -25,11 +21,6 @@ public class FriendshipEnums {
          * Requests send to another users
          */
         PENDING,
-
-        /**
-         * Requests send to me from another users
-         */
-        SEND_TO_ME
     }
 
 }

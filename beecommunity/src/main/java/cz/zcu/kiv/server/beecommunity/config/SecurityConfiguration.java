@@ -46,16 +46,18 @@ public class SecurityConfiguration implements WebMvcConfigurer {
             // These paths have not to be authenticated for access and there are permit to all
             .authorizeHttpRequests(request -> request
                 .requestMatchers(
-                    "/api-docs",
-                    "/api/v1/server/test-connection",
-                    "/api/v1/user/sign-up",
-                    "/api/v1/user/all",
-                    "/api/v1/user/update-password",
-                    "/api/v1/user/reset-password",
-                    "/api/v1/friends/find"
+                        "/api-docs",
+                        "/api/v1/server/test-connection",
+                        "/api/v1/user/sign-up",
+                        "/api/v1/user/all",
+                        "/api/v1/user/update-password",
+                        "/api/v1/user/reset-password"
+                        // TODO THIS paths will need authentication at the end
+                        //"/api/v1/friends/find",
                 )
                 .permitAll()
                 .requestMatchers("/api/v1/user/info").hasAnyAuthority("USER", "ADMIN")
+                .requestMatchers("/api/v1/friends/*").hasAuthority("USER")
                 //.requestMatchers("/api/v1/friends/find").hasAnyAuthority("USER", "ADMIN")
                 // any other url paths must be authenticated
                 .anyRequest()

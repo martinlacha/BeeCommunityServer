@@ -5,6 +5,7 @@ import cz.zcu.kiv.server.beecommunity.jpa.dto.NewUserDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.NewUserInfoDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.friends.FoundUserDto;
 import cz.zcu.kiv.server.beecommunity.jpa.entity.AddressEntity;
+import cz.zcu.kiv.server.beecommunity.jpa.entity.FriendshipEntity;
 import cz.zcu.kiv.server.beecommunity.jpa.entity.UserEntity;
 import cz.zcu.kiv.server.beecommunity.jpa.entity.UserInfoEntity;
 import lombok.AllArgsConstructor;
@@ -47,7 +48,31 @@ public class ObjectMapper {
 
     public List<FoundUserDto> convertListUserEntity(List<UserEntity> list) {
         List<FoundUserDto> output = new ArrayList<>();
-        list.forEach(userEntity -> output.add(new FoundUserDto(userEntity.getEmail(), userEntity.getUserInfo().getName(), userEntity.getUserInfo().getSurname())));
+        list.forEach(userEntity -> output.add(getFriendFromFriendship(userEntity)));
         return output;
+    }
+
+    /**
+     * Convert friendship into list of dtos of friend and it takes from sender and receiver
+     * @param list of friendship of user
+     * @param myId of user that want return all friends
+     * @return list of found friends
+     */
+    public List<FoundUserDto> convertListFriendship(List<FriendshipEntity> list, Long myId) {
+        List<FoundUserDto> output = new ArrayList<>();
+        list.forEach(friendship -> output.add(getFriendFromFriendship(
+                friendship.getReceiver().getId().equals(myId) ? friendship.getSender() : friendship.getReceiver()
+        )));
+        return output;
+    }
+
+    /**
+     * Convert UserEntity into FoundFriendDto
+     * @param user entity to convert into dto
+     * @return dto
+     */
+    private FoundUserDto getFriendFromFriendship(UserEntity user) {
+
+        return new FoundUserDto(user.getEmail(), user.getUserInfo().getName(), user.getUserInfo().getSurname());
     }
 }
