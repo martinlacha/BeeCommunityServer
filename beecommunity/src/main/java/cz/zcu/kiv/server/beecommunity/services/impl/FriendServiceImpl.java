@@ -8,14 +8,12 @@ import cz.zcu.kiv.server.beecommunity.jpa.repository.FriendshipRepository;
 import cz.zcu.kiv.server.beecommunity.jpa.repository.UserRepository;
 import cz.zcu.kiv.server.beecommunity.services.IFriendService;
 import cz.zcu.kiv.server.beecommunity.utils.ObjectMapper;
+import cz.zcu.kiv.server.beecommunity.utils.UserUtils;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,7 +40,7 @@ public class FriendServiceImpl implements IFriendService {
      */
     @Override
     public ResponseEntity<List<FoundUserDto>> findUsers(String name) {
-        UserEntity user = getUserFromSecurityContext();
+        UserEntity user = UserUtils.getUserFromSecurityContext();
         List<UserEntity> list = userRepository
                 .findByEmailContainsIgnoreCaseOrUserInfoNameContainsIgnoreCaseOrUserInfoSurnameContainsIgnoreCase(
                     name, name, name
@@ -58,7 +56,7 @@ public class FriendServiceImpl implements IFriendService {
      */
     @Override
     public ResponseEntity<List<FoundUserDto>> getMyFriends() {
-        UserEntity user = getUserFromSecurityContext();
+        UserEntity user = UserUtils.getUserFromSecurityContext();
         var friends = friendshipRepository.findBySenderIdAndStatusOrReceiverIdAndStatus(
                 user.getId(), FriendshipEnums.EStatus.FRIEND, user.getId(), FriendshipEnums.EStatus.FRIEND);
         return ResponseEntity.status(HttpStatus.OK).body(modelMapper.convertListFriendship(friends, user.getId()));
@@ -90,7 +88,7 @@ public class FriendServiceImpl implements IFriendService {
      */
     @Override
     public ResponseEntity<Void> sendFriendRequest(@NotNull String email) {
-        UserEntity user = getUserFromSecurityContext();
+        UserEntity user = UserUtils.getUserFromSecurityContext();
         Optional<UserEntity> newFriend = userRepository.findByEmail(email);
         if (newFriend.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -116,7 +114,7 @@ public class FriendServiceImpl implements IFriendService {
      */
     @Override
     public ResponseEntity<Void> removeFriendOrRequest(@NotNull String email) {
-        UserEntity user = getUserFromSecurityContext();
+        UserEntity user = UserUtils.getUserFromSecurityContext();
         Optional<UserEntity> removeFriend = userRepository.findByEmail(email);
         if (removeFriend.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -141,7 +139,7 @@ public class FriendServiceImpl implements IFriendService {
      */
     @Override
     public ResponseEntity<Void> blockUser(@NotNull String email) {
-        UserEntity user = getUserFromSecurityContext();
+        UserEntity user = UserUtils.getUserFromSecurityContext();
         Optional<UserEntity> userToBlock = userRepository.findByEmail(email);
         if (userToBlock.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -168,7 +166,7 @@ public class FriendServiceImpl implements IFriendService {
      */
     @Override
     public ResponseEntity<Void> unblockUser(@NotNull String email) {
-        UserEntity user = getUserFromSecurityContext();
+        UserEntity user = UserUtils.getUserFromSecurityContext();
         Optional<UserEntity> userToBlock = userRepository.findByEmail(email);
         if (userToBlock.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -193,7 +191,7 @@ public class FriendServiceImpl implements IFriendService {
      */
     @Override
     public ResponseEntity<Void> acceptFriendRequest(String email) {
-        UserEntity user = getUserFromSecurityContext();
+        UserEntity user = UserUtils.getUserFromSecurityContext();
         Optional<UserEntity> friend = userRepository.findByEmail(email);
         if (friend.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -214,7 +212,7 @@ public class FriendServiceImpl implements IFriendService {
      */
     @Override
     public ResponseEntity<Void> rejectFriendRequest(String email) {
-        UserEntity user = getUserFromSecurityContext();
+        UserEntity user = UserUtils.getUserFromSecurityContext();
         Optional<UserEntity> rejectedUser = userRepository.findByEmail(email);
         if (rejectedUser.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -229,23 +227,13 @@ public class FriendServiceImpl implements IFriendService {
     }
 
     /**
-     * Get UserDetails from security context if user is already authenticated
-     * @return user details from security context
-     */
-    private UserEntity getUserFromSecurityContext() {
-        SecurityContext securityContext = SecurityContextHolder.getContext();
-        Authentication authentication = securityContext.getAuthentication();
-        return (UserEntity) authentication.getPrincipal();
-    }
-
-    /**
      * Get list of dto of friends by friendship status, and it takes from database from receiver or sender
      * @param status filter requests by status
      * @param fromSender true return all my requests, false return all
      * @return return list of found users filtered by status
      */
     private ResponseEntity<List<FoundUserDto>> getListByStatus(FriendshipEnums.EStatus status, boolean fromSender) {
-        UserEntity user = getUserFromSecurityContext();
+        UserEntity user = UserUtils.getUserFromSecurityContext();
         var list = fromSender ?
                 friendshipRepository.findBySenderIdAndStatus(user.getId(), status) :
                 friendshipRepository.findByReceiverIdAndStatus(user.getId(), status);
