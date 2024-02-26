@@ -29,6 +29,9 @@ public class CommunityPostEntity {
     @JoinColumn(name = "user_id")
     private UserEntity author;
 
+    @Column(name = "title")
+    private String title;
+
     @Column(name = "post")
     private String post;
 
@@ -42,7 +45,7 @@ public class CommunityPostEntity {
     @Column(name = "created")
     private LocalDate created;
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<PostCommentEntity> comments;
 
     @Override

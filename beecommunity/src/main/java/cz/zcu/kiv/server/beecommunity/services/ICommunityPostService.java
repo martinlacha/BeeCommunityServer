@@ -16,7 +16,7 @@ public interface ICommunityPostService {
 
     ResponseEntity<Void> updatePost(CommunityPostDto postDto);
 
-    ResponseEntity<Void> addComment(PostCommentDto commentDto);
+    ResponseEntity<PostCommentDto> addComment(PostCommentDto commentDto);
 
     ResponseEntity<Void> deleteComment(Long commentId);
 }

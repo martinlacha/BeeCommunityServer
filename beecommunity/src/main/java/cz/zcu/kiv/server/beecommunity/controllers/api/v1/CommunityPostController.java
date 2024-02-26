@@ -49,7 +49,7 @@ public class CommunityPostController {
     }
 
     @PostMapping("/comment")
-    ResponseEntity<Void> addPostComment(@RequestBody @Valid PostCommentDto commentDto) {
+    ResponseEntity<PostCommentDto> addPostComment(@RequestBody @Valid PostCommentDto commentDto) {
         return communityPostService.addComment(commentDto);
     }
 

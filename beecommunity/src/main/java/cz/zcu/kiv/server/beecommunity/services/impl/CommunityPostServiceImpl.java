@@ -98,7 +98,7 @@ public class CommunityPostServiceImpl implements ICommunityPostService {
      * @return status code of operation
      */
     @Override
-    public ResponseEntity<Void> addComment(PostCommentDto commentDto) {
+    public ResponseEntity<PostCommentDto> addComment(PostCommentDto commentDto) {
         var user = UserUtils.getUserFromSecurityContext();
         var post = communityPostRepository.findById(commentDto.getPostId());
         if (post.isEmpty()) {
@@ -115,7 +115,7 @@ public class CommunityPostServiceImpl implements ICommunityPostService {
                 .date(LocalDate.now())
                 .build();
         commentRepository.saveAndFlush(newComment);
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.status(HttpStatus.OK).body(modelMapper.convertCommentToDto(newComment));
     }
 
     /**

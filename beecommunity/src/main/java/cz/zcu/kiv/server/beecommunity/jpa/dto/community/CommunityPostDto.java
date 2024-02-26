@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.hibernate.validator.constraints.Length;
 
 import java.util.List;
 
@@ -20,6 +21,11 @@ public class CommunityPostDto {
     private Long id;
 
     private String author;
+
+    @NotEmpty(message = "Post can't be empty")
+    @NotBlank(message = "Post can't be blank")
+    @Length(max = 50, message = "Title has to be up to 50 characters")
+    private String title;
 
     @NotEmpty(message = "Post can't be empty")
     @NotBlank(message = "Post can't be blank")
