@@ -95,6 +95,7 @@ public class ObjectMapper {
                         entity.getId(),
                         String.format("%s %s",
                                 entity.getAuthor().getUserInfo().getName(), entity.getAuthor().getUserInfo().getSurname()),
+                        entity.getTitle(),
                         entity.getPost(),
                         entity.getImage(),
                         entity.getAccess(),
@@ -103,17 +104,31 @@ public class ObjectMapper {
         return output;
     }
 
+    /**
+     * Convert list of comment entities to list of dto objects
+     * @param comments list of entities
+     * @return list of dto
+     */
     private List<PostCommentDto> convertCommentsEntityToDtoList(List<PostCommentEntity> comments) {
         List<PostCommentDto> output = new ArrayList<>();
-        comments.forEach(comment -> output.add(PostCommentDto
-                .builder()
-                        .id(comment.getId())
-                        .author(String.format("%s %s", comment.getAuthor().getUserInfo().getName(), comment.getAuthor().getUserInfo().getSurname()))
-                        .comment(comment.getComment())
-                        .postId(comment.getPost().getId())
-                        .date(comment.getDate().toString())
-                .build()));
+        comments.forEach(comment -> output.add(convertCommentToDto(comment)));
         return output;
+    }
+
+    /**
+     * Convert single comment entity to dto
+     * @param comment entity to convert
+     * @return converted dto from entity
+     */
+    public PostCommentDto convertCommentToDto(PostCommentEntity comment) {
+        return PostCommentDto
+                .builder()
+                .id(comment.getId())
+                .author(String.format("%s %s", comment.getAuthor().getUserInfo().getName(), comment.getAuthor().getUserInfo().getSurname()))
+                .comment(comment.getComment())
+                .postId(comment.getPost().getId())
+                .date(comment.getDate().toString())
+                .build();
     }
 
     /**
