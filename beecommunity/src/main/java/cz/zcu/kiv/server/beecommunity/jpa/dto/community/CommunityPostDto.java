@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -31,7 +32,7 @@ public class CommunityPostDto {
     @NotBlank(message = "Post can't be blank")
     private String post;
 
-    private byte[] image;
+    private MultipartFile image;
 
     @NotNull(message = "Experience can't be empty.")
     private CommunityEnums.EAccess access;
