@@ -6,15 +6,20 @@ import cz.zcu.kiv.server.beecommunity.jpa.dto.NewUserInfoDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.community.CommunityPostDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.community.PostCommentDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.friends.FoundUserDto;
+import cz.zcu.kiv.server.beecommunity.jpa.dto.news.NewsDetailDto;
+import cz.zcu.kiv.server.beecommunity.jpa.dto.news.NewsDto;
 import cz.zcu.kiv.server.beecommunity.jpa.entity.*;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Component
 @AllArgsConstructor
 public class ObjectMapper {
@@ -30,6 +35,11 @@ public class ObjectMapper {
         return modelMapper.map(userDto, UserEntity.class);
     }
 
+    /**
+     * Convert user information dto into entity
+     * @param infoDto dto with user information
+     * @return user info entity with address
+     */
     public UserInfoEntity convertToUserInfoEntity(NewUserInfoDto infoDto) {
         infoDto.fillAddress();
         UserInfoEntity info =  modelMapper.map(infoDto, UserInfoEntity.class);
@@ -38,6 +48,11 @@ public class ObjectMapper {
         return info;
     }
 
+    /**
+     * Convert entity into dto
+     * @param userInfo entity of user information from database
+     * @return dto of user information
+     */
     public GetUpdateUserInfoDto convertUserInfoDto(UserInfoEntity userInfo) {
         GetUpdateUserInfoDto infoDto = modelMapper.map(userInfo, GetUpdateUserInfoDto.class);
         AddressEntity address = userInfo.getAddress();
@@ -91,17 +106,32 @@ public class ObjectMapper {
     public List<CommunityPostDto> convertPostListToDtoList(List<CommunityPostEntity> posts) {
         List<CommunityPostDto> output = new ArrayList<>();
         posts.forEach(entity -> output.add(
-                new CommunityPostDto(
-                        entity.getId(),
-                        String.format("%s %s",
-                                entity.getAuthor().getUserInfo().getName(), entity.getAuthor().getUserInfo().getSurname()),
-                        entity.getTitle(),
-                        entity.getPost(),
-                        entity.getImage(),
-                        entity.getAccess(),
-                        entity.getCreated().toString(),
-                        convertCommentsEntityToDtoList(entity.getComments()))));
+                CommunityPostDto
+                        .builder()
+                        .id(entity.getId())
+                        .title(entity.getTitle())
+                        .author(entity.getAuthor().getFullName())
+                        .date(entity.getCreated().toString())
+                        .build()));
         return output;
+    }
+
+    /**
+     * Return converted post dto with details
+     * @param post entity of post
+     * @return dto with detail information
+     */
+    public CommunityPostDto convertPostEntityToDto(CommunityPostEntity post) {
+        return CommunityPostDto
+                .builder()
+                .id(post.getId())
+                .author(post.getAuthor().getFullName())
+                .title(post.getTitle())
+                .post(post.getPost())
+                .access(post.getAccess())
+                .date(post.getCreated().toString())
+                .comments( convertCommentsEntityToDtoList(post.getComments()))
+                .build();
     }
 
     /**
@@ -124,7 +154,7 @@ public class ObjectMapper {
         return PostCommentDto
                 .builder()
                 .id(comment.getId())
-                .author(String.format("%s %s", comment.getAuthor().getUserInfo().getName(), comment.getAuthor().getUserInfo().getSurname()))
+                .author(comment.getAuthor().getFullName())
                 .comment(comment.getComment())
                 .postId(comment.getPost().getId())
                 .date(comment.getDate().toString())
@@ -138,11 +168,64 @@ public class ObjectMapper {
      */
     public CommunityPostEntity convertPostDtoToEntity(CommunityPostDto dto) {
         var entity = modelMapper.map(dto, CommunityPostEntity.class);
-        if (dto.getImage() != null) {
-            dto.setImage(ImageUtil.compressImage(dto.getImage()));
-        } else {
-            dto.setImage(new byte[0]);
+        try {
+            if (dto.getImage() != null) {
+                entity.setImage(ImageUtil.compressImage(dto.getImage().getBytes()));
+            }
+        } catch (IOException e) {
+            log.warn("Error while get image from post: {}", e.getMessage());
         }
+
         return entity;
+    }
+
+    /**
+     * Convert NewsEntity into dto object
+     * @param newsEntity entity to convert
+     * @return dto of news article
+     */
+    public NewsDetailDto convertNewsEntityToDto(NewsEntity newsEntity) {
+        return NewsDetailDto
+                .builder()
+                .id(newsEntity.getId())
+                .title(newsEntity.getTitle())
+                .article(newsEntity.getArticle())
+                .firstImage(ImageUtil.decompressImage(newsEntity.getTitleImage()))
+                .secondImage(ImageUtil.decompressImage(newsEntity.getTitleImage()))
+                .author(newsEntity.getAuthor().getFullName())
+                .build();
+    }
+
+    /**
+     * Convert News dto into entity
+     * @param newsDetailDto dto to convert
+     * @return newsEntity
+     */
+    public NewsEntity convertNewsDtoToEntity(NewsDetailDto newsDetailDto) {
+        return NewsEntity
+                .builder()
+                .title(newsDetailDto.getTitle())
+                .article(newsDetailDto.getArticle())
+                .firstImage(ImageUtil.compressImage(newsDetailDto.getFirstImage()))
+                .secondImage(ImageUtil.compressImage(newsDetailDto.getSecondImage()))
+                .build();
+    }
+
+    /**
+     * Convert list of entities into list of dto for news overview
+     * @param newsList list of entities to convert
+     * @return list of news dto
+     */
+    public List<NewsDto> convertNewsList(List<NewsEntity> newsList) {
+        var list = new ArrayList<NewsDto>();
+        newsList.forEach(news -> list.add(
+                NewsDto
+                        .builder()
+                        .id(news.getId())
+                        .title(news.getTitle())
+                        .author(news.getAuthor().getFullName())
+                        .build()
+        ));
+        return list;
     }
 }

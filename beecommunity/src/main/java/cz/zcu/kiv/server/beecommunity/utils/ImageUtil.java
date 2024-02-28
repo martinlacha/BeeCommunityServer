@@ -1,11 +1,19 @@
 package cz.zcu.kiv.server.beecommunity.utils;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.ByteArrayOutputStream;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
+@Slf4j
 public class ImageUtil {
 
+    /**
+     * Compress raw image data from client
+     * @param data image from client to compress
+     * @return compressed image file as byte array
+     */
     public static byte[] compressImage(byte[] data) {
 
         Deflater deflater = new Deflater();
@@ -22,10 +30,16 @@ public class ImageUtil {
         try {
             outputStream.close();
         } catch (Exception e) {
+            log.error("Exception while compress image: {}", e.getMessage());
         }
         return outputStream.toByteArray();
     }
 
+    /**
+     * Decompress byte array image from database
+     * @param data byte array to decompress
+     * @return decompressed byte array
+     */
     public static byte[] decompressImage(byte[] data) {
         Inflater inflater = new Inflater();
         inflater.setInput(data);
@@ -37,7 +51,8 @@ public class ImageUtil {
                 outputStream.write(tmp, 0, count);
             }
             outputStream.close();
-        } catch (Exception exception) {
+        } catch (Exception e) {
+            log.error("Exception while compress image: {}", e.getMessage());
         }
         return outputStream.toByteArray();
     }

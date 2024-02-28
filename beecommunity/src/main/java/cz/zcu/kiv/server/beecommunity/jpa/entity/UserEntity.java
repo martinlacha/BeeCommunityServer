@@ -111,4 +111,11 @@ public class UserEntity implements UserDetails {
                 ", email='" + email + '\'' +
                 '}';
     }
+
+    /**
+     * @return user first name and surname as String
+     */
+    public String getFullName() {
+        return String.format("%s %s", userInfo.getName(), userInfo.getSurname());
+    }
 }

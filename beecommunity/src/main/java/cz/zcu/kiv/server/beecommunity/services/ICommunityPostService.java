@@ -12,6 +12,10 @@ public interface ICommunityPostService {
 
     ResponseEntity<List<CommunityPostDto>> getPosts(CommunityEnums.EAccess access);
 
+    ResponseEntity<CommunityPostDto> getPostDetail(Long postId);
+
+    ResponseEntity<byte[]> getPostImage(Long postId);
+
     ResponseEntity<Void> deletePost(Long postId);
 
     ResponseEntity<Void> updatePost(CommunityPostDto postDto);

@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -36,6 +37,11 @@ public class CommunityPostServiceImpl implements ICommunityPostService {
 
     private final FriendshipUtils friendshipUtils;
 
+    /**
+     * Create new post
+     * @param postDto dto of new post
+     * @return status code of operation result
+     */
     @Override
     public ResponseEntity<Void> createPost(CommunityPostDto postDto) {
         var user = UserUtils.getUserFromSecurityContext();
@@ -46,12 +52,61 @@ public class CommunityPostServiceImpl implements ICommunityPostService {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    /**
+     * Return list of posts
+     * @param access return posts by type
+     * @return list of posts
+     */
     @Override
     public ResponseEntity<List<CommunityPostDto>> getPosts(CommunityEnums.EAccess access) {
+        var user = UserUtils.getUserFromSecurityContext();
         var posts = communityPostRepository.findByAccess(access);
+        posts = posts.stream().filter(post -> canSeePost(user.getId(), post.getAuthor().getId())).toList();
         return ResponseEntity.status(HttpStatus.OK).body(modelMapper.convertPostListToDtoList(posts));
     }
 
+    /**
+     * Get detail of post
+     * @param postId id of post
+     * @return dto with details of post
+     */
+    @Override
+    public ResponseEntity<CommunityPostDto> getPostDetail(Long postId) {
+        var user = UserUtils.getUserFromSecurityContext();
+        var post = communityPostRepository.findById(postId);
+        if (post.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } else if (canSeePost(user.getId(), post.get().getAuthor().getId())) {
+            return ResponseEntity.status(HttpStatus.OK).body(modelMapper.convertPostEntityToDto(post.get()));
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    }
+
+    /**
+     * Return image as byte array from database if exist on post
+     * @param postId
+     * @return
+     */
+    @Override
+    public ResponseEntity<byte[]> getPostImage(Long postId) {
+        var user = UserUtils.getUserFromSecurityContext();
+        var post = communityPostRepository.findById(postId);
+        if (post.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } else if (canSeePost(user.getId(), post.get().getAuthor().getId())) {
+            return ResponseEntity.status(HttpStatus.OK).body(ImageUtil.decompressImage(post.get().getImage()));
+        } else if (post.get().getImage() == null) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    }
+
+
+    /**
+     * Delete post by id
+     * @param postId id of post
+     * @return status code of operation result
+     */
     @Override
     public ResponseEntity<Void> deletePost(Long postId) {
         var user = UserUtils.getUserFromSecurityContext();
@@ -83,9 +138,14 @@ public class CommunityPostServiceImpl implements ICommunityPostService {
         } else if (!user.getId().equals(post.get().getAuthor().getId())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-        if (postDto.getImage() != null) {
-            post.get().setImage(ImageUtil.compressImage(postDto.getImage()));
+        try {
+            if (postDto.getImage() != null) {
+                post.get().setImage(ImageUtil.compressImage(postDto.getImage().getBytes()));
+            }
+        } catch (IOException e) {
+            log.error("Error while get bytes from update post image: {}", e.getMessage());
         }
+
         post.get().setPost(postDto.getPost());
         post.get().setAccess(postDto.getAccess());
         communityPostRepository.saveAndFlush(post.get());
@@ -147,4 +207,15 @@ public class CommunityPostServiceImpl implements ICommunityPostService {
         return !friendshipUtils.isFriendshipStatus(user, author, FriendshipEnums.EStatus.FRIEND);
     }
 
+    /**
+     * Check if user can see post
+     * Users has to be friends, or it is same user
+     * @param userId first user id
+     * @param authorId id author of post
+     * @return true if user can see post, otherwise false
+     */
+    private boolean canSeePost(Long userId, Long authorId) {
+        return friendshipUtils.isFriendshipStatus(userId, authorId, FriendshipEnums.EStatus.FRIEND) ||
+                userId.equals(authorId);
+    }
 }
