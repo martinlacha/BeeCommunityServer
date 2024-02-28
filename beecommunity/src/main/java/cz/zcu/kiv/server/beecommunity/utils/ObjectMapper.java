@@ -164,7 +164,7 @@ public class ObjectMapper {
     /**
      * Convert dto into entity
      * @param dto to convert
-     * @return entity
+     * @return entity of post
      */
     public CommunityPostEntity convertPostDtoToEntity(CommunityPostDto dto) {
         var entity = modelMapper.map(dto, CommunityPostEntity.class);
@@ -190,8 +190,6 @@ public class ObjectMapper {
                 .id(newsEntity.getId())
                 .title(newsEntity.getTitle())
                 .article(newsEntity.getArticle())
-                .firstImage(ImageUtil.decompressImage(newsEntity.getTitleImage()))
-                .secondImage(ImageUtil.decompressImage(newsEntity.getTitleImage()))
                 .author(newsEntity.getAuthor().getFullName())
                 .build();
     }
@@ -202,13 +200,21 @@ public class ObjectMapper {
      * @return newsEntity
      */
     public NewsEntity convertNewsDtoToEntity(NewsDetailDto newsDetailDto) {
-        return NewsEntity
+        var news = NewsEntity
                 .builder()
                 .title(newsDetailDto.getTitle())
-                .article(newsDetailDto.getArticle())
-                .firstImage(ImageUtil.compressImage(newsDetailDto.getFirstImage()))
-                .secondImage(ImageUtil.compressImage(newsDetailDto.getSecondImage()))
-                .build();
+                .article(newsDetailDto.getArticle());
+        try {
+            if (newsDetailDto.getTitleImage() != null)
+                news.titleImage(ImageUtil.compressImage(newsDetailDto.getTitleImage().getBytes()));
+            if (newsDetailDto.getFirstImage() != null)
+                    news.firstImage(ImageUtil.compressImage(newsDetailDto.getFirstImage().getBytes()));
+            if (newsDetailDto.getSecondImage() != null)
+                    news.secondImage(ImageUtil.compressImage(newsDetailDto.getSecondImage().getBytes()));
+        } catch (IOException e) {
+            log.warn("Error while get image from news: {}", e.getMessage());
+        }
+        return news.build();
     }
 
     /**
@@ -223,7 +229,9 @@ public class ObjectMapper {
                         .builder()
                         .id(news.getId())
                         .title(news.getTitle())
+                        .article(news.getArticle())
                         .author(news.getAuthor().getFullName())
+                        .date(news.getDate().toString())
                         .build()
         ));
         return list;

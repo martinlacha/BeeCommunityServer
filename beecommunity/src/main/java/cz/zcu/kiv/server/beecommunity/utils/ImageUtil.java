@@ -52,7 +52,7 @@ public class ImageUtil {
             }
             outputStream.close();
         } catch (Exception e) {
-            log.error("Exception while compress image: {}", e.getMessage());
+            log.error("Exception while decompress image: {}", e.getMessage());
         }
         return outputStream.toByteArray();
     }

@@ -112,6 +112,7 @@ CREATE TABLE NEWS (
     id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     title TEXT NOT NULL,
     article TEXT NOT NULL,
+    date DATE NOT NULL,
     title_image bytea NOT NULL,
     first_image bytea NOT NULL,
     second_image bytea NOT NULL,

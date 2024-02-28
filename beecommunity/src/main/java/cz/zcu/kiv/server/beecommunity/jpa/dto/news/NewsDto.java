@@ -15,5 +15,9 @@ public class NewsDto {
 
     String title;
 
+    String article;
+
     String author;
+
+    String date;
 }

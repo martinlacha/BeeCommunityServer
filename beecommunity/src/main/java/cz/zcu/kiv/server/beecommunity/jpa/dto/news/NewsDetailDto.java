@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @Builder
@@ -24,9 +26,11 @@ public class NewsDetailDto {
     @NotBlank(message = "Article text can't be blank")
     String article;
 
-    byte[] firstImage;
+    MultipartFile titleImage;
 
-    byte[] secondImage;
+    MultipartFile firstImage;
+
+    MultipartFile secondImage;
 
     String author;
 }

@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 /**
  * Entity of news and tips for beekeepers
  */
@@ -30,13 +32,16 @@ public class NewsEntity {
     @Column(name = "article")
     private String article;
 
-    @Column(name = "title_image")
+    @Column(name = "date")
+    private LocalDate date;
+
+    @Column(name = "title_image", length = 1024)
     private byte[] titleImage;
 
-    @Column(name = "first_image")
+    @Column(name = "first_image", length = 1024)
     private byte[] firstImage;
 
-    @Column(name = "second_image")
+    @Column(name = "second_image", length = 1024)
     private byte[] secondImage;
 
     @ManyToOne(fetch = FetchType.LAZY)

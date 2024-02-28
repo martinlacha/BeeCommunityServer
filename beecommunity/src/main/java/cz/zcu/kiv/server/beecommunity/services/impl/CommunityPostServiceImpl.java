@@ -84,8 +84,8 @@ public class CommunityPostServiceImpl implements ICommunityPostService {
 
     /**
      * Return image as byte array from database if exist on post
-     * @param postId
-     * @return
+     * @param postId post id
+     * @return byte array of image
      */
     @Override
     public ResponseEntity<byte[]> getPostImage(Long postId) {
