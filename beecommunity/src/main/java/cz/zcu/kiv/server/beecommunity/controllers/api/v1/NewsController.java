@@ -1,6 +1,7 @@
 package cz.zcu.kiv.server.beecommunity.controllers.api.v1;
 
 
+import cz.zcu.kiv.server.beecommunity.enums.NewsEnums;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.news.NewsDetailDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.news.NewsDto;
 import cz.zcu.kiv.server.beecommunity.services.INewsService;
@@ -36,7 +37,7 @@ public class NewsController {
      * @return created article as dto
      */
     @PostMapping
-    ResponseEntity<NewsDetailDto> createArticle(@RequestBody @Valid NewsDetailDto newsDetailDto) {
+    ResponseEntity<Void> createArticle(@ModelAttribute @Valid NewsDetailDto newsDetailDto) {
         return newsService.createArticle(newsDetailDto);
     }
 
@@ -46,7 +47,7 @@ public class NewsController {
      * @return updated dto
      */
     @PutMapping
-    ResponseEntity<NewsDetailDto> updateArticle(@RequestBody @Valid NewsDetailDto newsDetailDto) {
+    ResponseEntity<Void> updateArticle(@ModelAttribute @Valid NewsDetailDto newsDetailDto) {
         return newsService.updateArticle(newsDetailDto);
     }
 
@@ -60,8 +61,21 @@ public class NewsController {
         return newsService.deleteArticle(articleId);
     }
 
+    /**
+     * Get news details with text and images
+     * @param articleId article id
+     * @return article details (images, text, author)
+     */
     @GetMapping("/detail")
     ResponseEntity<NewsDetailDto> getArticleDetail(@RequestParam Long articleId) {
         return newsService.getArticleDetail(articleId);
+    }
+
+    /**
+     *
+     */
+    @GetMapping("/image")
+    ResponseEntity<byte[]> getArticleImage(@RequestParam Long articleId, @RequestParam NewsEnums.EImage image) {
+        return newsService.getArticleImage(articleId, image);
     }
 }

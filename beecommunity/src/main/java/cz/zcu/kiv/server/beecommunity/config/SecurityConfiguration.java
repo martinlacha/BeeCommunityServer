@@ -4,6 +4,7 @@ import cz.zcu.kiv.server.beecommunity.filters.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -52,14 +53,15 @@ public class SecurityConfiguration implements WebMvcConfigurer {
                         "/api/v1/user/all",
                         "/api/v1/user/update-password",
                         "/api/v1/user/reset-password"
-                        // TODO THIS paths will need authentication at the end
-                        //"/api/v1/friends/find",
                 )
                 .permitAll()
                 .requestMatchers("/api/v1/user/info").hasAnyAuthority("USER", "ADMIN")
                 .requestMatchers("/api/v1/friends/*").hasAnyAuthority("USER")
                 .requestMatchers("/api/v1/community-post/*").hasAnyAuthority("USER")
-                .requestMatchers("/api/v1/news*").hasAuthority("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/api/v1/news/*").hasAuthority("USER")
+                .requestMatchers(HttpMethod.DELETE, "/api/v1/news/*").hasAuthority("ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/v1/news/*").hasAuthority("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/v1/news/*").hasAuthority("ADMIN")
                 // any other url paths must be authenticated
                 .anyRequest()
                 .authenticated()
