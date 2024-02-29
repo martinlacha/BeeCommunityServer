@@ -191,6 +191,7 @@ public class ObjectMapper {
                 .title(newsEntity.getTitle())
                 .article(newsEntity.getArticle())
                 .author(newsEntity.getAuthor().getFullName())
+                .date(newsEntity.getDate().toString())
                 .build();
     }
 
