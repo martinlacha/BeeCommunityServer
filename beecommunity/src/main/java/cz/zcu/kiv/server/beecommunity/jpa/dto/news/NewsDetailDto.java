@@ -7,7 +7,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.multipart.MultipartFile;
 
 @Data
@@ -33,4 +32,6 @@ public class NewsDetailDto {
     MultipartFile secondImage;
 
     String author;
+
+    String date;
 }

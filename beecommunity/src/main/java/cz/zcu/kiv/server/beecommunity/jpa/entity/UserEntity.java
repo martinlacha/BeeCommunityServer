@@ -113,9 +113,11 @@ public class UserEntity implements UserDetails {
     }
 
     /**
-     * @return user first name and surname as String
+     * @return user first name and surname as String if it is not null, otherwise user id
      */
     public String getFullName() {
-        return String.format("%s %s", userInfo.getName(), userInfo.getSurname());
+        return getUserInfo() != null ?
+                String.format("%s %s", userInfo.getName(), userInfo.getSurname()) :
+                String.format("userId: %d", id);
     }
 }

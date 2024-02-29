@@ -56,7 +56,7 @@ public class NewsController {
      * @param articleId id of article
      * @return status code of operation
      */
-    @DeleteMapping
+    @DeleteMapping("/detail")
     ResponseEntity<Void> deleteArticle(@RequestParam Long articleId) {
         return newsService.deleteArticle(articleId);
     }

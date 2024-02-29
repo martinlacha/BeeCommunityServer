@@ -1,6 +1,7 @@
 package cz.zcu.kiv.server.beecommunity.config;
 
 import cz.zcu.kiv.server.beecommunity.filters.JwtAuthenticationFilter;
+import cz.zcu.kiv.server.beecommunity.handlers.ApiAccessDeniedHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,6 +34,8 @@ public class SecurityConfiguration implements WebMvcConfigurer {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
+    private final ApiAccessDeniedHandler apiAccessDeniedHandler;
+
     /**
      * Security filter chain to check every http request
      * First
@@ -58,10 +61,10 @@ public class SecurityConfiguration implements WebMvcConfigurer {
                 .requestMatchers("/api/v1/user/info").hasAnyAuthority("USER", "ADMIN")
                 .requestMatchers("/api/v1/friends/*").hasAnyAuthority("USER")
                 .requestMatchers("/api/v1/community-post/*").hasAnyAuthority("USER")
-                .requestMatchers(HttpMethod.GET, "/api/v1/news/*").hasAuthority("USER")
-                .requestMatchers(HttpMethod.DELETE, "/api/v1/news/*").hasAuthority("ADMIN")
-                .requestMatchers(HttpMethod.POST, "/api/v1/news/*").hasAuthority("ADMIN")
-                .requestMatchers(HttpMethod.PUT, "/api/v1/news/*").hasAuthority("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/api/v1/news", "/api/v1/news/detail").hasAnyAuthority("USER", "ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/v1/news", "/api/v1/news/detail").hasAuthority("ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/v1/news", "/api/v1/news/detail").hasAuthority("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/v1/news", "/api/v1/news/detail").hasAuthority("ADMIN")
                 // any other url paths must be authenticated
                 .anyRequest()
                 .authenticated()
@@ -80,6 +83,7 @@ public class SecurityConfiguration implements WebMvcConfigurer {
                             httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
             .csrf(AbstractHttpConfigurer::disable)
+            .exceptionHandling(configurer -> configurer.accessDeniedHandler(apiAccessDeniedHandler))
             .logout(LogoutConfigurer::permitAll);
         return http.build();
     }
