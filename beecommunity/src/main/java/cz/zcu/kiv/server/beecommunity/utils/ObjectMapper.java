@@ -1,8 +1,8 @@
 package cz.zcu.kiv.server.beecommunity.utils;
 
-import cz.zcu.kiv.server.beecommunity.jpa.dto.GetUpdateUserInfoDto;
-import cz.zcu.kiv.server.beecommunity.jpa.dto.NewUserDto;
-import cz.zcu.kiv.server.beecommunity.jpa.dto.NewUserInfoDto;
+import cz.zcu.kiv.server.beecommunity.jpa.dto.user.GetUpdateUserInfoDto;
+import cz.zcu.kiv.server.beecommunity.jpa.dto.user.NewUserDto;
+import cz.zcu.kiv.server.beecommunity.jpa.dto.user.NewUserInfoDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.community.CommunityPostDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.community.PostCommentDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.friends.FoundUserDto;

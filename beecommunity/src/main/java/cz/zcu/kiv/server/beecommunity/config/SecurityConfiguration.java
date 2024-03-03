@@ -1,5 +1,6 @@
 package cz.zcu.kiv.server.beecommunity.config;
 
+import cz.zcu.kiv.server.beecommunity.enums.UserEnums;
 import cz.zcu.kiv.server.beecommunity.filters.JwtAuthenticationFilter;
 import cz.zcu.kiv.server.beecommunity.handlers.ApiAccessDeniedHandler;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,9 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import static cz.zcu.kiv.server.beecommunity.enums.UserEnums.ERoles.ADMIN;
+import static cz.zcu.kiv.server.beecommunity.enums.UserEnums.ERoles.USER;
 
 @Configuration
 @EnableWebSecurity
@@ -61,6 +65,9 @@ public class SecurityConfiguration implements WebMvcConfigurer {
                 .requestMatchers("/api/v1/user/info").hasAnyAuthority("USER", "ADMIN")
                 .requestMatchers("/api/v1/friends/*").hasAnyAuthority("USER")
                 .requestMatchers("/api/v1/community-post/*").hasAnyAuthority("USER")
+                .requestMatchers(HttpMethod.GET, "/api/v1/user/roles-info").hasAuthority(ADMIN.name())
+                .requestMatchers(HttpMethod.DELETE, "/api/v1/user/admin").hasAuthority(ADMIN.name())
+                .requestMatchers(HttpMethod.POST, "/api/v1/user/admin").hasAuthority(ADMIN.name())
                 .requestMatchers(HttpMethod.GET, "/api/v1/news", "/api/v1/news/detail").hasAnyAuthority("USER", "ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/v1/news", "/api/v1/news/detail").hasAuthority("ADMIN")
                 .requestMatchers(HttpMethod.POST, "/api/v1/news", "/api/v1/news/detail").hasAuthority("ADMIN")

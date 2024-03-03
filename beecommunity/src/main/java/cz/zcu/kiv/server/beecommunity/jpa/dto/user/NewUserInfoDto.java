@@ -1,11 +1,8 @@
-package cz.zcu.kiv.server.beecommunity.jpa.dto;
+package cz.zcu.kiv.server.beecommunity.jpa.dto.user;
 
 import cz.zcu.kiv.server.beecommunity.enums.UserEnums;
 import jakarta.validation.constraints.*;
 import lombok.Data;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import java.time.LocalDate;
 
 /**
  * Dto with information about new user

@@ -1,5 +1,6 @@
 package cz.zcu.kiv.server.beecommunity.jpa.entity;
 
+import cz.zcu.kiv.server.beecommunity.enums.UserEnums;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -12,9 +13,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 /**
  * Entity of user in database
@@ -55,9 +54,10 @@ public class UserEntity implements UserDetails {
     @Column(name = "new_account")
     private boolean newAccount;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "role_id")
-    private RoleEntity role;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "AUTH_USER_ROLE", joinColumns = @JoinColumn(name = "user_id"),
+    inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<RoleEntity> roles = new HashSet<>();
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_info_id")
@@ -66,7 +66,7 @@ public class UserEntity implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<SimpleGrantedAuthority> authorityList = new ArrayList<>();
-        authorityList.add(new SimpleGrantedAuthority(role.getRole()));
+        roles.forEach(role -> authorityList.add(new SimpleGrantedAuthority(role.getRole())));
         return authorityList;
     }
 
@@ -119,5 +119,13 @@ public class UserEntity implements UserDetails {
         return getUserInfo() != null ?
                 String.format("%s %s", userInfo.getName(), userInfo.getSurname()) :
                 String.format("userId: %d", id);
+    }
+
+    /**
+     * Check if user has admin role
+     * @return true if user has admin role, otherwise false
+     */
+    public boolean hasRole(UserEnums.ERoles role) {
+        return roles.stream().anyMatch(roleEntity -> roleEntity.getRole().contains(role.name()));
     }
 }

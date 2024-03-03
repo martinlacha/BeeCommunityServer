@@ -1,6 +1,6 @@
 package cz.zcu.kiv.server.beecommunity.controllers.api.v1;
 
-import cz.zcu.kiv.server.beecommunity.jpa.dto.*;
+import cz.zcu.kiv.server.beecommunity.jpa.dto.user.*;
 import cz.zcu.kiv.server.beecommunity.services.IUserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * Controller for user endpoints
@@ -78,5 +80,32 @@ public class UserController {
     @GetMapping("/info")
     ResponseEntity<GetUpdateUserInfoDto> getUserInfo() {
         return userService.getUserInfo();
+    }
+
+    /**
+     * Return list of users with roles assigned to them
+     * @return users with roles
+     */
+    @GetMapping("/roles-info")
+    ResponseEntity<List<UserRolesDto>> getUsersRoles() {
+        return userService.getUsersRoles();
+    }
+
+    /**
+     * Grant user with admin role
+     * @return status code of operation result
+     */
+    @PostMapping("/admin")
+    ResponseEntity<Void> grantAdminRole(@RequestParam Long userId) {
+        return userService.grantAdminRole(userId);
+    }
+
+    /**
+     * Revoke admin role from user
+     * @return status code of operation result
+     */
+    @DeleteMapping("/admin")
+    ResponseEntity<Void> revokeAdminRole(@RequestParam Long userId) {
+        return userService.revokeAdminRole(userId);
     }
 }
