@@ -29,8 +29,7 @@ CREATE TABLE AUTH_USER (
     login_attempts INT DEFAULT 0,
     suspended BOOLEAN DEFAULT FALSE,
     new_account BOOLEAN DEFAULT TRUE,
-    user_info_id INT REFERENCES USER_INFO(id),
-    role_id INT REFERENCES AUTH_ROLE(id)
+    user_info_id INT REFERENCES USER_INFO(id)
 );
 
 CREATE TABLE AUTH_USER_ROLE (
@@ -113,9 +112,9 @@ CREATE TABLE NEWS (
     title TEXT NOT NULL,
     article TEXT NOT NULL,
     date DATE NOT NULL,
-    title_image bytea NOT NULL,
-    first_image bytea NOT NULL,
-    second_image bytea NOT NULL,
+    title_image bytea,
+    first_image bytea,
+    second_image bytea,
     author_id INT NOT NULL REFERENCES AUTH_USER(id)
 );
 

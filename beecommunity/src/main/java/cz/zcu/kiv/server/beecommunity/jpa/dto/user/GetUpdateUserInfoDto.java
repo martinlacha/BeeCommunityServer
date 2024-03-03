@@ -1,4 +1,4 @@
-package cz.zcu.kiv.server.beecommunity.jpa.dto;
+package cz.zcu.kiv.server.beecommunity.jpa.dto.user;
 
 import cz.zcu.kiv.server.beecommunity.enums.UserEnums;
 import jakarta.validation.constraints.Past;
@@ -7,7 +7,7 @@ import lombok.Data;
 import java.time.LocalDate;
 
 /**
- * Dto with address and pesonal user information
+ * Dto with address and personal user information
  */
 @Data
 public class GetUpdateUserInfoDto {
@@ -20,4 +20,5 @@ public class GetUpdateUserInfoDto {
     private String town;
     private String street;
     private int number;
+    private boolean isAdmin;
 }

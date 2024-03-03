@@ -1,20 +1,18 @@
 package cz.zcu.kiv.server.beecommunity.services.impl;
 
-import cz.zcu.kiv.server.beecommunity.config.PropertiesConfiguration;
-import cz.zcu.kiv.server.beecommunity.jpa.dto.*;
-import cz.zcu.kiv.server.beecommunity.jpa.entity.RoleEntity;
+import cz.zcu.kiv.server.beecommunity.enums.UserEnums;
+import cz.zcu.kiv.server.beecommunity.jpa.dto.user.*;
 import cz.zcu.kiv.server.beecommunity.jpa.entity.UserEntity;
 import cz.zcu.kiv.server.beecommunity.jpa.entity.UserInfoEntity;
 import cz.zcu.kiv.server.beecommunity.jpa.repository.RoleRepository;
-import cz.zcu.kiv.server.beecommunity.jpa.repository.UserInfoRepository;
 import cz.zcu.kiv.server.beecommunity.jpa.repository.UserRepository;
 import cz.zcu.kiv.server.beecommunity.services.IUserService;
 import cz.zcu.kiv.server.beecommunity.utils.ConfirmCodeGenerator;
 import cz.zcu.kiv.server.beecommunity.utils.DateTimeUtils;
 import cz.zcu.kiv.server.beecommunity.utils.ObjectMapper;
+import cz.zcu.kiv.server.beecommunity.utils.UserUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
@@ -30,7 +28,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.chrono.ChronoLocalDate;
 import java.util.*;
 
 @Slf4j
@@ -74,12 +71,12 @@ public class UserServiceImpl implements UserDetailsService, IUserService {
             log.warn("Can't create account with email {}. Already exists.", user.getEmail());
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
-        RoleEntity userRole = roleRepository.findByRole("USER");
+        var userRole = roleRepository.findByRole(UserEnums.ERoles.USER.name());
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         UserEntity newUser = objectMapper.convertToNewUserEntity(user);
         newUser.setNewAccount(true);
         newUser.setSuspended(false);
-        newUser.setRole(userRole);
+        userRole.ifPresent(role -> newUser.getRoles().add(role));
         userRepository.saveAndFlush(newUser);
         log.info("New account with email {} created.", user.getEmail());
         return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -93,7 +90,7 @@ public class UserServiceImpl implements UserDetailsService, IUserService {
      */
     @Override
     public ResponseEntity<Void> createNewUserInfo(NewUserInfoDto userIntoDto) {
-        UserEntity user = getUserFromSecurityContext();
+        UserEntity user = UserUtils.getUserFromSecurityContext();
         if (user.getUserInfo() != null) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
@@ -115,7 +112,7 @@ public class UserServiceImpl implements UserDetailsService, IUserService {
      */
     @Override
     public ResponseEntity<Void> updateUserInfo(GetUpdateUserInfoDto userInfoDto) {
-        UserEntity user = getUserFromSecurityContext();
+        UserEntity user = UserUtils.getUserFromSecurityContext();
         if (user.getUserInfo() == null) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
@@ -213,21 +210,77 @@ public class UserServiceImpl implements UserDetailsService, IUserService {
      */
     @Override
     public ResponseEntity<GetUpdateUserInfoDto> getUserInfo() {
-        UserEntity user = getUserFromSecurityContext();
+        UserEntity user = UserUtils.getUserFromSecurityContext();
         if (user.getUserInfo() == null) {
             ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
         var dto = objectMapper.convertUserInfoDto(user.getUserInfo());
+        dto.setAdmin(user.hasRole(UserEnums.ERoles.ADMIN));
         return ResponseEntity.status(HttpStatus.OK).body(dto);
     }
 
     /**
-     * Get UserDetails from security context if user is already authenticated
-     * @return user details
+     * Return list of users with roles assigned to them
+     * @return list of users with roles
      */
-    private UserEntity getUserFromSecurityContext() {
-        SecurityContext securityContext = SecurityContextHolder.getContext();
-        Authentication authentication = securityContext.getAuthentication();
-        return (UserEntity) authentication.getPrincipal();
+    @Override
+    public ResponseEntity<List<UserRolesDto>> getUsersRoles() {
+        var admin = UserUtils.getUserFromSecurityContext();
+        var users = userRepository.findAll();
+        var rolesList = new ArrayList<UserRolesDto>();
+        users.forEach(user -> {
+                    if (!admin.getId().equals(user.getId())) {
+                        rolesList.add(
+                                UserRolesDto
+                                        .builder()
+                                        .userId(user.getId())
+                                        .email(user.getEmail())
+                                        .fullName(user.getFullName())
+                                        .isUser(user.hasRole(UserEnums.ERoles.USER))
+                                        .isAdmin(user.hasRole(UserEnums.ERoles.ADMIN))
+                                        .build()
+                        );
+                    }}
+        );
+        return ResponseEntity.status(HttpStatus.OK).body(rolesList);
+    }
+
+    /**
+     * Grant user with admin role.
+     * User has to be admin to grant other user.
+     * @param userId id of user that will be granted admin role
+     * @return status code of operation result
+     */
+    @Override
+    public ResponseEntity<Void> grantAdminRole(Long userId) {
+        var newAdmin = userRepository.findById(userId);
+        var adminRole = roleRepository.findByRole(UserEnums.ERoles.ADMIN.name());
+        if (newAdmin.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } else if (newAdmin.get().hasRole(UserEnums.ERoles.ADMIN) || adminRole.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        newAdmin.get().getRoles().add(adminRole.get());
+        userRepository.saveAndFlush(newAdmin.get());
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    /**
+     * Revoke admin role from user.
+     * @param userId user id
+     * @return status code of operation result
+     */
+    @Override
+    public ResponseEntity<Void> revokeAdminRole(Long userId) {
+        var adminUser = userRepository.findById(userId);
+        var adminRole = roleRepository.findByRole(UserEnums.ERoles.ADMIN.name());
+        if (adminUser.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } else if (!adminUser.get().hasRole(UserEnums.ERoles.ADMIN) || adminRole.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        adminUser.get().getRoles().remove(adminRole.get());
+        userRepository.saveAndFlush(adminUser.get());
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }
