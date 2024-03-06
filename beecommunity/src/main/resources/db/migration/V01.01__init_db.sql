@@ -83,11 +83,13 @@ CREATE TABLE QUEEN (
 CREATE TABLE APIARY (
     id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     user_id INT NOT NULL REFERENCES AUTH_USER(id),
+    name TEXT NOT NULL,
     environment TEXT NOT NULL,
     terrain TEXT NOT NULL,
     latitude DOUBLE PRECISION NOT NULL,
     longitude DOUBLE PRECISION NOT NULL,
-    notes TEXT
+    notes TEXT,
+    image bytea,
 );
 
 CREATE TABLE HIVE (

@@ -3,6 +3,7 @@ package cz.zcu.kiv.server.beecommunity.jpa.entity;
 import cz.zcu.kiv.server.beecommunity.enums.ApiaryEnums;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -14,9 +15,11 @@ import java.util.List;
 @Entity
 @Table(name = "APIARY")
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class ApiaryEntity {
+
 
     /**
      * Unique identification of apiary entity in database table
@@ -28,6 +31,9 @@ public class ApiaryEntity {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private UserEntity owner;
+
+    @Column(name = "name")
+    private String name;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "environment")
@@ -45,6 +51,9 @@ public class ApiaryEntity {
 
     @Column(name = "notes")
     private String notes;
+
+    @Column(name = "image", length = 1024)
+    private byte[] image;
 
     @OneToMany(mappedBy = "apiary", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<HiveEntity> hives;

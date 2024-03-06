@@ -19,7 +19,7 @@ import java.util.List;
 @RequestMapping("/api/v1/friends")
 @Tag(name = "User")
 @AllArgsConstructor
-public class FriendsController {
+public class FriendController {
 
     private final IFriendService friendService;
 
