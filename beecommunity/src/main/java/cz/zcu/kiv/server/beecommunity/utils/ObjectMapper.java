@@ -1,5 +1,6 @@
 package cz.zcu.kiv.server.beecommunity.utils;
 
+import cz.zcu.kiv.server.beecommunity.jpa.dto.apiary.ApiaryDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.user.GetUpdateUserInfoDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.user.NewUserDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.user.NewUserInfoDto;
@@ -12,6 +13,7 @@ import cz.zcu.kiv.server.beecommunity.jpa.entity.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -236,5 +238,53 @@ public class ObjectMapper {
                         .build()
         ));
         return list;
+    }
+
+    /**
+     * Convert apiary dto to entity
+     * Compress image if it was uploaded
+     * @param dto object to convert
+     * @return converted apiary entity
+     */
+    public ApiaryEntity convertApiaryDto(ApiaryDto dto) {
+        var entity = modelMapper.map(dto, ApiaryEntity.class);
+        try {
+            if (dto.getImage() != null) {
+                entity.setImage(ImageUtil.compressImage(dto.getImage().getBytes()));
+            }
+        } catch (IOException e) {
+            log.warn("Error while get image from post: {}", e.getMessage());
+        }
+        return entity;
+    }
+
+    /**
+     * Convert apiary entity to dto
+     * @param entity to convert
+     * @return converted apiary dto
+     */
+    public ApiaryDto convertApiaryEntity(ApiaryEntity entity) {
+        return modelMapper.map(entity, ApiaryDto.class);
+    }
+
+    /**
+     * Convert list of apiary entities to list of dto
+     * @param entitiesList list of entities
+     * @return list of apiary dto
+     */
+    public List<ApiaryDto> convertApiaryEntityList(List<ApiaryEntity> entitiesList) {
+        List<ApiaryDto> apiaries = new ArrayList<>();
+        entitiesList.forEach(entity ->
+                apiaries.add(ApiaryDto
+                    .builder()
+                    .id(entity.getId())
+                    .name(entity.getName())
+                    .environment(entity.getEnvironment())
+                    .terrain(entity.getTerrain())
+                    .latitude(String.format("%f", entity.getLatitude()))
+                    .longitude(String.format("%f", entity.getLongitude()))
+                    .notes(entity.getNotes())
+                    .build()));
+        return apiaries;
     }
 }

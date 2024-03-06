@@ -1,6 +1,5 @@
 package cz.zcu.kiv.server.beecommunity.config;
 
-import cz.zcu.kiv.server.beecommunity.enums.UserEnums;
 import cz.zcu.kiv.server.beecommunity.filters.JwtAuthenticationFilter;
 import cz.zcu.kiv.server.beecommunity.handlers.ApiAccessDeniedHandler;
 import lombok.RequiredArgsConstructor;
@@ -62,16 +61,17 @@ public class SecurityConfiguration implements WebMvcConfigurer {
                         "/api/v1/user/reset-password"
                 )
                 .permitAll()
-                .requestMatchers("/api/v1/user/info").hasAnyAuthority("USER", "ADMIN")
-                .requestMatchers("/api/v1/friends/*").hasAnyAuthority("USER")
-                .requestMatchers("/api/v1/community-post/*").hasAnyAuthority("USER")
+                .requestMatchers("/api/v1/user/info").hasAnyAuthority(USER.name(), ADMIN.name())
+                .requestMatchers("/api/v1/friends/*").hasAnyAuthority(USER.name())
+                .requestMatchers("/api/v1/community-post/*").hasAnyAuthority(USER.name())
                 .requestMatchers(HttpMethod.GET, "/api/v1/user/roles-info").hasAuthority(ADMIN.name())
                 .requestMatchers(HttpMethod.DELETE, "/api/v1/user/admin").hasAuthority(ADMIN.name())
                 .requestMatchers(HttpMethod.POST, "/api/v1/user/admin").hasAuthority(ADMIN.name())
-                .requestMatchers(HttpMethod.GET, "/api/v1/news", "/api/v1/news/detail").hasAnyAuthority("USER", "ADMIN")
-                .requestMatchers(HttpMethod.DELETE, "/api/v1/news", "/api/v1/news/detail").hasAuthority("ADMIN")
-                .requestMatchers(HttpMethod.POST, "/api/v1/news", "/api/v1/news/detail").hasAuthority("ADMIN")
-                .requestMatchers(HttpMethod.PUT, "/api/v1/news", "/api/v1/news/detail").hasAuthority("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/api/v1/news", "/api/v1/news/detail").hasAnyAuthority(USER.name(), ADMIN.name())
+                .requestMatchers(HttpMethod.DELETE, "/api/v1/news", "/api/v1/news/detail").hasAuthority(ADMIN.name())
+                .requestMatchers(HttpMethod.POST, "/api/v1/news", "/api/v1/news/detail").hasAuthority(ADMIN.name())
+                .requestMatchers(HttpMethod.PUT, "/api/v1/news", "/api/v1/news/detail").hasAuthority(ADMIN.name())
+                .requestMatchers("/api/v1/apiary/*").hasAuthority(USER.name())
                 // any other url paths must be authenticated
                 .anyRequest()
                 .authenticated()
