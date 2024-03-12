@@ -1,25 +1,27 @@
 package cz.zcu.kiv.server.beecommunity.utils;
 
 import cz.zcu.kiv.server.beecommunity.jpa.dto.apiary.ApiaryDto;
-import cz.zcu.kiv.server.beecommunity.jpa.dto.user.GetUpdateUserInfoDto;
-import cz.zcu.kiv.server.beecommunity.jpa.dto.user.NewUserDto;
-import cz.zcu.kiv.server.beecommunity.jpa.dto.user.NewUserInfoDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.community.CommunityPostDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.community.PostCommentDto;
+import cz.zcu.kiv.server.beecommunity.jpa.dto.event.EventDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.friends.FoundUserDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.news.NewsDetailDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.news.NewsDto;
+import cz.zcu.kiv.server.beecommunity.jpa.dto.user.GetUpdateUserInfoDto;
+import cz.zcu.kiv.server.beecommunity.jpa.dto.user.NewUserDto;
+import cz.zcu.kiv.server.beecommunity.jpa.dto.user.NewUserInfoDto;
 import cz.zcu.kiv.server.beecommunity.jpa.entity.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -286,5 +288,46 @@ public class ObjectMapper {
                     .notes(entity.getNotes())
                     .build()));
         return apiaries;
+    }
+
+    /**
+     * Convert event dto into entity
+     * @param event dto to convert
+     * @return event entity
+     */
+    public EventEntity convertEventDto(EventDto event) {
+        var entity = modelMapper.map(event, EventEntity.class);
+        entity.setDate(DateTimeUtils.getDateFromString(event.getDate()));
+        return entity;
+    }
+
+    /**
+     * Convert event entity to dto
+     * @param event entity to convert
+     * @return event dto
+     */
+    public EventDto convertEventEntity(EventEntity event) {
+        return modelMapper.map(event, EventDto.class);
+    }
+
+    /**
+     * Convert list of event entities into list of dto
+     * @param eventList list of entities
+     * @return list of converted events
+     */
+    public LinkedHashMap<String, List<EventDto>> convertEventList(List<EventEntity> eventList) {
+        List<EventDto> events = new ArrayList<>();
+        eventList.forEach(entity -> events.add(EventDto
+                .builder()
+                .id(entity.getId())
+                .title(entity.getTitle())
+                .activity(entity.getActivity())
+                .type(entity.getType())
+                .notes(entity.getNotes())
+                .date(entity.getDate().toString())
+                .isFinished(entity.getFinished())
+                .build())
+        );
+        return events.stream().collect(Collectors.groupingBy(EventDto::getDate, LinkedHashMap::new, Collectors.toList()));
     }
 }
