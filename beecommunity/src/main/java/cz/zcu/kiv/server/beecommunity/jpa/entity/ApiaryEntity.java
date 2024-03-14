@@ -54,7 +54,4 @@ public class ApiaryEntity {
 
     @Column(name = "image", length = 1024)
     private byte[] image;
-
-    @OneToMany(mappedBy = "apiary", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private List<HiveEntity> hives;
 }

@@ -45,6 +45,9 @@ public class CommunityPostEntity {
     @Column(name = "created")
     private LocalDate created;
 
+    @Column(name = "type")
+    private CommunityEnums.EType type;
+
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<PostCommentEntity> comments;
 

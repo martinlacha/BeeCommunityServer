@@ -13,4 +13,7 @@ public class FoundUserDto {
     private String email;
     private String name;
     private String surname;
+    private String state;
+    private String country;
+    private String town;
 }

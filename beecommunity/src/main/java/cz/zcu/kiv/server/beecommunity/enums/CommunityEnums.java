@@ -17,4 +17,28 @@ public class CommunityEnums {
          */
         PRIVATE,
     }
+
+    /**
+     * Community post type
+     */
+    public enum EType {
+        /**
+         * None type
+         */
+        NONE,
+        /**
+         * Information post
+         */
+        INFO,
+
+        /**
+         * Warning post
+         */
+        WARN,
+
+        /**
+         * Emergency post
+         */
+        EMERGENCY
+    }
 }

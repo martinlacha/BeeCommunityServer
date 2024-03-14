@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.List;
 
 /**
  * Entity of hive
@@ -26,16 +25,20 @@ public class HiveEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @Column(name = "name")
+    private String name;
+
+    @ManyToOne
     @JoinColumn(name = "apiary_id")
     private ApiaryEntity apiary;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private UserEntity owner;
 
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "queen_id")
     private QueenEntity queen;
-
-    @Column(name = "frame_count")
-    private int frameCount;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "color")
@@ -51,6 +54,16 @@ public class HiveEntity {
     @Column(name = "notes")
     private String notes;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "hive")
-    private List<InspectionEntity> inspections;
+    @Column(name = "image", length = 1024)
+    private byte[] image;
+
+    @Override
+    public String toString() {
+        return "HiveEntity{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", color=" + color +
+                ", source=" + source +
+                '}';
+    }
 }
