@@ -75,6 +75,11 @@ public class EventServiceImpl implements IEventService {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
+    /**
+     * Set event to finish status when it was completed
+     * @param eventId id of finished event
+     * @return status code of operation result
+     */
     @Override
     public ResponseEntity<Void> finishEvent(Long eventId) {
         var user = UserUtils.getUserFromSecurityContext();

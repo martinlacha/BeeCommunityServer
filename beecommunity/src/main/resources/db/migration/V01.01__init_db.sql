@@ -53,6 +53,7 @@ CREATE TABLE COMMUNITY_POST(
     post TEXT NOT NULL,
     image bytea,
     access TEXT NOT NULL,
+    type TEXT,
     created DATE DEFAULT now()
 );
 
@@ -70,16 +71,6 @@ CREATE TABLE GROUP_USERS (
     created DATE NOT NULL
 );
 
-CREATE TABLE QUEEN (
-   id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-   user_id INT NOT NULL REFERENCES AUTH_USER(id),
-   breed TEXT NOT NULL,
-   color TEXT NOT NULL,
-   acceptance_date DATE,
-   notes TEXT,
-   image bytea
-);
-
 CREATE TABLE APIARY (
     id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     user_id INT NOT NULL REFERENCES AUTH_USER(id),
@@ -94,13 +85,25 @@ CREATE TABLE APIARY (
 
 CREATE TABLE HIVE (
     id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    user_id INT NOT NULL REFERENCES AUTH_USER(id),
     apiary_id INT NOT NULL REFERENCES APIARY(id),
-    queen_id INT REFERENCES QUEEN(id),
-    frame_count INT NOT NULL DEFAULT 0,
+    name TEXT NOT NULL,
     color TEXT NOT NULL,
     bee_source TEXT NOT NULL,
     date_establishment DATE NOT NULL,
-    notes TEXT
+    notes TEXT,
+    image bytea
+);
+
+CREATE TABLE QUEEN (
+    id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    user_id INT NOT NULL REFERENCES AUTH_USER(id),
+    hive_id INT REFERENCES HIVE(id),
+    breed TEXT NOT NULL,
+    color TEXT NOT NULL,
+    acceptance_date DATE,
+    notes TEXT,
+    image bytea
 );
 
 CREATE TABLE STORAGE (

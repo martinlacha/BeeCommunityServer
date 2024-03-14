@@ -7,15 +7,16 @@ public class HiveEnums {
      */
     public enum EColor {
         NONE,
-        WHITE,
         BLACK,
-        GRAY,
-        BLUE,
-        RED,
         PURPLE,
+        BLUE,
+        GREEN,
         YELLOW,
         ORANGE,
-        GREEN
+        RED,
+        WHITE,
+        GRAY,
+        OTHER
     }
 
     /**
@@ -28,5 +29,11 @@ public class HiveEnums {
         SPLIT,
         ACQUIRED,
         OTHER
+    }
+
+    public enum EBodySupersType {
+        SMALL,
+        MEDIUM,
+        DEEP
     }
 }

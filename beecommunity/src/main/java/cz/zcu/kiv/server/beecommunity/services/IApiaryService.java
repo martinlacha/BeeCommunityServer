@@ -17,12 +17,4 @@ public interface IApiaryService {
     ResponseEntity<Void> updateApiary(ApiaryDto postDto);
 
     ResponseEntity<ApiaryDto> getApiaryDetail(Long apiaryId);
-
-    //ResponseEntity<Void> getHives(Long apiaryId);
-
-    //ResponseEntity<Void> addHive(PostCommentDto commentDto);
-
-    //ResponseEntity<Void> updateHive(PostCommentDto commentDto);
-
-    //ResponseEntity<Void> deleteHive(Long hiveId);
 }

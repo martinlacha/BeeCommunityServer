@@ -5,6 +5,7 @@ import cz.zcu.kiv.server.beecommunity.jpa.dto.community.CommunityPostDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.community.PostCommentDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.event.EventDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.friends.FoundUserDto;
+import cz.zcu.kiv.server.beecommunity.jpa.dto.hive.HiveDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.news.NewsDetailDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.news.NewsDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.user.GetUpdateUserInfoDto;
@@ -99,7 +100,13 @@ public class ObjectMapper {
      * @return dto
      */
     private FoundUserDto getFriendFromFriendship(UserEntity user) {
-        return new FoundUserDto(user.getEmail(), user.getUserInfo().getName(), user.getUserInfo().getSurname());
+        return new FoundUserDto(
+                user.getEmail(),
+                user.getUserInfo().getName(),
+                user.getUserInfo().getSurname(),
+                user.getUserInfo().getAddress().getCountry(),
+                user.getUserInfo().getAddress().getState(),
+                user.getUserInfo().getAddress().getTown());
     }
 
     /**
@@ -116,6 +123,7 @@ public class ObjectMapper {
                         .title(entity.getTitle())
                         .author(entity.getAuthor().getFullName())
                         .date(entity.getCreated().toString())
+                        .type(entity.getType())
                         .build()));
         return output;
     }
@@ -134,6 +142,7 @@ public class ObjectMapper {
                 .post(post.getPost())
                 .access(post.getAccess())
                 .date(post.getCreated().toString())
+                .type(post.getType())
                 .comments( convertCommentsEntityToDtoList(post.getComments()))
                 .build();
     }
@@ -313,7 +322,7 @@ public class ObjectMapper {
     /**
      * Convert list of event entities into list of dto
      * @param eventList list of entities
-     * @return list of converted events
+     * @return map of converted events
      */
     public LinkedHashMap<String, List<EventDto>> convertEventList(List<EventEntity> eventList) {
         List<EventDto> events = new ArrayList<>();
@@ -329,5 +338,54 @@ public class ObjectMapper {
                 .build())
         );
         return events.stream().collect(Collectors.groupingBy(EventDto::getDate, LinkedHashMap::new, Collectors.toList()));
+    }
+
+    /**
+     * Convert hive entity to dto
+     * @param hive entity to convert
+     * @return hive dto
+     */
+    public HiveDto convertHiveEntity(HiveEntity hive) {
+        return modelMapper.map(hive, HiveDto.class);
+    }
+
+    /**
+     * Convert list of hive entities to list of dto
+     * @param hiveList list of entities
+     * @return list of hive dto
+     */
+    public List<HiveDto> convertHiveEntityList(List<HiveEntity> hiveList) {
+        List<HiveDto> hives = new ArrayList<>();
+        hiveList.forEach(hive ->
+                hives.add(HiveDto
+                        .builder()
+                        .id(hive.getId())
+                        .apiaryId(hive.getApiary().getId())
+                        .name(hive.getName())
+                        .color(hive.getColor())
+                        .source(hive.getSource())
+                        .establishment(hive.getEstablishment().toString())
+                        .notes(hive.getNotes())
+                        .build()));
+        return hives;
+    }
+
+
+    /**
+     * Convert hive dto into entity and compress image if it was uploaded
+     * @param hiveDto dto to convert
+     * @return hive entity
+     */
+    public HiveEntity convertHiveDto(HiveDto hiveDto) {
+        var entity = modelMapper.map(hiveDto, HiveEntity.class);
+        entity.setEstablishment(DateTimeUtils.getDateFromString(hiveDto.getEstablishment()));
+        try {
+            if (hiveDto.getImage() != null) {
+                entity.setImage(ImageUtil.compressImage(hiveDto.getImage().getBytes()));
+            }
+        } catch (IOException e) {
+            log.warn("Error while get image from post: {}", e.getMessage());
+        }
+        return entity;
     }
 }

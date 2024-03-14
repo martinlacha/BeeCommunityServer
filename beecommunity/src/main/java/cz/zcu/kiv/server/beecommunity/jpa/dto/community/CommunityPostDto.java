@@ -37,6 +37,8 @@ public class CommunityPostDto {
     @NotNull(message = "Experience can't be empty.")
     private CommunityEnums.EAccess access;
 
+    private CommunityEnums.EType type;
+
     private String date;
 
     List<PostCommentDto> comments;
