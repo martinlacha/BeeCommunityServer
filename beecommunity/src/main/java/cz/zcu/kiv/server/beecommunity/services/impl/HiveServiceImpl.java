@@ -1,11 +1,7 @@
 package cz.zcu.kiv.server.beecommunity.services.impl;
 
-import ch.qos.logback.core.util.TimeUtil;
-import cz.zcu.kiv.server.beecommunity.jpa.dto.apiary.ApiaryDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.hive.HiveDto;
-import cz.zcu.kiv.server.beecommunity.jpa.repository.ApiaryRepository;
 import cz.zcu.kiv.server.beecommunity.jpa.repository.HiveRepository;
-import cz.zcu.kiv.server.beecommunity.services.IApiaryService;
 import cz.zcu.kiv.server.beecommunity.services.IHiveService;
 import cz.zcu.kiv.server.beecommunity.utils.DateTimeUtils;
 import cz.zcu.kiv.server.beecommunity.utils.ImageUtil;
@@ -18,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -36,7 +33,7 @@ public class HiveServiceImpl implements IHiveService {
     @Override
     public ResponseEntity<List<HiveDto>> getHives(Long apiaryId) {
         var user = UserUtils.getUserFromSecurityContext();
-        var entitiesList = hiveRepository.findByOwnerIdAndApiaryId(user.getId(), apiaryId);
+        var entitiesList = hiveRepository.findByOwnerIdAndApiaryIdOrderById(user.getId(), apiaryId);
         return ResponseEntity.status(HttpStatus.OK).body(modelMapper.convertHiveEntityList(entitiesList));
     }
 
@@ -50,12 +47,13 @@ public class HiveServiceImpl implements IHiveService {
         var user = UserUtils.getUserFromSecurityContext();
         var hiveEntity = modelMapper.convertHiveDto(hiveDto);
         hiveEntity.setOwner(user);
+        hiveEntity.getQueen().setOwner(user);
         hiveRepository.saveAndFlush(hiveEntity);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     /**
-     * Update hive base information
+     * Update hive base information and queen
      * @param hiveDto dto with hive base information
      * @return status code of operation result
      */
@@ -86,6 +84,33 @@ public class HiveServiceImpl implements IHiveService {
         }
         if (hiveDto.getNotes() != null && !hiveDto.getNotes().isBlank()) {
             hive.get().setNotes(hiveDto.getNotes());
+        }
+
+        if (hiveDto.getQueenName() != null && !hiveDto.getQueenName().isBlank()) {
+            hive.get().getQueen().setName(hiveDto.getQueenName());
+        }
+        if (hiveDto.getBreed() != null && !hiveDto.getBreed().isBlank()) {
+            hive.get().getQueen().setBreed(hiveDto.getBreed());
+        }
+        if (hiveDto.getHatch() != null && !hiveDto.getHatch().isBlank()) {
+            hive.get().getQueen().setQueenHatch(DateTimeUtils.getDateFromString(hiveDto.getHatch()));
+        }
+        if (hiveDto.getQueenColor() != null) {
+            hive.get().getQueen().setColor(hiveDto.getQueenColor());
+        }
+        if (hiveDto.getQueenNotes() != null && !hiveDto.getQueenNotes().isBlank()) {
+            hive.get().getQueen().setNotes(hiveDto.getQueenNotes());
+        }
+
+        try {
+            if (hiveDto.getImage() != null) {
+                hive.get().setImage(ImageUtil.compressImage(hiveDto.getImage().getBytes()));
+            }
+            if (hiveDto.getQueenImage() != null) {
+                hive.get().getQueen().setImage(ImageUtil.compressImage(hiveDto.getQueenImage().getBytes()));
+            }
+        } catch (IOException e) {
+            log.warn("Error while update image for hive: {}", e.getMessage());
         }
         hiveRepository.saveAndFlush(hive.get());
         return ResponseEntity.status(HttpStatus.OK).build();
@@ -144,5 +169,61 @@ public class HiveServiceImpl implements IHiveService {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
         return ResponseEntity.status(HttpStatus.OK).body(ImageUtil.decompressImage(hive.get().getImage()));
+    }
+
+    /**
+     * Get queen image if was uploaded
+     * @param hiveId queen id
+     * @return byte array of image
+     */
+    @Override
+    public ResponseEntity<byte[]> getQueenImage(Long hiveId) {
+        var user = UserUtils.getUserFromSecurityContext();
+        var hive = hiveRepository.findById(hiveId);
+        if (hive.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } else if (!user.getId().equals(hive.get().getOwner().getId())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        } else if (hive.get().getQueen().getImage() == null) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(ImageUtil.decompressImage(hive.get().getQueen().getImage()));
+    }
+
+    /**
+     * Find and return string representation of hive structure
+     * @param hiveId hive id
+     * @return String representation of structure
+     */
+    @Override
+    public ResponseEntity<String> getHiveStructure(Long hiveId) {
+        var user = UserUtils.getUserFromSecurityContext();
+        var hive = hiveRepository.findById(hiveId);
+        if (hive.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } else if (!user.getId().equals(hive.get().getOwner().getId())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(hive.get().getStructure());
+    }
+
+    /**
+     * Create or update hive structure
+     * @param hiveId hive id
+     * @param structure string representation of hive structure
+     * @return status code of operation result
+     */
+    @Override
+    public ResponseEntity<Void> createHiveStructure(Long hiveId, String structure) {
+        var user = UserUtils.getUserFromSecurityContext();
+        var hive = hiveRepository.findById(hiveId);
+        if (hive.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } else if (!user.getId().equals(hive.get().getOwner().getId())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        hive.get().setStructure(structure);
+        hiveRepository.saveAndFlush(hive.get());
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

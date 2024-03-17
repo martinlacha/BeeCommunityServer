@@ -19,9 +19,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -248,6 +246,7 @@ public class ObjectMapper {
                         .date(news.getDate().toString())
                         .build()
         ));
+        newsList.sort(Comparator.comparingLong(NewsEntity::getId));
         return list;
     }
 
@@ -264,7 +263,7 @@ public class ObjectMapper {
                 entity.setImage(ImageUtil.compressImage(dto.getImage().getBytes()));
             }
         } catch (IOException e) {
-            log.warn("Error while get image from post: {}", e.getMessage());
+            log.warn("Error while get image from apiary: {}", e.getMessage());
         }
         return entity;
     }
@@ -337,16 +336,26 @@ public class ObjectMapper {
                 .isFinished(entity.getFinished())
                 .build())
         );
-        return events.stream().collect(Collectors.groupingBy(EventDto::getDate, LinkedHashMap::new, Collectors.toList()));
+        return events
+                .stream()
+                .collect(Collectors.groupingBy(EventDto::getDate, LinkedHashMap::new, Collectors.toList()));
     }
 
     /**
-     * Convert hive entity to dto
+     * Convert hive entity and queen to dto
      * @param hive entity to convert
      * @return hive dto
      */
     public HiveDto convertHiveEntity(HiveEntity hive) {
-        return modelMapper.map(hive, HiveDto.class);
+        var detail = modelMapper.map(hive, HiveDto.class);
+        detail.setQueenName(hive.getQueen().getName());
+        detail.setQueenColor(hive.getQueen().getColor());
+        detail.setQueenNotes(hive.getQueen().getNotes());
+        if (hive.getQueen().getQueenHatch() != null) {
+            detail.setHatch(hive.getQueen().getQueenHatch().toString());
+        }
+        detail.setBreed(hive.getQueen().getBreed());
+        return detail;
     }
 
     /**
@@ -377,15 +386,21 @@ public class ObjectMapper {
      * @return hive entity
      */
     public HiveEntity convertHiveDto(HiveDto hiveDto) {
-        var entity = modelMapper.map(hiveDto, HiveEntity.class);
-        entity.setEstablishment(DateTimeUtils.getDateFromString(hiveDto.getEstablishment()));
+        var hive = modelMapper.map(hiveDto, HiveEntity.class);
+        var queen = modelMapper.map(hiveDto, QueenEntity.class);
+        queen.setQueenHatch(DateTimeUtils.getDateFromString(hiveDto.getHatch()));
+        hive.setEstablishment(DateTimeUtils.getDateFromString(hiveDto.getEstablishment()));
+        hive.setQueen(queen);
         try {
             if (hiveDto.getImage() != null) {
-                entity.setImage(ImageUtil.compressImage(hiveDto.getImage().getBytes()));
+                hive.setImage(ImageUtil.compressImage(hiveDto.getImage().getBytes()));
+            }
+            if (hiveDto.getQueenImage() != null) {
+                queen.setImage(ImageUtil.compressImage(hiveDto.getQueenImage().getBytes()));
             }
         } catch (IOException e) {
-            log.warn("Error while get image from post: {}", e.getMessage());
+            log.warn("Error while get image from hive: {}", e.getMessage());
         }
-        return entity;
+        return hive;
     }
 }

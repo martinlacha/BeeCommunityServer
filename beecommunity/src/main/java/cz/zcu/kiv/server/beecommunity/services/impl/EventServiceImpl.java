@@ -50,7 +50,7 @@ public class EventServiceImpl implements IEventService {
     @Override
     public ResponseEntity<LinkedHashMap<String, List<EventDto>>> getEvents() {
         var user = UserUtils.getUserFromSecurityContext();
-        var entitiesList = eventRepository.findByOwnerId(user.getId());
+        var entitiesList = eventRepository.findByOwnerIdOrderById(user.getId());
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(modelMapper.convertEventList(entitiesList));

@@ -31,9 +31,16 @@ public class HiveEnums {
         OTHER
     }
 
-    public enum EBodySupersType {
-        SMALL,
-        MEDIUM,
-        DEEP
+    /**
+     * Parts of beehive
+     */
+    public enum EBodyPart {
+        OUTER_COVER,
+        MEDIUM_SUPER,
+        DEEP_SUPER,
+        SLATTED_RACK,
+        QUEEN_EXCLUDER,
+        BOTTOM_BOARD,
+        HIVE_STAND
     }
 }
