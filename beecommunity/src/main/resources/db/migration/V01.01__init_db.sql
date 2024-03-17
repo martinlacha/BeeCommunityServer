@@ -91,17 +91,18 @@ CREATE TABLE HIVE (
     color TEXT NOT NULL,
     bee_source TEXT NOT NULL,
     date_establishment DATE NOT NULL,
+    structure TEXT,
     notes TEXT,
     image bytea
 );
 
 CREATE TABLE QUEEN (
     id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    user_id INT NOT NULL REFERENCES AUTH_USER(id),
-    hive_id INT REFERENCES HIVE(id),
-    breed TEXT NOT NULL,
+    hive_id INT NOT NULL REFERENCES HIVE(id),
+    user_id INT NOT NULL REFERENCES HIVE(id),
+    breed TEXT,
     color TEXT NOT NULL,
-    acceptance_date DATE,
+    queen_hatch DATE DEFAULT now(),
     notes TEXT,
     image bytea
 );

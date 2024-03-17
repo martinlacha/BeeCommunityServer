@@ -9,5 +9,5 @@ import java.util.List;
 
 @Repository
 public interface CommunityPostRepository extends JpaRepository<CommunityPostEntity, Long> {
-    List<CommunityPostEntity> findByAccess(CommunityEnums.EAccess access);
+    List<CommunityPostEntity> findByAccessOrderById(CommunityEnums.EAccess access);
 }

@@ -93,8 +93,7 @@ public class InspectionEntity {
     @Column(name = "colony_temperament")
     private InspectionEnums.EColonyTemperament temperament;
 
-    @Lob
-    @Column(name = "photo")
+    @Column(name = "photo", length = 1024)
     private byte[] photo;
 
     @Column(name = "notes")

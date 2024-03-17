@@ -81,4 +81,35 @@ public class HiveController {
     ResponseEntity<byte[]> getHiveImage(@RequestParam Long hiveId) {
         return hiveService.getHiveImage(hiveId);
     }
+
+    /**
+     * Get queen image if was uploaded
+     * @param hiveId queen id
+     * @return byte array of image
+     */
+    @GetMapping("/queen")
+    ResponseEntity<byte[]> getQueenImage(@RequestParam Long hiveId) {
+        return hiveService.getQueenImage(hiveId);
+    }
+
+    /**
+     * Find and return string representation of hive structure
+     * @param hiveId hive id
+     * @return String representation of structure
+     */
+    @GetMapping("/structure")
+    ResponseEntity<String> getHiveStructure(@RequestParam Long hiveId) {
+        return hiveService.getHiveStructure(hiveId);
+    }
+
+    /**
+     * Create or update hive structure
+     * @param hiveId hive id
+     * @param structure string representation of hive structure
+     * @return status code of operation result
+     */
+    @PostMapping("/structure")
+    ResponseEntity<Void> createHiveStructure(@RequestParam Long hiveId, @RequestParam String structure) {
+        return hiveService.createHiveStructure(hiveId, structure);
+    }
 }

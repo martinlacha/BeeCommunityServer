@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 /**
  * Entity for queen
  */
@@ -27,18 +29,22 @@ public class QueenEntity {
     @JoinColumn(name = "user_id")
     private UserEntity owner;
 
+    @Column(name = "name")
+    private String name;
+
     @Column(name = "breed")
-    @Enumerated(EnumType.STRING)
-    private QueenEnums.EBreed breed;
+    private String breed;
 
     @Column(name = "color")
     @Enumerated(EnumType.STRING)
     private QueenEnums.EColor color;
 
+    @Column(name = "queen_hatch")
+    private LocalDate queenHatch;
+
     @Column(name = "notes")
     private String notes;
 
-    @Lob
-    @Column(name = "image")
+    @Column(name = "image", length = 1024)
     private byte[] image;
 }

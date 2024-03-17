@@ -23,13 +23,11 @@ public class QueenEnums {
      * Color marked on queen
      */
     public enum EColor {
-        UNMARKED,
         WHITE,
         YELLOW,
         RED,
         GREEN,
         BLUE,
-        OTHER,
         NONE
     }
 }

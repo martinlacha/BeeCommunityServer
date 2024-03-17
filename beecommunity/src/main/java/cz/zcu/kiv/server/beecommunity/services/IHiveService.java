@@ -17,4 +17,10 @@ public interface IHiveService {
     ResponseEntity<HiveDto> getHiveDetail(Long hiveId);
 
     ResponseEntity<byte[]> getHiveImage(Long hiveId);
+
+    ResponseEntity<byte[]> getQueenImage(Long hiveId);
+
+    ResponseEntity<String> getHiveStructure(Long hiveId);
+
+    ResponseEntity<Void> createHiveStructure(Long hiveId, String structure);
 }

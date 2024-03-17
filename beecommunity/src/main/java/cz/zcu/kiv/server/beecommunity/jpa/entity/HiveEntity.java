@@ -36,7 +36,7 @@ public class HiveEntity {
     @JoinColumn(name = "user_id")
     private UserEntity owner;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "queen_id")
     private QueenEntity queen;
 
@@ -50,6 +50,9 @@ public class HiveEntity {
 
     @Column(name = "date_establishment")
     private LocalDate establishment;
+
+    @Column(name = "structure")
+    private String structure;
 
     @Column(name = "notes")
     private String notes;

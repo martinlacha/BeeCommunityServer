@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -45,7 +46,7 @@ public class ApiaryServiceImpl implements IApiaryService {
     @Override
     public ResponseEntity<List<ApiaryDto>> getApiaries() {
         var user = UserUtils.getUserFromSecurityContext();
-        var entitiesList = apiaryRepository.findByOwnerId(user.getId());
+        var entitiesList = apiaryRepository.findByOwnerIdOrderById(user.getId());
         return ResponseEntity.status(HttpStatus.OK).body(modelMapper.convertApiaryEntityList(entitiesList));
     }
 
@@ -118,6 +119,13 @@ public class ApiaryServiceImpl implements IApiaryService {
         }
         if (apiaryDto.getNotes() != null) {
             apiary.get().setNotes(apiary.get().getNotes());
+        }
+        try {
+            if (apiaryDto.getImage() != null) {
+                apiary.get().setImage(ImageUtil.compressImage(apiaryDto.getImage().getBytes()));
+            }
+        } catch (IOException e) {
+            log.warn("Error while update image for apiary: {}", e.getMessage());
         }
         apiaryRepository.saveAndFlush(apiary.get());
         return ResponseEntity.status(HttpStatus.OK).build();

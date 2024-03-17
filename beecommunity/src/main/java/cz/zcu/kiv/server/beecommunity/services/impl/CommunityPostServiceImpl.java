@@ -60,7 +60,7 @@ public class CommunityPostServiceImpl implements ICommunityPostService {
     @Override
     public ResponseEntity<List<CommunityPostDto>> getPosts(CommunityEnums.EAccess access) {
         var user = UserUtils.getUserFromSecurityContext();
-        var posts = communityPostRepository.findByAccess(access);
+        var posts = communityPostRepository.findByAccessOrderById(access);
         posts = posts.stream().filter(post -> canSeePost(user.getId(), post.getAuthor().getId())).toList();
         return ResponseEntity.status(HttpStatus.OK).body(modelMapper.convertPostListToDtoList(posts));
     }
