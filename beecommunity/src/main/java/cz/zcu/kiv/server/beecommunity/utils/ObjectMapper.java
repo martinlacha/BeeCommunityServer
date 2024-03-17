@@ -390,7 +390,6 @@ public class ObjectMapper {
         var queen = modelMapper.map(hiveDto, QueenEntity.class);
         queen.setQueenHatch(DateTimeUtils.getDateFromString(hiveDto.getHatch()));
         hive.setEstablishment(DateTimeUtils.getDateFromString(hiveDto.getEstablishment()));
-        hive.setQueen(queen);
         try {
             if (hiveDto.getImage() != null) {
                 hive.setImage(ImageUtil.compressImage(hiveDto.getImage().getBytes()));
@@ -401,6 +400,7 @@ public class ObjectMapper {
         } catch (IOException e) {
             log.warn("Error while get image from hive: {}", e.getMessage());
         }
+        hive.setQueen(queen);
         return hive;
     }
 }
