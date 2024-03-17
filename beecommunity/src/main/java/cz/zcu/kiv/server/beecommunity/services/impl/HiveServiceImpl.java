@@ -172,25 +172,6 @@ public class HiveServiceImpl implements IHiveService {
     }
 
     /**
-     * Get queen image if was uploaded
-     * @param hiveId queen id
-     * @return byte array of image
-     */
-    @Override
-    public ResponseEntity<byte[]> getQueenImage(Long hiveId) {
-        var user = UserUtils.getUserFromSecurityContext();
-        var hive = hiveRepository.findById(hiveId);
-        if (hive.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        } else if (!user.getId().equals(hive.get().getOwner().getId())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        } else if (hive.get().getQueen().getImage() == null) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(ImageUtil.decompressImage(hive.get().getQueen().getImage()));
-    }
-
-    /**
      * Find and return string representation of hive structure
      * @param hiveId hive id
      * @return String representation of structure

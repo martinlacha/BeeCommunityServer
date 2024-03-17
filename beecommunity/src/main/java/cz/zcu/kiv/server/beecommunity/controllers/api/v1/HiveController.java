@@ -83,16 +83,6 @@ public class HiveController {
     }
 
     /**
-     * Get queen image if was uploaded
-     * @param hiveId queen id
-     * @return byte array of image
-     */
-    @GetMapping("/queen")
-    ResponseEntity<byte[]> getQueenImage(@RequestParam Long hiveId) {
-        return hiveService.getQueenImage(hiveId);
-    }
-
-    /**
      * Find and return string representation of hive structure
      * @param hiveId hive id
      * @return String representation of structure
