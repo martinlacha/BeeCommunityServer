@@ -1,11 +1,13 @@
 package cz.zcu.kiv.server.beecommunity.utils;
 
+import cz.zcu.kiv.server.beecommunity.enums.InspectionEnums;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.apiary.ApiaryDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.community.CommunityPostDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.community.PostCommentDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.event.EventDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.friends.FoundUserDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.hive.HiveDto;
+import cz.zcu.kiv.server.beecommunity.jpa.dto.inspection.*;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.news.NewsDetailDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.news.NewsDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.user.GetUpdateUserInfoDto;
@@ -16,6 +18,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
+import org.thymeleaf.util.DateUtils;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -402,5 +405,162 @@ public class ObjectMapper {
         }
         hive.setQueen(queen);
         return hive;
+    }
+
+    /**
+     * Convert list of inspection entities to list of dto
+     * @param list list of inspection entities
+     * @return list of inspections list dto
+     */
+    public List<InspectionDto> convertInspectionEntityList(List<InspectionEntity> list) {
+        List<InspectionDto> inspections = new ArrayList<>();
+        list.forEach(inspection ->
+                inspections.add(InspectionDto
+                        .builder()
+                        .id(inspection.getId())
+                        .type(inspection.getType())
+                        .date(inspection.getInspectionDate().toString())
+                        .population(inspection.getPopulation())
+                        .food(inspection.getFoodStorage())
+                        .hasQueen(inspection.isQueen())
+                        .sourceNearby(inspection.getSourceNearby())
+                        .hasBrood(!inspection.getBroodPattern().equals(InspectionEnums.EBroodPattern.NO_BROOD))
+                        .hasDisease(inspection.getStressors().hasDisease())
+                        .build()));
+        return inspections;
+    }
+
+    /**
+     * Convert inspection from hive into entities
+     * @param inspectionDto dto with inspection, feeding, treatment, disease information
+     * @return converted entity
+     */
+    public InspectionEntity convertInspectionDto(InspectionDetailDto inspectionDto) {
+        var inspection = modelMapper.map(inspectionDto, InspectionEntity.class);
+        inspection.setInspectionDate(DateTimeUtils.getDateFromString(inspectionDto.getDate()));
+        inspection.getTreatment().setStartDate(DateTimeUtils.getDateFromString(inspectionDto.getTreatment().getStartDate()));
+        inspection.getTreatment().setEndDate(DateTimeUtils.getDateFromString(inspectionDto.getTreatment().getEndDate()));
+        try {
+            if (inspectionDto.getInspectionImage() != null) {
+                inspection.setInspectionImage(ImageUtil.compressImage(inspectionDto.getInspectionImage().getBytes()));
+            }
+            if (inspectionDto.getFoodImage() != null) {
+                inspection.setFoodImage(ImageUtil.compressImage(inspectionDto.getFoodImage().getBytes()));
+            }
+            if (inspectionDto.getPopulationImage() != null) {
+                inspection.setPopulationImage(ImageUtil.compressImage(inspectionDto.getPopulationImage().getBytes()));
+            }
+            if (inspectionDto.getQueenImage() != null) {
+                inspection.setQueenImage(ImageUtil.compressImage(inspectionDto.getQueenImage().getBytes()));
+            }
+            if (inspectionDto.getBroodImage() != null) {
+                inspection.setBroodImage(ImageUtil.compressImage(inspectionDto.getBroodImage().getBytes()));
+            }
+            if (inspectionDto.getStressorsImage() != null) {
+                inspection.setStressorsImage(ImageUtil.compressImage(inspectionDto.getStressorsImage().getBytes()));
+            }
+            if (inspectionDto.getDiseaseImage() != null) {
+                inspection.setDiseaseImage(ImageUtil.compressImage(inspectionDto.getDiseaseImage().getBytes()));
+            }
+        } catch (IOException e) {
+            log.warn("Error while get image from hive: {}", e.getMessage());
+        }
+        return inspection;
+    }
+
+    public InspectionDetailDto convertInspectionEntity(InspectionEntity inspection) {
+        return InspectionDetailDto
+                .builder()
+                .type(inspection.getType())
+                .date(inspection.getInspectionDate().toString())
+                .weather(inspection.getWeather())
+                .population(inspection.getPopulation())
+                .foodStorage(inspection.getFoodStorage())
+                .sourceNearby(inspection.getSourceNearby())
+
+                .broodPattern(inspection.getBroodPattern())
+                .hasQueen(inspection.isQueen())
+                .hasEggs(inspection.isEggs())
+                .hasUncappedBrood(inspection.isUncappedBrood())
+                .hasCappedBrood(inspection.isCappedBrood())
+
+                .colonyTemperament(inspection.getTemperament())
+
+                .stressors(convertStressorsEntity(inspection.getStressors()))
+                .treatment(convertTreatmentEntity(inspection.getTreatment()))
+                .feeding(convertFeedingEntity(inspection.getFeeding()))
+                .harvest(convertHarvestEntity(inspection.getHarvest()))
+                .notes(inspection.getNotes())
+                .build();
+    }
+
+    /**
+     * Convert stressors entity to dto
+     * @param stressors entity to convert
+     * @return converted dto of stressors entity
+     */
+    public StressorsDto convertStressorsEntity(StressorsEntity stressors) {
+        return StressorsDto
+                .builder()
+                .varroaMites(stressors.isVarroaMites())
+                .chalkbrood(stressors.isChalkbrood())
+                .sacbrood(stressors.isSacbrood())
+                .foulbrood(stressors.isFoulbrood())
+                .nosema(stressors.isNosema())
+                .beetles(stressors.isBeetles())
+                .mice(stressors.isMice())
+                .ants(stressors.isAnts())
+                .moths(stressors.isMoths())
+                .wasps(stressors.isWasps())
+                .hornet(stressors.isHornet())
+                .build();
+    }
+
+    /**
+     * Convert treatment entity to dto
+     * @param treatment entity to convert
+     * @return converted dto of treatment entity
+     */
+    public TreatmentDto convertTreatmentEntity(HiveTreatmentEntity treatment) {
+        return TreatmentDto
+                .builder()
+                .disease(treatment.getDisease())
+                .treatment(treatment.getTreatment())
+                .quantity(treatment.getQuantity())
+                .dose(treatment.getDose())
+                .startDate(treatment.getStartDate().toString())
+                .endDate(treatment.getEndDate().toString())
+                .build();
+    }
+
+    /**
+     * Convert feeding entity to dto
+     * @param feeding entity to convert
+     * @return converted dto of feeding entity
+     */
+    public FeedingDto convertFeedingEntity(HiveFeedingEntity feeding) {
+        return FeedingDto
+                .builder()
+                .food(feeding.getFood())
+                .ratio(feeding.getRatio())
+                .foodQuantity(feeding.getFoodQuantity())
+                .foodUnit(feeding.getFoodUnit())
+                .build();
+    }
+
+    /**
+     * Convert harvest entity to dto
+     * @param harvest entity to convert
+     * @return converted dto of harvest entity
+     */
+    public HarvestDto convertHarvestEntity(HiveHarvestEntity harvest) {
+        return HarvestDto
+                .builder()
+                .product(harvest.getProduct())
+                .productQuantity(harvest.getProductQuantity())
+                .productUnit(harvest.getProductUnit())
+                .frameCount(harvest.getFrameCount())
+                .superCount(harvest.getSuperCount())
+                .build();
     }
 }

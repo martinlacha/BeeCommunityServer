@@ -74,7 +74,7 @@ CREATE TABLE APIARY (
     latitude DOUBLE PRECISION NOT NULL,
     longitude DOUBLE PRECISION NOT NULL,
     notes TEXT,
-    image bytea,
+    image bytea
 );
 
 CREATE TABLE HIVE (
@@ -112,115 +112,6 @@ CREATE TABLE NEWS (
     author_id INT NOT NULL REFERENCES AUTH_USER(id)
 );
 
-CREATE TABLE STRESSORS (
-    id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    varroa_mites BIT,
-    chalkbrood BIT,
-    sacbrood BIT,
-    american_foulbrood BIT,
-    european_foulbrood BIT,
-    nosema BIT,
-    beetles BIT,
-    mice BIT,
-    ants BIT,
-    moths BIT,
-    wasps BIT,
-    yellow_jackets BIT,
-    other_stressors BIT,
-    none_of_stressors BIT
-);
-
-CREATE TABLE SYMPTOMS (
-    id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-
-    -- Body and behaviour
-    bees_cant_fly BIT,
-    deformed_wings BIT,
-    hyperactivity BIT,
-    poor_motor_coordination BIT,
-    deformed_abdomens BIT,
-    bees_fighting BIT,
-    trembling BIT,
-    shiny_black_bees BIT,
-
-    -- Brood
-    dead_larvae BIT,
-    chalky_larvae BIT,
-    discolored_larvae BIT,
-    mites_on_larvae BIT,
-    patchy_brood BIT,
-    punctured_capped_brood BIT,
-    ropey_larvae BIT,
-    saclike_larvae BIT,
-    sunken_cappings BIT,
-
-    -- Death
-    chalky_corpses BIT,
-    dead_bees BIT,
-    translucent_pale_corpses BIT,
-
-    -- Environment
-    bad_smell BIT,
-    fecal_markings BIT,
-
-    -- Other
-    other BIT,
-    none_of_symptoms BIT
-);
-
-CREATE TABLE HIVE_INSPECTION (
-    id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-
-    -- Basic information
-    hive_id INT NOT NULL REFERENCES HIVE(id),
-    inspection_date DATE NOT NULL,
-    weather TEXT NOT NULL,
-    temperature INT,
-
-    -- Population
-    population TEXT NOT NULL,
-    covered_frames INT,
-
-    -- Food and supply
-    food_storage TEXT,
-    sources_nearby TEXT,
-    harvest_time BIT,
-
-    -- Queens and broods
-    queen BIT,
-    eggs BIT,
-    uncapped_brood BIT,
-    capped_brood BIT,
-    none_brood BIT,
-
-    -- Stressors reference
-    stressors_id INT NOT NULL REFERENCES STRESSORS(id),
-
-    -- Symptoms reference
-    symptoms_id INT NOT NULL REFERENCES SYMPTOMS(id),
-
-    -- Bees mood
-    colony_temperament TEXT,
-
-    -- Other
-    notes TEXT,
-    photo bytea
-);
-
-CREATE TABLE HONEY_HARVEST(
-    id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    user_id INT NOT NULL REFERENCES AUTH_USER(id),
-    harvest_date DATE NOT NULL,
-    total_honey_weight REAL NOT NULL DEFAULT 0
-);
-
-CREATE TABLE HIVE_HARVEST_INFO(
-    id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    honey_harvest_id INT NOT NULL REFERENCES HONEY_HARVEST(id),
-    hive_id INT NOT NULL REFERENCES HIVE(id),
-    honey_weight REAL NOT NULL DEFAULT 0
-);
-
 CREATE TABLE EVENT(
     id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     user_id INT NOT NULL REFERENCES AUTH_USER(id),
@@ -230,4 +121,132 @@ CREATE TABLE EVENT(
     notes TEXT,
     date DATE NOT NULL,
     finished BOOLEAN DEFAULT FALSE
-)
+);
+
+CREATE TABLE STRESSORS (
+    id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    varroa_mites BOOLEAN DEFAULT FALSE,
+    chalkbrood BOOLEAN DEFAULT FALSE,
+    sacbrood BOOLEAN DEFAULT FALSE,
+    foulbrood BOOLEAN DEFAULT FALSE,
+    nosema BOOLEAN DEFAULT FALSE,
+    beetles BOOLEAN DEFAULT FALSE,
+    mice BOOLEAN DEFAULT FALSE,
+    ants BOOLEAN DEFAULT FALSE,
+    moths BOOLEAN DEFAULT FALSE,
+    wasps BOOLEAN DEFAULT FALSE,
+    hornet BOOLEAN DEFAULT FALSE
+);
+
+CREATE TABLE SYMPTOMS (
+    id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+
+    -- Body and behaviour
+    bees_cant_fly BOOLEAN DEFAULT FALSE,
+    deformed_wings BOOLEAN DEFAULT FALSE,
+    hyperactivity BOOLEAN DEFAULT FALSE,
+    poor_motor_coordination BOOLEAN DEFAULT FALSE,
+    deformed_abdomens BOOLEAN DEFAULT FALSE,
+    bees_fighting BOOLEAN DEFAULT FALSE,
+    trembling BOOLEAN DEFAULT FALSE,
+    shiny_black_bees BOOLEAN DEFAULT FALSE,
+
+    -- Brood
+    dead_larvae BOOLEAN DEFAULT FALSE,
+    chalky_larvae BOOLEAN DEFAULT FALSE,
+    discolored_larvae BOOLEAN DEFAULT FALSE,
+    mites_on_larvae BOOLEAN DEFAULT FALSE,
+    patchy_brood BOOLEAN DEFAULT FALSE,
+    punctured_capped_brood BOOLEAN DEFAULT FALSE,
+    ropey_larvae BOOLEAN DEFAULT FALSE,
+    saclike_larvae BOOLEAN DEFAULT FALSE,
+    sunken_cappings BOOLEAN DEFAULT FALSE,
+
+    -- Death
+    chalky_corpses BOOLEAN DEFAULT FALSE,
+    dead_bees BOOLEAN DEFAULT FALSE,
+    translucent_pale_corpses BOOLEAN DEFAULT FALSE,
+
+    -- Environment
+    bad_smell BOOLEAN DEFAULT FALSE,
+    fecal_markings BOOLEAN DEFAULT FALSE
+);
+
+CREATE TABLE HIVE_TREATMENT(
+    id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    disease TEXT,
+    treatment TEXT,
+    quantity INT,
+    dose TEXT,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL
+);
+
+CREATE TABLE HIVE_FEEDING(
+    id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    food TEXT,
+    ratio TEXT,
+    quantity TEXT,
+    unit TEXT
+);
+
+CREATE TABLE HIVE_HARVEST(
+    id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    product TEXT NOT NULL,
+    quantity INT NOT NULL DEFAULT 0,
+    unit TEXT NOT NULL,
+    super_count int DEFAULT 0,
+    frame_count INT DEFAULT 0
+);
+
+CREATE TABLE HIVE_INSPECTION (
+    id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+
+    -- Basic information
+    hive_id INT NOT NULL REFERENCES HIVE(id),
+    user_id INT NOT NULL REFERENCES AUTH_USER(id),
+
+    type TEXT NOT NULL,
+    inspection_date DATE NOT NULL,
+    weather TEXT NOT NULL,
+
+    -- Population
+    population TEXT NOT NULL,
+
+    -- Food and supply
+    food_storage TEXT,
+    sources_nearby TEXT,
+    brood_pattern TEXT,
+
+    -- Queens and broods
+    queen BOOLEAN DEFAULT FALSE,
+    eggs BOOLEAN DEFAULT FALSE,
+    uncapped_brood BOOLEAN DEFAULT FALSE,
+    capped_brood BOOLEAN DEFAULT FALSE,
+
+    -- Stressors reference
+    stressors_id INT NOT NULL REFERENCES STRESSORS(id),
+
+    -- Symptoms reference
+    -- symptoms_id INT NOT NULL REFERENCES SYMPTOMS(id),
+
+    treatment_id INT NOT NULL REFERENCES HIVE_TREATMENT(id),
+
+    feeding_id INT NOT NULL REFERENCES HIVE_FEEDING(id),
+
+    harvest_id INT NOT NULL REFERENCES HIVE_HARVEST(id),
+
+    -- Bees mood
+    colony_temperament TEXT,
+
+    -- Other
+    notes TEXT,
+
+    inspection_image bytea,
+    food_image bytea,
+    population_image bytea,
+    queen_image bytea,
+    brood_image bytea,
+    stressors_image bytea,
+    disease_image bytea
+);

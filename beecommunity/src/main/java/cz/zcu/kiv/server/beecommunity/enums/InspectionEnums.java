@@ -3,17 +3,26 @@ package cz.zcu.kiv.server.beecommunity.enums;
 public class InspectionEnums {
 
     /**
+     * Type of inspection
+     */
+    public enum EType {
+        INSPECTION,
+        HARVEST,
+        FEEDING,
+        TREATMENTS
+    }
+
+    /**
      * Weather type when inspection
      */
     public enum EWeather {
-        CLEAR,
-        PARTLY_CLOUDY,
-        CLOUDY,
+        THUNDERSTORM,
         DRIZZLE,
         RAIN,
-        STORM,
         SNOW,
-        FOG
+        ATMOSPHERE,
+        CLEAR,
+        CLOUDS
     }
 
     /**
@@ -62,9 +71,87 @@ public class InspectionEnums {
      * Bees behaviour in colony
      */
     public enum EColonyTemperament {
+        UNSPECIFIED,
         CALM,
         NERVOUS,
         AGGRESSIVE,
         OTHER
+    }
+
+    /**
+     * Image type
+     */
+    public enum EImageType {
+        INSPECTION,
+        POPULATION,
+        FOOD,
+        QUEEN,
+        BROOD,
+        STRESSORS,
+        DISEASE,
+    }
+
+    /**
+     * Treatment dose type
+     */
+    public enum EUnitsAndDoses {
+        UNSPECIFIED,
+        STRIP,
+        DROP,
+        KILOGRAM,
+        GRAM,
+        LITER,
+        MILLILITER,
+        PIECE
+    }
+
+    /**
+     * Harvest product type
+     */
+    public enum EHarvestProduct {
+        UNSPECIFIED,
+        HONEY,
+        WAX,
+        PROPOLIS,
+        POLLEN,
+        VENOM,
+        ROYAL_JELLY
+    }
+
+    /**
+     * Food ratio
+     */
+    public enum EFoodRatio {
+        NONE,
+        ONE_ZERO,
+        ONE_ONE,
+        TWO_ONE,
+        TREE_ONE,
+        ONE_TWO,
+        ONE_TREE
+    }
+
+    /**
+     * Food type
+     */
+    public enum EFoodType {
+        UNSPECIFIED,
+        SUGAR,
+        HONEY,
+        SYRUP,
+        POLLEN,
+        NECTAR
+    }
+
+    /**
+     * Disease type
+     */
+    public enum EDisease {
+        UNSPECIFIED,
+        VARROASIS,
+        NOSEMA,
+        CHLKBROOD,
+        SACBROOD,
+        FOULBROOD
     }
 }
