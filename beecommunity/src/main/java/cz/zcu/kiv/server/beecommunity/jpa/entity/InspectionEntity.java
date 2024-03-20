@@ -29,6 +29,13 @@ public class InspectionEntity {
     @JoinColumn(name = "hive_id")
     private HiveEntity hive;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private UserEntity owner;
+
+    @Column(name = "type")
+    private InspectionEnums.EType type;
+
     @Column(name = "inspection_date")
     private LocalDate inspectionDate;
 
@@ -36,18 +43,12 @@ public class InspectionEntity {
     @Column(name = "weather")
     private InspectionEnums.EWeather weather;
 
-    @Column(name = "temperature")
-    private int temperature;
-
     /**
      * Population
      */
     @Enumerated(EnumType.STRING)
     @Column(name = "population")
     private InspectionEnums.EPopulation population;
-
-    @Column(name = "covered_frames")
-    private int coveredFrames;
 
     /**
      * Food
@@ -57,11 +58,12 @@ public class InspectionEntity {
     private InspectionEnums.EFoodStorage foodStorage;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "source_nearby")
+    @Column(name = "sources_nearby")
     private InspectionEnums.ESourceNearby sourceNearby;
 
-    @Column(name = "harvest_time")
-    private boolean harvestTime;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "brood_pattern")
+    private InspectionEnums.EBroodPattern broodPattern;
 
     /**
      * Queen and Brood
@@ -78,24 +80,47 @@ public class InspectionEntity {
     @Column(name = "capped_brood")
     private boolean cappedBrood;
 
-    @Column(name = "none_brood")
-    private boolean noneBrood;
-
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "stressors_id")
     private StressorsEntity stressors;
 
     @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "symptoms_id")
-    private SymptomsEntity symptoms;
+    @JoinColumn(name = "treatment_id")
+    private HiveTreatmentEntity treatment;
+
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "feeding_id")
+    private HiveFeedingEntity feeding;
+
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "harvest_id")
+    private HiveHarvestEntity harvest;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "colony_temperament")
     private InspectionEnums.EColonyTemperament temperament;
 
-    @Column(name = "photo", length = 1024)
-    private byte[] photo;
-
     @Column(name = "notes")
     private String notes;
+
+    @Column(name = "inspection_image", length = 1024)
+    private byte[] inspectionImage;
+
+    @Column(name = "food_image", length = 1024)
+    private byte[] foodImage;
+
+    @Column(name = "population_image", length = 1024)
+    private byte[] populationImage;
+
+    @Column(name = "queen_image", length = 1024)
+    private byte[] queenImage;
+
+    @Column(name = "brood_image", length = 1024)
+    private byte[] broodImage;
+
+    @Column(name = "stressors_image", length = 1024)
+    private byte[] stressorsImage;
+
+    @Column(name = "disease_image", length = 1024)
+    private byte[] diseaseImage;
 }

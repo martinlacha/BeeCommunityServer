@@ -31,11 +31,8 @@ public class StressorsEntity {
     @Column(name = "sacbrood")
     private boolean sacbrood;
 
-    @Column(name = "american_foulbrood")
-    private boolean americanFoulbrood;
-
-    @Column(name = "european_foulbrood")
-    private boolean europeanFoulbrood;
+    @Column(name = "foulbrood")
+    private boolean foulbrood;
 
     @Column(name = "nosema")
     private boolean nosema;
@@ -55,12 +52,21 @@ public class StressorsEntity {
     @Column(name = "wasps")
     private boolean wasps;
 
-    @Column(name = "yellow_jackets")
-    private boolean yellowJackets;
+    @Column(name = "hornet")
+    private boolean hornet;
 
-    @Column(name = "other_stressors")
-    private boolean otherStressors;
-
-    @Column(name = "none_of_stressors")
-    private boolean noneOfStressors;
+    public boolean hasDisease() {
+        return
+            varroaMites ||
+            chalkbrood ||
+            sacbrood ||
+            foulbrood ||
+            nosema ||
+            beetles ||
+            mice ||
+            ants ||
+            moths ||
+            wasps ||
+            hornet;
+    }
 }
