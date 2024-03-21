@@ -6,10 +6,12 @@ public class InspectionEnums {
      * Type of inspection
      */
     public enum EType {
+        UNSPECIFIED,
         INSPECTION,
         HARVEST,
         FEEDING,
-        TREATMENTS
+        TREATMENTS,
+        STRESSORS
     }
 
     /**

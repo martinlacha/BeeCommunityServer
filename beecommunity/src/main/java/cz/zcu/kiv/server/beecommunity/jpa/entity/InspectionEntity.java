@@ -25,7 +25,7 @@ public class InspectionEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "hive_id")
     private HiveEntity hive;
 
@@ -80,19 +80,19 @@ public class InspectionEntity {
     @Column(name = "capped_brood")
     private boolean cappedBrood;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "stressors_id")
     private StressorsEntity stressors;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "treatment_id")
     private HiveTreatmentEntity treatment;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "feeding_id")
     private HiveFeedingEntity feeding;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "harvest_id")
     private HiveHarvestEntity harvest;
 
