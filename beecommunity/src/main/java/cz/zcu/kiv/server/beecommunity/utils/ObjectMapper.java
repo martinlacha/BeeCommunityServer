@@ -32,6 +32,8 @@ public class ObjectMapper {
 
     private final ModelMapper modelMapper;
 
+    private final com.fasterxml.jackson.databind.ObjectMapper objectMapper;
+
     /**
      * Convert user dto into entity
      * @param userDto dto
@@ -422,8 +424,8 @@ public class ObjectMapper {
                         .date(inspection.getInspectionDate().toString())
                         .population(inspection.getPopulation())
                         .food(inspection.getFoodStorage())
-                        .hasQueen(inspection.isQueen())
                         .sourceNearby(inspection.getSourceNearby())
+                        .hasQueen(inspection.isQueen())
                         .hasBrood(!inspection.getBroodPattern().equals(InspectionEnums.EBroodPattern.NO_BROOD))
                         .hasDisease(inspection.getStressors().hasDisease())
                         .build()));
@@ -468,6 +470,11 @@ public class ObjectMapper {
         return inspection;
     }
 
+    /**
+     * Convert inspection entity to dto detail
+     * @param inspection entity to convert
+     * @return converted dto with inspection detail
+     */
     public InspectionDetailDto convertInspectionEntity(InspectionEntity inspection) {
         return InspectionDetailDto
                 .builder()
@@ -528,8 +535,8 @@ public class ObjectMapper {
                 .treatment(treatment.getTreatment())
                 .quantity(treatment.getQuantity())
                 .dose(treatment.getDose())
-                .startDate(treatment.getStartDate().toString())
-                .endDate(treatment.getEndDate().toString())
+                .startDate(treatment.getStartDate() != null ? treatment.getStartDate().toString() : "")
+                .endDate(treatment.getEndDate() != null ? treatment.getStartDate().toString() : "")
                 .build();
     }
 

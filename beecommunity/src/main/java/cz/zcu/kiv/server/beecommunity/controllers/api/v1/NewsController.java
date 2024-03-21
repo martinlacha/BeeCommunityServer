@@ -72,7 +72,10 @@ public class NewsController {
     }
 
     /**
-     *
+     * Return article image by articleId and image type
+     * @param articleId article id
+     * @param image type
+     * @return byte array of decompressed image
      */
     @GetMapping("/image")
     ResponseEntity<byte[]> getArticleImage(@RequestParam Long articleId, @RequestParam NewsEnums.EImage image) {

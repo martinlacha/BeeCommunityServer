@@ -3,6 +3,7 @@ package cz.zcu.kiv.server.beecommunity.services.impl;
 import cz.zcu.kiv.server.beecommunity.enums.InspectionEnums;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.inspection.InspectionDetailDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.inspection.InspectionDto;
+import cz.zcu.kiv.server.beecommunity.jpa.repository.HiveRepository;
 import cz.zcu.kiv.server.beecommunity.jpa.repository.InspectionRepository;
 import cz.zcu.kiv.server.beecommunity.services.IInspectionService;
 import cz.zcu.kiv.server.beecommunity.utils.ImageUtil;
@@ -23,6 +24,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class InspectionServiceImpl implements IInspectionService {
     private final InspectionRepository inspectionRepository;
+    private final HiveRepository hiveRepository;
 
     private final ObjectMapper modelMapper;
 
@@ -33,7 +35,7 @@ public class InspectionServiceImpl implements IInspectionService {
     @Override
     public ResponseEntity<List<InspectionDto>> getInspections(Long hiveId) {
         var user = UserUtils.getUserFromSecurityContext();
-        var entitiesList = inspectionRepository.findByOwnerIdAndHiveIdOrderById(user.getId(), hiveId);
+        var entitiesList = inspectionRepository.findByOwnerIdAndHiveIdOrderByInspectionDate(user.getId(), hiveId);
         return ResponseEntity.status(HttpStatus.OK).body(modelMapper.convertInspectionEntityList(entitiesList));
     }
 
@@ -46,6 +48,11 @@ public class InspectionServiceImpl implements IInspectionService {
     public ResponseEntity<Void> createInspection(InspectionDetailDto inspectionDto) {
         var user = UserUtils.getUserFromSecurityContext();
         var inspectionEntity = modelMapper.convertInspectionDto(inspectionDto);
+        var hive = hiveRepository.findById(inspectionDto.getHiveId());
+        if (hive.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        inspectionEntity.setHive(hive.get());
         inspectionEntity.setOwner(user);
         inspectionRepository.saveAndFlush(inspectionEntity);
         return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -58,7 +65,19 @@ public class InspectionServiceImpl implements IInspectionService {
      */
     @Override
     public ResponseEntity<Void> updateInspection(InspectionDetailDto inspectionDto) {
-        return null;
+        var user = UserUtils.getUserFromSecurityContext();
+        var newInspection = modelMapper.convertInspectionDto(inspectionDto);
+        var hive = hiveRepository.findById(inspectionDto.getHiveId());
+        var oldInspection = inspectionRepository.findByOwnerIdAndId(user.getId(), newInspection.getId());
+        if (hive.isEmpty() || oldInspection.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } else if (!user.getId().equals(hive.get().getOwner().getId()) ||
+                !user.getId().equals(oldInspection.get().getOwner().getId())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        newInspection.setOwner(user);
+        inspectionRepository.saveAndFlush(newInspection);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     /**

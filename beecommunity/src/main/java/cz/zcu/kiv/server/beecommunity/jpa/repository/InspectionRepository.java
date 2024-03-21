@@ -7,6 +7,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface InspectionRepository extends JpaRepository<InspectionEntity, Long> {
-    List<InspectionEntity> findByOwnerIdAndHiveIdOrderById(Long userId, Long hiveId);
+    List<InspectionEntity> findByOwnerIdAndHiveIdOrderByInspectionDate(Long userId, Long hiveId);
     Optional<InspectionEntity> findByOwnerIdAndId(Long userId, Long hiveId);
 }

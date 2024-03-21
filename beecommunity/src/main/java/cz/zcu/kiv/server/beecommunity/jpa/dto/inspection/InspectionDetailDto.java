@@ -69,4 +69,14 @@ public class InspectionDetailDto {
     private MultipartFile broodImage;
     private MultipartFile stressorsImage;
     private MultipartFile diseaseImage;
+
+    @Override
+    public String toString() {
+        return "InspectionDetailDto{" +
+                "id=" + id +
+                ", hiveId=" + hiveId +
+                ", type=" + type +
+                ", date='" + date + '\'' +
+                '}';
+    }
 }

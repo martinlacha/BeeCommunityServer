@@ -178,8 +178,8 @@ CREATE TABLE HIVE_TREATMENT(
     treatment TEXT,
     quantity INT,
     dose TEXT,
-    start_date DATE NOT NULL,
-    end_date DATE NOT NULL
+    start_date DATE,
+    end_date DATE
 );
 
 CREATE TABLE HIVE_FEEDING(
