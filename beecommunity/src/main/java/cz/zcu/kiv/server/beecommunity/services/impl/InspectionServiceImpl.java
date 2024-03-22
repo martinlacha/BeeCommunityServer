@@ -1,11 +1,13 @@
 package cz.zcu.kiv.server.beecommunity.services.impl;
 
+import cz.zcu.kiv.server.beecommunity.enums.FriendshipEnums;
 import cz.zcu.kiv.server.beecommunity.enums.InspectionEnums;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.inspection.InspectionDetailDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.inspection.InspectionDto;
 import cz.zcu.kiv.server.beecommunity.jpa.repository.HiveRepository;
 import cz.zcu.kiv.server.beecommunity.jpa.repository.InspectionRepository;
 import cz.zcu.kiv.server.beecommunity.services.IInspectionService;
+import cz.zcu.kiv.server.beecommunity.utils.FriendshipUtils;
 import cz.zcu.kiv.server.beecommunity.utils.ImageUtil;
 import cz.zcu.kiv.server.beecommunity.utils.ObjectMapper;
 import cz.zcu.kiv.server.beecommunity.utils.UserUtils;
@@ -24,9 +26,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class InspectionServiceImpl implements IInspectionService {
     private final InspectionRepository inspectionRepository;
+
     private final HiveRepository hiveRepository;
 
     private final ObjectMapper modelMapper;
+
+    private final FriendshipUtils friendshipUtils;
 
     /**
      * Find all inspections of hive
@@ -35,7 +40,15 @@ public class InspectionServiceImpl implements IInspectionService {
     @Override
     public ResponseEntity<List<InspectionDto>> getInspections(Long hiveId) {
         var user = UserUtils.getUserFromSecurityContext();
-        var entitiesList = inspectionRepository.findByOwnerIdAndHiveIdOrderByInspectionDate(user.getId(), hiveId);
+        var hive = hiveRepository.findById(hiveId);
+        if (hive.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } else if (!user.getId().equals(hive.get().getOwner().getId()) &&
+                !friendshipUtils.isFriendshipStatus(user.getId(), hive.get().getOwner().getId(),
+                        FriendshipEnums.EStatus.FRIEND)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        var entitiesList = inspectionRepository.findByHiveIdOrderById(hiveId);
         return ResponseEntity.status(HttpStatus.OK).body(modelMapper.convertInspectionEntityList(entitiesList));
     }
 
@@ -51,6 +64,8 @@ public class InspectionServiceImpl implements IInspectionService {
         var hive = hiveRepository.findById(inspectionDto.getHiveId());
         if (hive.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } else if (!user.getId().equals(hive.get().getOwner().getId())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         inspectionEntity.setHive(hive.get());
         inspectionEntity.setOwner(user);
@@ -68,7 +83,7 @@ public class InspectionServiceImpl implements IInspectionService {
         var user = UserUtils.getUserFromSecurityContext();
         var newInspection = modelMapper.convertInspectionDto(inspectionDto);
         var hive = hiveRepository.findById(inspectionDto.getHiveId());
-        var oldInspection = inspectionRepository.findByOwnerIdAndId(user.getId(), newInspection.getId());
+        var oldInspection = inspectionRepository.findById(newInspection.getId());
         if (hive.isEmpty() || oldInspection.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         } else if (!user.getId().equals(hive.get().getOwner().getId()) ||
@@ -88,9 +103,11 @@ public class InspectionServiceImpl implements IInspectionService {
     @Override
     public ResponseEntity<Void> deleteInspection(Long inspectionId) {
         var user = UserUtils.getUserFromSecurityContext();
-        var inspection = inspectionRepository.findByOwnerIdAndId(user.getId(), inspectionId);
+        var inspection = inspectionRepository.findById(inspectionId);
         if (inspection.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } else if (!user.getId().equals(inspection.get().getOwner().getId())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         inspectionRepository.delete(inspection.get());
         inspectionRepository.flush();
@@ -105,7 +122,14 @@ public class InspectionServiceImpl implements IInspectionService {
     @Override
     public ResponseEntity<InspectionDetailDto> getInspectionDetail(Long inspectionId) {
         var user = UserUtils.getUserFromSecurityContext();
-        var inspection = inspectionRepository.findByOwnerIdAndId(user.getId(), inspectionId);
+        var inspection = inspectionRepository.findById(inspectionId);
+        if (inspection.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } else if (!user.getId().equals(inspection.get().getOwner().getId()) &&
+                !friendshipUtils.isFriendshipStatus(user.getId(), inspection.get().getOwner().getId(),
+                        FriendshipEnums.EStatus.FRIEND)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
         return inspection
                 .map(inspectionEntity -> ResponseEntity.status(HttpStatus.OK)
                         .body(modelMapper.convertInspectionEntity(inspectionEntity)))

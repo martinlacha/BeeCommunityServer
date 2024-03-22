@@ -5,7 +5,6 @@ import cz.zcu.kiv.server.beecommunity.jpa.dto.inspection.InspectionDetailDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.inspection.InspectionDto;
 import cz.zcu.kiv.server.beecommunity.services.IInspectionService;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

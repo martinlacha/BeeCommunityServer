@@ -1,12 +1,11 @@
 package cz.zcu.kiv.server.beecommunity.services.impl;
 
+import cz.zcu.kiv.server.beecommunity.enums.FriendshipEnums;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.hive.HiveDto;
+import cz.zcu.kiv.server.beecommunity.jpa.repository.ApiaryRepository;
 import cz.zcu.kiv.server.beecommunity.jpa.repository.HiveRepository;
 import cz.zcu.kiv.server.beecommunity.services.IHiveService;
-import cz.zcu.kiv.server.beecommunity.utils.DateTimeUtils;
-import cz.zcu.kiv.server.beecommunity.utils.ImageUtil;
-import cz.zcu.kiv.server.beecommunity.utils.ObjectMapper;
-import cz.zcu.kiv.server.beecommunity.utils.UserUtils;
+import cz.zcu.kiv.server.beecommunity.utils.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -22,9 +21,13 @@ import java.util.List;
 @Transactional
 @RequiredArgsConstructor
 public class HiveServiceImpl implements IHiveService {
+    private final ApiaryRepository apiaryRepository;
+
     private final HiveRepository hiveRepository;
 
     private final ObjectMapper modelMapper;
+
+    private final FriendshipUtils friendshipUtils;
 
     /**
      * Find all hives a return them to user
@@ -33,7 +36,15 @@ public class HiveServiceImpl implements IHiveService {
     @Override
     public ResponseEntity<List<HiveDto>> getHives(Long apiaryId) {
         var user = UserUtils.getUserFromSecurityContext();
-        var entitiesList = hiveRepository.findByOwnerIdAndApiaryIdOrderById(user.getId(), apiaryId);
+        var apiary = apiaryRepository.findById(apiaryId);
+        if (apiary.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } else if (!apiary.get().getOwner().getId().equals(user.getId()) &&
+                !friendshipUtils.isFriendshipStatus(user.getId(), apiary.get().getOwner().getId(),
+                        FriendshipEnums.EStatus.FRIEND)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        var entitiesList = hiveRepository.findByApiaryIdOrderById(apiaryId);
         return ResponseEntity.status(HttpStatus.OK).body(modelMapper.convertHiveEntityList(entitiesList));
     }
 
@@ -45,6 +56,14 @@ public class HiveServiceImpl implements IHiveService {
     @Override
     public ResponseEntity<Void> createHive(HiveDto hiveDto) {
         var user = UserUtils.getUserFromSecurityContext();
+        var apiary = apiaryRepository.findById(hiveDto.getApiaryId());
+        if (apiary.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } else if (!apiary.get().getOwner().getId().equals(user.getId()) &&
+                !friendshipUtils.isFriendshipStatus(user.getId(), apiary.get().getOwner().getId(),
+                        FriendshipEnums.EStatus.FRIEND)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
         var hiveEntity = modelMapper.convertHiveDto(hiveDto);
         hiveEntity.setOwner(user);
         hiveEntity.getQueen().setOwner(user);
@@ -146,7 +165,8 @@ public class HiveServiceImpl implements IHiveService {
         var hive = hiveRepository.findById(hiveId);
         if (hive.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        } else if (!user.getId().equals(hive.get().getOwner().getId())) {
+        } else if (!user.getId().equals(hive.get().getOwner().getId()) &&
+                !friendshipUtils.isFriendshipStatus(user.getId(), hive.get().getOwner().getId(), FriendshipEnums.EStatus.FRIEND)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         return ResponseEntity.status(HttpStatus.OK).body(modelMapper.convertHiveEntity(hive.get()));
@@ -163,7 +183,8 @@ public class HiveServiceImpl implements IHiveService {
         var hive = hiveRepository.findById(hiveId);
         if (hive.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        } else if (!user.getId().equals(hive.get().getOwner().getId())) {
+        } else if (!user.getId().equals(hive.get().getOwner().getId())  &&
+                !friendshipUtils.isFriendshipStatus(user.getId(), hive.get().getOwner().getId(), FriendshipEnums.EStatus.FRIEND)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         } else if (hive.get().getImage() == null) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
@@ -182,7 +203,8 @@ public class HiveServiceImpl implements IHiveService {
         var hive = hiveRepository.findById(hiveId);
         if (hive.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        } else if (!user.getId().equals(hive.get().getOwner().getId())) {
+        } else if (!user.getId().equals(hive.get().getOwner().getId()) &&
+                !friendshipUtils.isFriendshipStatus(user.getId(), hive.get().getOwner().getId(), FriendshipEnums.EStatus.FRIEND)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         return ResponseEntity.status(HttpStatus.OK).body(hive.get().getStructure());

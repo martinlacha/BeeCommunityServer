@@ -1,8 +1,11 @@
 package cz.zcu.kiv.server.beecommunity.services.impl;
 
+import cz.zcu.kiv.server.beecommunity.enums.FriendshipEnums;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.apiary.ApiaryDto;
 import cz.zcu.kiv.server.beecommunity.jpa.repository.ApiaryRepository;
+import cz.zcu.kiv.server.beecommunity.jpa.repository.UserRepository;
 import cz.zcu.kiv.server.beecommunity.services.IApiaryService;
+import cz.zcu.kiv.server.beecommunity.utils.FriendshipUtils;
 import cz.zcu.kiv.server.beecommunity.utils.ImageUtil;
 import cz.zcu.kiv.server.beecommunity.utils.ObjectMapper;
 import cz.zcu.kiv.server.beecommunity.utils.UserUtils;
@@ -22,6 +25,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ApiaryServiceImpl implements IApiaryService {
     private final ApiaryRepository apiaryRepository;
+    private final UserRepository userRepository;
+    private final FriendshipUtils friendshipUtils;
 
     private final ObjectMapper modelMapper;
 
@@ -48,6 +53,24 @@ public class ApiaryServiceImpl implements IApiaryService {
         var user = UserUtils.getUserFromSecurityContext();
         var entitiesList = apiaryRepository.findByOwnerIdOrderById(user.getId());
         return ResponseEntity.status(HttpStatus.OK).body(modelMapper.convertApiaryEntityList(entitiesList));
+    }
+
+    /**
+     * Check friendship between users and if there are friends return his apiaries
+     * @param email user email
+     * @return list of friend apiaries
+     */
+    @Override
+    public ResponseEntity<List<ApiaryDto>> getFriendApiaries(String email) {
+        var user = UserUtils.getUserFromSecurityContext();
+        var secondUser = userRepository.findByEmail(email);
+        if (secondUser.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } else if (!friendshipUtils.isFriendshipStatus(user.getId(), secondUser.get().getId(), FriendshipEnums.EStatus.FRIEND)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        var friendApiaries = apiaryRepository.findByOwnerIdOrderById(secondUser.get().getId());
+        return ResponseEntity.status(HttpStatus.OK).body(modelMapper.convertApiaryEntityList(friendApiaries));
     }
 
     /**
@@ -141,7 +164,9 @@ public class ApiaryServiceImpl implements IApiaryService {
         var apiary = apiaryRepository.findById(apiaryId);
         if (apiary.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        } else if (!user.getId().equals(apiary.get().getOwner().getId())) {
+        } else if (!user.getId().equals(apiary.get().getOwner().getId()) &&
+                !friendshipUtils.isFriendshipStatus(user.getId(), apiary.get().getOwner().getId(),
+                        FriendshipEnums.EStatus.FRIEND)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         return ResponseEntity.status(HttpStatus.OK).body(modelMapper.convertApiaryEntity(apiary.get()));

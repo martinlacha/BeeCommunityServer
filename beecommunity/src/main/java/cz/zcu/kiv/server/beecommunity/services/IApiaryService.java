@@ -10,6 +10,8 @@ public interface IApiaryService {
 
     ResponseEntity<List<ApiaryDto>> getApiaries();
 
+    ResponseEntity<List<ApiaryDto>> getFriendApiaries(String email);
+
     ResponseEntity<byte[]> getApiaryImage(Long apiaryId);
 
     ResponseEntity<Void> deleteApiary(Long apiaryId);
