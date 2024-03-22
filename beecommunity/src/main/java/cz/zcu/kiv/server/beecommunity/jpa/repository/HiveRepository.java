@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface HiveRepository extends JpaRepository<HiveEntity, Long> {
-    List<HiveEntity> findByOwnerIdAndApiaryIdOrderById(Long userId, Long apiaryId);
+    List<HiveEntity> findByApiaryIdOrderById(Long apiaryId);
 }

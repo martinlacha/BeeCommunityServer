@@ -33,6 +33,15 @@ public class ApiaryController {
     }
 
     /**
+     * Return list of friend apiaries
+     * @return list of apiaries if users are friends
+     */
+    @GetMapping("/friend")
+    ResponseEntity<List<ApiaryDto>> getFriendApiaries(@RequestParam String email) {
+        return apiaryService.getFriendApiaries(email);
+    }
+
+    /**
      * Create new apiary for user
      * @param apiaryDto dto with information and image
      * @return status code of operation result
@@ -77,7 +86,7 @@ public class ApiaryController {
      * @return list of apiaries
      */
     @GetMapping("/detail")
-    ResponseEntity<ApiaryDto> getApiaries(@RequestParam Long apiaryId) {
+    ResponseEntity<ApiaryDto> getApiaryDetail(@RequestParam Long apiaryId) {
         return apiaryService.getApiaryDetail(apiaryId);
     }
 }
