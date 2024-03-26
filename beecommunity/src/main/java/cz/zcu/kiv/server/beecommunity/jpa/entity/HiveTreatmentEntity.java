@@ -25,6 +25,7 @@ public class HiveTreatmentEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "disease")
     private InspectionEnums.EDisease disease;
 

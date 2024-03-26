@@ -25,7 +25,6 @@ public class FeedingDto {
         this.json = json;
     }
 
-
     private InspectionEnums.EFoodType food;
 
     private InspectionEnums.EFoodRatio ratio;
@@ -37,7 +36,11 @@ public class FeedingDto {
     // Json string to deserialize dto
     private String json;
 
-    // Deserialize String json value to dto object
+    /**
+     * Deserialize String json value to dto object
+     * @param objectMapper object mapper
+     * @return mapped dto from string json
+     */
     public FeedingDto deserializeJson(ObjectMapper objectMapper) {
         try {
             return objectMapper.readValue(json, this.getClass());

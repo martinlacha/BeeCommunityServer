@@ -23,9 +23,11 @@ public class HiveFeedingEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "food")
     private InspectionEnums.EFoodType food;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "ratio")
     private InspectionEnums.EFoodRatio ratio;
 

@@ -10,6 +10,7 @@ import cz.zcu.kiv.server.beecommunity.jpa.dto.hive.HiveDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.inspection.*;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.news.NewsDetailDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.news.NewsDto;
+import cz.zcu.kiv.server.beecommunity.jpa.dto.statistics.GraphOverviewItem;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.user.GetUpdateUserInfoDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.user.NewUserDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.user.NewUserInfoDto;
@@ -18,7 +19,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
-import org.thymeleaf.util.DateUtils;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -569,5 +569,16 @@ public class ObjectMapper {
                 .frameCount(harvest.getFrameCount())
                 .superCount(harvest.getSuperCount())
                 .build();
+    }
+
+    /**
+     * Convert list of timeline items into list dto objects for timeline statistics
+     */
+    public List<GraphOverviewItem> convertObjectTimelineCounts(List<Object[]> users) {
+        List<GraphOverviewItem> timeline = new ArrayList<>();
+        users.forEach(user ->
+                timeline.add(
+                        GraphOverviewItem.builder().date(((LocalDate) user[0]).toString()).count((Long) user[1]).build()));
+        return timeline;
     }
 }

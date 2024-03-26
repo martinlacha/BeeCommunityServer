@@ -76,6 +76,7 @@ public class SecurityConfiguration implements WebMvcConfigurer {
                 .requestMatchers("/api/v1/hive/*").hasAuthority(USER.name())
                 .requestMatchers("/api/v1/queen/*").hasAuthority(USER.name())
                 .requestMatchers("/api/v1/inspection/*").hasAuthority(USER.name())
+                .requestMatchers("/api/v1/stats/*").hasAuthority(USER.name())
                 // any other url paths must be authenticated
                 .anyRequest()
                 .authenticated()
