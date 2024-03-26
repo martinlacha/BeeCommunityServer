@@ -33,6 +33,7 @@ public class InspectionEntity {
     @JoinColumn(name = "user_id")
     private UserEntity owner;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "type")
     private InspectionEnums.EType type;
 

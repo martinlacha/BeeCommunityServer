@@ -6,7 +6,6 @@ public class InspectionEnums {
      * Type of inspection
      */
     public enum EType {
-        UNSPECIFIED,
         INSPECTION,
         HARVEST,
         FEEDING,
@@ -90,7 +89,7 @@ public class InspectionEnums {
         QUEEN,
         BROOD,
         STRESSORS,
-        DISEASE,
+        DISEASE
     }
 
     /**
@@ -128,9 +127,9 @@ public class InspectionEnums {
         ONE_ZERO,
         ONE_ONE,
         TWO_ONE,
-        TREE_ONE,
+        THREE_ONE,
         ONE_TWO,
-        ONE_TREE
+        ONE_THREE
     }
 
     /**
