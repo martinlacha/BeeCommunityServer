@@ -77,26 +77,26 @@ CREATE TABLE APIARY (
     image bytea
 );
 
+CREATE TABLE QUEEN (
+    id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    user_id INT NOT NULL REFERENCES USER_INFO(id),
+    breed TEXT,
+    color TEXT NOT NULL,
+    queen_hatch DATE DEFAULT now(),
+    notes TEXT,
+    image bytea
+);
+
 CREATE TABLE HIVE (
     id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     user_id INT NOT NULL REFERENCES AUTH_USER(id),
     apiary_id INT NOT NULL REFERENCES APIARY(id),
+    queen_id INT NOT NULL REFERENCES QUEEN(id),
     name TEXT NOT NULL,
     color TEXT NOT NULL,
     bee_source TEXT NOT NULL,
     date_establishment DATE NOT NULL,
     structure TEXT,
-    notes TEXT,
-    image bytea
-);
-
-CREATE TABLE QUEEN (
-    id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    hive_id INT NOT NULL REFERENCES HIVE(id),
-    user_id INT NOT NULL REFERENCES HIVE(id),
-    breed TEXT,
-    color TEXT NOT NULL,
-    queen_hatch DATE DEFAULT now(),
     notes TEXT,
     image bytea
 );
@@ -176,7 +176,7 @@ CREATE TABLE HIVE_TREATMENT(
     id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     disease TEXT,
     treatment TEXT,
-    quantity INT,
+    quantity DOUBLE PRECISION,
     dose TEXT,
     start_date DATE,
     end_date DATE
@@ -186,14 +186,14 @@ CREATE TABLE HIVE_FEEDING(
     id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     food TEXT,
     ratio TEXT,
-    quantity TEXT,
+    quantity DOUBLE PRECISION,
     unit TEXT
 );
 
 CREATE TABLE HIVE_HARVEST(
     id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     product TEXT NOT NULL,
-    quantity INT NOT NULL DEFAULT 0,
+    quantity DOUBLE PRECISION NOT NULL DEFAULT 0,
     unit TEXT NOT NULL,
     super_count int DEFAULT 0,
     frame_count INT DEFAULT 0

@@ -12,11 +12,13 @@ public interface ApiaryRepository extends JpaRepository<ApiaryEntity, Long> {
     // Find apiary by owner id and order them by id
     List<ApiaryEntity> findByOwnerIdOrderById(Long userId);
 
+    int countByOwnerId(Long userId);
+
     // Count apiaries for every user
     @Query("SELECT COUNT(r), r.owner.email FROM ApiaryEntity r WHERE r.owner.userInfo IS NOT NULL GROUP BY r.owner ORDER BY COUNT(r) DESC")
     List<Object[]> countApiariesGroupByOwner();
 
-
+    // Count by environment type
     @Query("SELECT COUNT(r), r.environment FROM ApiaryEntity r GROUP BY r.environment ORDER BY COUNT(r) DESC")
     List<Object[]> countApiariesGroupByEnvironment();
 
