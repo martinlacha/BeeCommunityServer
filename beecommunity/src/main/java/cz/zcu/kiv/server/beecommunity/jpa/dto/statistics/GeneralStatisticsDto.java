@@ -1,12 +1,12 @@
 package cz.zcu.kiv.server.beecommunity.jpa.dto.statistics;
 
+import cz.zcu.kiv.server.beecommunity.enums.InspectionEnums;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Dto for general statistics
@@ -46,5 +46,26 @@ public class GeneralStatisticsDto {
     private Object topNewsUser;
     private List<GraphOverviewItem> newsCountOverviewMap;
 
-    // Inspections
+    // Honey
+    private double totalHoneyCurrentYear;
+    private double totalHoneyLastYear;
+    // Wax
+    private double totalWaxCurrentYear;
+    private double totalWaxLastYear;
+    // Propolis
+    private double totalPropolisCurrentYear;
+    private double totalPropolisLastYear;
+    // Pollen
+    private double totalPollenCurrentYear;
+    private double totalPollenLastYear;
+    // Jelly
+    private double totalJellyCurrentYear;
+    private double totalJellyLastYear;
+
+    // Disease
+    private InspectionEnums.EDisease mostCommonDisease;
+
+    // Feeding
+    private InspectionEnums.EFoodType mostCommonFood;
+
 }
