@@ -25,6 +25,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     // Count user is non/activated account
     int countByNewAccount(boolean isNewAccount);
 
-    @Query("SELECT r.userInfo.created, COUNT(r) FROM UserEntity r WHERE r.userInfo IS NOT NULL GROUP BY r.userInfo.created ORDER BY r.userInfo.created")
+    @Query("SELECT r.userInfo.created, COUNT(r.id) FROM UserEntity r WHERE r.userInfo IS NOT NULL GROUP BY r.userInfo.created ORDER BY r.userInfo.created")
     List<Object[]> findCountUsersByCreatedDate();
 }

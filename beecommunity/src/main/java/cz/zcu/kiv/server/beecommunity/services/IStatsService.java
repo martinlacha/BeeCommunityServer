@@ -12,5 +12,5 @@ public interface IStatsService {
 
     ResponseEntity<UserDetailStatisticsDto> getPersonalStatistics();
 
-    ResponseEntity<UserDetailStatisticsDto> getFriendDetailStatistics(Long userId);
+    ResponseEntity<UserDetailStatisticsDto> getFriendDetailStatistics(String email);
 }

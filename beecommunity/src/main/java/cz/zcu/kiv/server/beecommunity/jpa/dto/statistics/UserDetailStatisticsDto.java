@@ -21,8 +21,8 @@ public class UserDetailStatisticsDto {
     private int countOfApiaries;
 
     // Hive
-    private int countOfHivesLastYear;
-    private int countOfHivesCurrentYear;
+    private Long countOfHivesLastYear;
+    private Long countOfHivesCurrentYear;
     private int countSwarmHives;
     private int countNucHives;
     private int countPackageHives;

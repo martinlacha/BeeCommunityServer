@@ -67,5 +67,4 @@ public class GeneralStatisticsDto {
 
     // Feeding
     private InspectionEnums.EFoodType mostCommonFood;
-
 }

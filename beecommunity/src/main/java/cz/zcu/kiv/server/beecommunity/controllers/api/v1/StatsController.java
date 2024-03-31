@@ -57,7 +57,7 @@ public class StatsController {
      * @return detailed statistics of friend
      */
     @GetMapping("/friend")
-    ResponseEntity<UserDetailStatisticsDto> getFriendDetailStatistics(@RequestParam Long userId) {
-        return apiaryService.getFriendDetailStatistics(userId);
+    ResponseEntity<UserDetailStatisticsDto> getFriendDetailStatistics(@RequestParam String email) {
+        return apiaryService.getFriendDetailStatistics(email);
     }
 }

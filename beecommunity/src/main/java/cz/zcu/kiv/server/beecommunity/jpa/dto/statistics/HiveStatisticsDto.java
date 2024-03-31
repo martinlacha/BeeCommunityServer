@@ -21,5 +21,6 @@ public class HiveStatisticsDto {
     private Long id;
     private String name;
     private HiveEnums.EBeeSource beeSource;
+    private HiveEnums.EColor color;
     private List<InspectionDetailDto> inspections;
 }

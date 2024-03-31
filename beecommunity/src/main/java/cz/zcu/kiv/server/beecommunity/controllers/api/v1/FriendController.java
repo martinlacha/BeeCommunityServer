@@ -97,7 +97,7 @@ public class FriendController {
      * Return all users friends
      * @return list of friends
      */
-    @GetMapping("/get")
+    @GetMapping
     ResponseEntity<List<FoundUserDto>> getMyFriends() {
         return friendService.getMyFriends();
     }

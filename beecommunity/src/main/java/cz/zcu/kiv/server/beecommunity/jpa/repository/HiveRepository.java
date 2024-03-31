@@ -12,6 +12,8 @@ import java.util.List;
 public interface HiveRepository extends JpaRepository<HiveEntity, Long> {
     List<HiveEntity> findByApiaryIdOrderById(Long apiaryId);
 
+    List<HiveEntity> findByOwnerId(Long userId);
+
     @Query("SELECT COUNT(h.owner.id) FROM HiveEntity h WHERE YEAR(h.establishment) = :year AND h.owner.id = :userId GROUP BY h.owner.id")
     Object countByOwnerIdAndEstablishmentYear(Long userId, Integer year);
 

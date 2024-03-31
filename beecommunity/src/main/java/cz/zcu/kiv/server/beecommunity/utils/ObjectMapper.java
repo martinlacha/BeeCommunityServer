@@ -23,6 +23,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -394,6 +395,7 @@ public class ObjectMapper {
         var hive = modelMapper.map(hiveDto, HiveEntity.class);
         var queen = modelMapper.map(hiveDto, QueenEntity.class);
         queen.setQueenHatch(DateTimeUtils.getDateFromString(hiveDto.getHatch()));
+        queen.setColor(hiveDto.getQueenColor());
         hive.setEstablishment(DateTimeUtils.getDateFromString(hiveDto.getEstablishment()));
         try {
             if (hiveDto.getImage() != null) {
