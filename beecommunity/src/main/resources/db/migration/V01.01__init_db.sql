@@ -79,9 +79,10 @@ CREATE TABLE APIARY (
 
 CREATE TABLE QUEEN (
     id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    user_id INT NOT NULL REFERENCES USER_INFO(id),
+    user_id INT NOT NULL REFERENCES AUTH_USER(id),
+    name TEXT,
     breed TEXT,
-    color TEXT NOT NULL,
+    color TEXT,
     queen_hatch DATE DEFAULT now(),
     notes TEXT,
     image bytea

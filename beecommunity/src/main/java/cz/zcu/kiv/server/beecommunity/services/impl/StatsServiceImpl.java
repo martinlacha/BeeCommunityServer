@@ -80,14 +80,14 @@ public class StatsServiceImpl implements IStatsService {
         stats.setNewsCountOverviewMap(modelMapper.convertObjectTimelineCounts(newsRepository.findCountNewsByCreatedDate()));
         var dailyCountsNews = newsRepository.countsDailyNews();
         if (!dailyCountsNews.isEmpty()) {
-            stats.setAverageDailyNews((double) dailyCountsNews.stream().mapToInt(Integer::intValue).sum() /dailyCountsNews.size());
+            stats.setAverageDailyNews((double) dailyCountsNews.stream().mapToInt(Integer::intValue).sum()/dailyCountsNews.size());
         }
 
         // Community
         stats.setCountPosts((int) communityRepository.count());
         stats.setCountPublicPosts(communityRepository.countByAccess(CommunityEnums.EAccess.PUBLIC));
         stats.setTopPostUser(communityRepository.findTopUserByPostCount());
-        stats.setNewsCountOverviewMap(modelMapper.convertObjectTimelineCounts(communityRepository.findCountPostsByCreatedDate()));
+        stats.setPostsCountOverviewMap(modelMapper.convertObjectTimelineCounts(communityRepository.findCountPostsByCreatedDate()));
         var dailyCountsPosts = communityRepository.countsDailyPosts();
         if (!dailyCountsPosts.isEmpty()) {
             stats.setAverageDailyPosts((double) dailyCountsPosts.stream().mapToInt(Integer::intValue).sum()/dailyCountsPosts.size());
@@ -154,12 +154,15 @@ public class StatsServiceImpl implements IStatsService {
      * @return detailed statistics of friend
      */
     @Override
-    public ResponseEntity<UserDetailStatisticsDto> getFriendDetailStatistics(Long friendId) {
+    public ResponseEntity<UserDetailStatisticsDto> getFriendDetailStatistics(String email) {
         var user = UserUtils.getUserFromSecurityContext();
-        if (!friendshipUtils.isFriendshipStatus(user.getId(), friendId, FriendshipEnums.EStatus.FRIEND)) {
+        var friend = userRepository.findByEmail(email);
+        if (friend.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } else if (!friendshipUtils.isFriendshipStatus(user.getId(), friend.get().getId(), FriendshipEnums.EStatus.FRIEND)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-        return ResponseEntity.status(HttpStatus.OK).body(getUserDetailStatistics(friendId));
+        return ResponseEntity.status(HttpStatus.OK).body(getUserDetailStatistics(friend.get().getId()));
     }
 
     /**
@@ -168,11 +171,13 @@ public class StatsServiceImpl implements IStatsService {
      * @return detailed statistics
      */
     private UserDetailStatisticsDto getUserDetailStatistics(Long userId) {
+        var currentYear = LocalDate.now().getYear();
+        var lastYear = LocalDate.now().getYear() - 1;
         return UserDetailStatisticsDto
                 .builder()
                 .countOfApiaries(apiaryRepository.countByOwnerId(userId))
-                .countOfHivesLastYear(0)
-                .countOfHivesCurrentYear(0)
+                .countOfHivesLastYear((long) hiveRepository.findByOwnerId(userId).stream().filter(hiveEntity -> hiveEntity.getEstablishment().getYear() <= lastYear).toList().size())
+                .countOfHivesCurrentYear((long) hiveRepository.findByOwnerId(userId).stream().filter(hiveEntity -> hiveEntity.getEstablishment().getYear() <= currentYear).toList().size())
                 .countSwarmHives(hiveRepository.countByOwnerIdAndSource(userId, EBeeSource.SWARM))
                 .countNucHives(hiveRepository.countByOwnerIdAndSource(userId, EBeeSource.NUC))
                 .countPackageHives(hiveRepository.countByOwnerIdAndSource(userId, EBeeSource.PACKAGE))
@@ -290,10 +295,10 @@ public class StatsServiceImpl implements IStatsService {
      * @return return detailed statistics for single hive
      */
     private List<HiveStatisticsDto> getHiveStatistics(Long userId, Long apiaryId) {
-        var hives = hiveRepository.findByOwnerIdAndApiaryIdOrderByEstablishmentDesc(userId, apiaryId);
+        var hives = hiveRepository.findByOwnerIdAndApiaryIdOrderByEstablishmentAsc(userId, apiaryId);
         return hives
                 .stream()
-                .map(hive -> new HiveStatisticsDto(hive.getId(), hive.getName(), hive.getSource(), getHiveInspections(hive.getId())))
+                .map(hive -> new HiveStatisticsDto(hive.getId(), hive.getName(), hive.getSource(), hive.getColor(), getHiveInspections(hive.getId())))
                 .toList();
     }
 
@@ -315,7 +320,7 @@ public class StatsServiceImpl implements IStatsService {
     private HiveProductionInfo mostHoneyProductiveHive(List<HiveEntity> hives, int year) {
         double honey = 0;
         double total = 0;
-        String hiveName = "";
+        String hiveName = "-";
         for (var hive : hives) {
             var hiveHoney =  calculateSingleHiveHoneyProductionInYear(hive.getId(), year);
             total += hiveHoney;
@@ -337,7 +342,7 @@ public class StatsServiceImpl implements IStatsService {
     private HiveProductionInfo mostProductiveHive(List<HiveEntity> hives, int year, EHarvestProduct product) {
         double mostHiveWeight = 0;
         double total = 0;
-        String hiveName = "";
+        String hiveName = "-";
         for (var hive : hives) {
             var hiveProduct =  calculateSingleHiveProductWeightInYear(hive.getId(), year, product);
             total += hiveProduct;
@@ -427,6 +432,9 @@ public class StatsServiceImpl implements IStatsService {
     }
 }
 
+/**
+ * Class for statistics summary of single hive
+ */
 @Data
 @AllArgsConstructor
 class HiveProductionInfo {
