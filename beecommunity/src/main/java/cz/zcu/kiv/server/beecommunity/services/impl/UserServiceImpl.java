@@ -283,4 +283,23 @@ public class UserServiceImpl implements UserDetailsService, IUserService {
         userRepository.saveAndFlush(adminUser.get());
         return ResponseEntity.status(HttpStatus.OK).build();
     }
+
+    /**
+     * Change user email
+     * @param userId user id which will be changed email
+     * @param newEmail new email of user
+     * @return status code of operation result
+     */
+    @Override
+    public ResponseEntity<Void> changeUserEmail(Long userId, String newEmail) {
+        UserEntity user = UserUtils.getUserFromSecurityContext();
+        var account = userRepository.findById(userId);
+        if (!user.hasRole(UserEnums.ERoles.ADMIN) || userRepository.existsByEmail(newEmail)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        } else if (account.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        account.get().setEmail(newEmail);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
 }

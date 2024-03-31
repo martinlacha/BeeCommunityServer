@@ -23,4 +23,6 @@ public interface IUserService {
     ResponseEntity<Void> grantAdminRole(Long userId);
 
     ResponseEntity<Void> revokeAdminRole(Long userId);
+
+    ResponseEntity<Void> changeUserEmail(Long userId, String newEmail);
 }
