@@ -108,4 +108,15 @@ public class UserController {
     ResponseEntity<Void> revokeAdminRole(@RequestParam Long userId) {
         return userService.revokeAdminRole(userId);
     }
+
+    /**
+     * Change user email
+     * @param userId user id which will be changed email
+     * @param newEmail new email of user
+     * @return status code of operation result
+     */
+    @PostMapping("/email")
+    ResponseEntity<Void> changeUserEmail(@RequestParam Long userId, @RequestParam String newEmail) {
+        return userService.changeUserEmail(userId, newEmail);
+    }
 }
