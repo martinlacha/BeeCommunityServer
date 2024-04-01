@@ -35,12 +35,12 @@ public class UserController {
 
     /**
      * Endpoint to reset password and mail will be sent
-     * @param resetPasswordDto dto with email of account to reset password
+     * @param email email of account to reset password
      * @return ok (200), when user not found (404), otherwise bad request (400)
      */
     @PostMapping("/reset-password")
-    ResponseEntity<Void> resetPassword(@RequestBody @Valid ResetPasswordDto resetPasswordDto) {
-        return userService.resetUserPassword(resetPasswordDto);
+    ResponseEntity<Void> resetPassword(@RequestParam String email) {
+        return userService.resetUserPassword(email);
     }
 
     /**
