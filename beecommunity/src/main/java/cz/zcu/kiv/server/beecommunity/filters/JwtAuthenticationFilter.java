@@ -23,6 +23,10 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * Filter for incoming requests from users
+ */
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -32,6 +36,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final UserDetailsService userDetailsService;
 
+    /**
+     * Check if request contain JWT token and valid it
+     * @param request request from user
+     * @param response response return to user
+     * @param filterChain filter chain
+     * @throws ServletException exception
+     * @throws IOException exception
+     */
     @Override
     protected void doFilterInternal(
             @NonNull HttpServletRequest request,
@@ -50,6 +62,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 return;
             }
 
+            // Get JWT token from header
             jwt = header.substring(7);
             // Get jwt token and validate
             final String jwtCopy = header.split(" ")[1].trim();
@@ -62,8 +75,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             // Extract email
             userEmail = jwtService.extractUsernameFromToken(jwt);
+            // Check user authentication record
             if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(userEmail);
+                // Check is account is enabled and non-locked
                 if (!userDetails.isAccountNonLocked() || !userDetails.isEnabled()) {
                     log.warn("Account {} is locked: {}, enabled: {}",
                             userDetails.getUsername(), userDetails.isAccountNonLocked(), userDetails.isEnabled());
@@ -71,6 +86,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     return;
                 }
 
+                // Check validity of token
                 if (jwtService.isTokenValid(jwt, userDetails)) {
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                             userDetails,

@@ -8,7 +8,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 
 /**
  * Dto for bee stressors
@@ -48,7 +47,11 @@ public class StressorsDto {
     // Json string to deserialize dto
     private String json;
 
-    // Deserialize String json value to dto object
+    /**
+     * Deserialize String json value to dto object
+     * @param objectMapper object mapper
+     * @return mapped dto from string json
+     */
     public StressorsDto deserializeJson(ObjectMapper objectMapper) {
         try {
             return objectMapper.readValue(json, this.getClass());

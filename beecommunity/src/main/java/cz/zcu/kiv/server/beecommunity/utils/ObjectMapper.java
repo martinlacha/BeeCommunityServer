@@ -33,8 +33,6 @@ public class ObjectMapper {
 
     private final ModelMapper modelMapper;
 
-    private final com.fasterxml.jackson.databind.ObjectMapper objectMapper;
-
     /**
      * Convert user dto into entity
      * @param userDto dto

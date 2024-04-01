@@ -16,7 +16,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
- * Controler for event endpoints
+ * Service implementation for event endpoints
  */
 
 @Slf4j

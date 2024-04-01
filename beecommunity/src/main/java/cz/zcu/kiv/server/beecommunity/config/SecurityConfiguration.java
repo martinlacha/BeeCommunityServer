@@ -26,6 +26,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import static cz.zcu.kiv.server.beecommunity.enums.UserEnums.ERoles.ADMIN;
 import static cz.zcu.kiv.server.beecommunity.enums.UserEnums.ERoles.USER;
 
+/**
+ * Security configuration
+ */
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -61,6 +65,7 @@ public class SecurityConfiguration implements WebMvcConfigurer {
                         "/api/v1/user/reset-password"
                 )
                 .permitAll()
+                // Paths which has to be authenticated and which roles user must have
                 .requestMatchers("/api/v1/user/info").hasAnyAuthority(USER.name(), ADMIN.name())
                 .requestMatchers("/api/v1/friends/*").hasAnyAuthority(USER.name())
                 .requestMatchers("/api/v1/community-post/*").hasAnyAuthority(USER.name())
@@ -77,10 +82,11 @@ public class SecurityConfiguration implements WebMvcConfigurer {
                 .requestMatchers("/api/v1/queen/*").hasAuthority(USER.name())
                 .requestMatchers("/api/v1/inspection/*").hasAuthority(USER.name())
                 .requestMatchers("/api/v1/stats/*").hasAuthority(USER.name())
-                // any other url paths must be authenticated
+                // Any other url paths must be authenticated
                 .anyRequest()
                 .authenticated()
             )
+            // Login form
             .formLogin(form -> form
                 .usernameParameter("username")
                 .passwordParameter("password")
@@ -90,11 +96,14 @@ public class SecurityConfiguration implements WebMvcConfigurer {
                 .permitAll()
             )
             .httpBasic(Customizer.withDefaults())
+            // Stateless session policy
             .sessionManagement(
                     httpSecuritySessionManagementConfigurer ->
                             httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            // Filter incoming request to valid and check JWT token
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
             .csrf(AbstractHttpConfigurer::disable)
+            // Set up exception handler
             .exceptionHandling(configurer -> configurer.accessDeniedHandler(apiAccessDeniedHandler))
             .logout(LogoutConfigurer::permitAll);
         return http.build();

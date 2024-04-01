@@ -1,7 +1,6 @@
 package cz.zcu.kiv.server.beecommunity.jpa.repository;
 
 import cz.zcu.kiv.server.beecommunity.jpa.entity.NewsEntity;
-import org.modelmapper.internal.Pair;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

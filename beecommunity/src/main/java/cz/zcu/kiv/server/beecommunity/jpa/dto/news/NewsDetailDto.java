@@ -9,6 +9,9 @@ import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.web.multipart.MultipartFile;
 
+/**
+ * Dto for news detail with images
+ */
 @Data
 @Builder
 @AllArgsConstructor

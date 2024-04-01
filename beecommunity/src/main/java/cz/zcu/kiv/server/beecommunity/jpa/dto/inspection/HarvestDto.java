@@ -9,7 +9,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 
 /**
  * Dto for harvest
@@ -37,7 +36,11 @@ public class HarvestDto {
     // Json string to deserialize
     private String json;
 
-    // Deserialize String json value to dto object
+    /**
+     * Deserialize String json value to dto object
+     * @param objectMapper object mapper
+     * @return mapped harvest dto object
+     */
     public HarvestDto deserializeJson(ObjectMapper objectMapper) {
         try {
             return objectMapper.readValue(json, this.getClass());

@@ -13,6 +13,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 @RestControllerAdvice
 public class RequestBodyMissingHandler {
+    /**
+     * Exception handler when http message is invalid
+     * E.g. Validation in dto objects
+     * @param exception exception with details about error
+     * @return response entity with string message with error message
+     */
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<String> handleInvalidHttpMessage(HttpMessageNotReadableException exception) {
         log.error("Request fail with error: {}", exception.getMessage());
