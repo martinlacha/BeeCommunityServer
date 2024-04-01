@@ -8,7 +8,7 @@ import java.util.List;
 public interface IUserService {
     ResponseEntity<Void> createNewUser(NewUserDto user);
 
-    ResponseEntity<Void> resetUserPassword(ResetPasswordDto resetPasswordDto);
+    ResponseEntity<Void> resetUserPassword(String email);
 
     ResponseEntity<Void> createNewUserInfo(NewUserInfoDto userIntoDto);
 

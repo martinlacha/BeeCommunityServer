@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -154,14 +155,14 @@ public class UserServiceImpl implements UserDetailsService, IUserService {
 
     /**
      * Send email with confirm code to change password
-     * @param resetPasswordDto dto with email where will be sent confirm code
+     * @param email dto with email where will be sent confirm code
      * @return status code. OK (200) email was send, account not found (404)
      */
     @Override
-    public ResponseEntity<Void> resetUserPassword(ResetPasswordDto resetPasswordDto) {
-        Optional<UserEntity> optionalUser = userRepository.findByEmail(resetPasswordDto.getEmail());
+    public ResponseEntity<Void> resetUserPassword(String email) {
+        Optional<UserEntity> optionalUser = userRepository.findByEmail(email);
         if (optionalUser.isEmpty()) {
-            log.warn("Reset password failed for {}", resetPasswordDto.getEmail());
+            log.warn("Reset password failed for {}", email);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
@@ -169,12 +170,17 @@ public class UserServiceImpl implements UserDetailsService, IUserService {
         RESET_PASSWORD_CODES_MAP.put(optionalUser.get().getEmail(), code);
 
         SimpleMailMessage mailMessage = new SimpleMailMessage();
-        mailMessage.setFrom("noreplay@seznam.cz");
-        mailMessage.setTo(resetPasswordDto.getEmail());
+        mailMessage.setTo(email);
         mailMessage.setSubject("BeeCommunity: Reset password code");
-        mailMessage.setText("Code: " + code);
-        emailSender.send(mailMessage);
-        return ResponseEntity.status(HttpStatus.OK).build();
+        mailMessage.setText("Confirm code: " + code);
+        try {
+            emailSender.send(mailMessage);
+            log.info("Reset password email sent to {}", email);
+            return ResponseEntity.status(HttpStatus.OK).build();
+        } catch (MailException e) {
+            log.warn("Failed to send reset password email to {}", email, e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
 
     /**
@@ -188,7 +194,7 @@ public class UserServiceImpl implements UserDetailsService, IUserService {
         Optional<UserEntity> optionalUser = userRepository.findByEmail(updatePasswordDto.getEmail());
         if (optionalUser.isEmpty()) {
             log.warn("Account {} not found", updatePasswordDto.getEmail());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
         String code = RESET_PASSWORD_CODES_MAP.get(updatePasswordDto.getEmail());
         if (!updatePasswordDto.getCode().equals(code)) {
@@ -197,6 +203,7 @@ public class UserServiceImpl implements UserDetailsService, IUserService {
         }
         optionalUser.get().setPassword(bCryptPasswordEncoder.encode(updatePasswordDto.getNewPassword()));
         optionalUser.get().setLogin_attempts(0);
+        RESET_PASSWORD_CODES_MAP.remove(updatePasswordDto.getEmail());
         userRepository.save(optionalUser.get());
         return ResponseEntity.status(HttpStatus.OK).build();
     }

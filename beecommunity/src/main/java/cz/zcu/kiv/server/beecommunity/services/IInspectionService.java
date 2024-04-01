@@ -1,7 +1,6 @@
 package cz.zcu.kiv.server.beecommunity.services;
 
 import cz.zcu.kiv.server.beecommunity.enums.InspectionEnums;
-import cz.zcu.kiv.server.beecommunity.jpa.dto.hive.HiveDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.inspection.InspectionDetailDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.inspection.InspectionDto;
 import org.springframework.http.ResponseEntity;
