@@ -2,13 +2,11 @@ package cz.zcu.kiv.server.beecommunity.jpa.repository;
 
 import cz.zcu.kiv.server.beecommunity.enums.CommunityEnums;
 import cz.zcu.kiv.server.beecommunity.jpa.entity.CommunityPostEntity;
-import org.modelmapper.internal.Pair;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Map;
 
 @Repository
 public interface CommunityPostRepository extends JpaRepository<CommunityPostEntity, Long> {

@@ -1,10 +1,7 @@
 package cz.zcu.kiv.server.beecommunity.jpa.dto.user;
 
 import cz.zcu.kiv.server.beecommunity.enums.UserEnums;
-import jakarta.validation.constraints.Past;
 import lombok.Data;
-
-import java.time.LocalDate;
 
 /**
  * Dto with address and personal user information

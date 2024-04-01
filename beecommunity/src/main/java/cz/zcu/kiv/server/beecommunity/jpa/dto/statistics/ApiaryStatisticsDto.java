@@ -1,7 +1,6 @@
 package cz.zcu.kiv.server.beecommunity.jpa.dto.statistics;
 
 import cz.zcu.kiv.server.beecommunity.enums.ApiaryEnums;
-import cz.zcu.kiv.server.beecommunity.enums.InspectionEnums;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

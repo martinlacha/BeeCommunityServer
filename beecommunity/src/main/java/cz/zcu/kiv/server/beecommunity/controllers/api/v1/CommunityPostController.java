@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Controller for community post endpoints
+ */
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/community-post")

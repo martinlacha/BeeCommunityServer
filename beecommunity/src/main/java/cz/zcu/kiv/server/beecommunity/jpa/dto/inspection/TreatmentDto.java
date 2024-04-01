@@ -39,7 +39,11 @@ public class TreatmentDto {
     // Json string to deserialize dto
     private String json;
 
-    // Deserialize String json value to dto object
+    /**
+     * Deserialize String json value to dto object
+     * @param objectMapper object mapper
+     * @return mapped dto from string json
+     */
     public TreatmentDto deserializeJson(ObjectMapper objectMapper) {
         try {
             return objectMapper.readValue(json, this.getClass());

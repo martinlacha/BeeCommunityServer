@@ -14,7 +14,6 @@ import java.util.List;
 /**
  * Controller for apiaries endpoints
  */
-
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/apiary")

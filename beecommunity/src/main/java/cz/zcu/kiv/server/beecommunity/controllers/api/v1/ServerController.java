@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * Controller for server endpoints
  */
-
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/server")

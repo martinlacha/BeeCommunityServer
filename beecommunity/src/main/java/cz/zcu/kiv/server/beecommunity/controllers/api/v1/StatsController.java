@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * Controller for statistics endpoints
  */
-
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/stats")

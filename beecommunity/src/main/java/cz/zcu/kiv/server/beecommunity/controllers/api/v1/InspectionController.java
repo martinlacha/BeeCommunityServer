@@ -15,7 +15,6 @@ import java.util.List;
 /**
  * Controller for inspection endpoints
  */
-
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/inspection")

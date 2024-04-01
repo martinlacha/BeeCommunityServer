@@ -13,7 +13,6 @@ import java.util.List;
 /**
  * Controller for friends endpoints
  */
-
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/friends")

@@ -5,7 +5,6 @@ import cz.zcu.kiv.server.beecommunity.jpa.dto.news.NewsDetailDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.news.NewsDto;
 import cz.zcu.kiv.server.beecommunity.jpa.repository.NewsRepository;
 import cz.zcu.kiv.server.beecommunity.services.INewsService;
-import cz.zcu.kiv.server.beecommunity.utils.DateTimeUtils;
 import cz.zcu.kiv.server.beecommunity.utils.ImageUtil;
 import cz.zcu.kiv.server.beecommunity.utils.ObjectMapper;
 import cz.zcu.kiv.server.beecommunity.utils.UserUtils;
