@@ -24,4 +24,27 @@ public class ApiaryEnums {
         OTHER
     }
 
+    /**
+     * Enum to describe event type
+     */
+    public enum EEventType {
+        GENERAL,
+        APIARY,
+        HIVE
+    }
+
+    /**
+     * Enum to describe event activity type in calendar
+     */
+    public enum EEventActivityType {
+        FEED,
+        HEAL,
+        INSPECT,
+        DISEASE,
+        QUEEN,
+        SWARN,
+        MEET,
+        OTHER
+    }
+
 }

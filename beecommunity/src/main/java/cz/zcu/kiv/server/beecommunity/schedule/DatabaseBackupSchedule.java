@@ -72,7 +72,7 @@ public class DatabaseBackupSchedule {
      * @param commands list of commands to run
      * @return true - command run successfully, false - command failed
      */
-    private boolean runSingleCommand(String... commands) {
+     boolean runSingleCommand(String... commands) {
         boolean commandSuccessful = true;
         Process process;
         var pb = new ProcessBuilder(

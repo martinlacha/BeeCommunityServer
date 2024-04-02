@@ -15,6 +15,9 @@ public class ImageUtil {
      * @return compressed image file as byte array
      */
     public static byte[] compressImage(byte[] data) {
+        if (data == null) {
+            return new byte[0];
+        }
 
         Deflater deflater = new Deflater();
         deflater.setLevel(Deflater.BEST_COMPRESSION);
@@ -41,6 +44,10 @@ public class ImageUtil {
      * @return decompressed byte array
      */
     public static byte[] decompressImage(byte[] data) {
+        if (data == null) {
+            return new byte[0];
+        }
+
         Inflater inflater = new Inflater();
         inflater.setInput(data);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream(data.length);

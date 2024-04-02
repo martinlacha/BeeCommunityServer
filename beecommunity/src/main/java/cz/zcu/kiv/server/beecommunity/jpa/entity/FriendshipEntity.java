@@ -3,6 +3,7 @@ package cz.zcu.kiv.server.beecommunity.jpa.entity;
 import cz.zcu.kiv.server.beecommunity.enums.FriendshipEnums;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,6 +13,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "FRIENDSHIP", schema = "public")
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class FriendshipEntity {

@@ -3,6 +3,7 @@ package cz.zcu.kiv.server.beecommunity.jpa.entity;
 import cz.zcu.kiv.server.beecommunity.enums.QueenEnums;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -14,6 +15,7 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "QUEEN", schema = "public")
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class QueenEntity {

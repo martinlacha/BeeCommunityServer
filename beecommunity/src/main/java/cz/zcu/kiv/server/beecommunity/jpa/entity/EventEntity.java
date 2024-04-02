@@ -1,5 +1,6 @@
 package cz.zcu.kiv.server.beecommunity.jpa.entity;
 
+import cz.zcu.kiv.server.beecommunity.enums.ApiaryEnums;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -34,11 +35,12 @@ public class EventEntity {
     @Column(name = "title")
     private String title;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "activity")
-    private String activity;
+    private ApiaryEnums.EEventActivityType activity;
 
     @Column(name = "type")
-    private String type;
+    private ApiaryEnums.EEventType type;
 
     @Column(name = "notes")
     private String notes;

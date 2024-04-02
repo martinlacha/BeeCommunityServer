@@ -2,12 +2,16 @@ package cz.zcu.kiv.server.beecommunity.jpa.dto.user;
 
 import cz.zcu.kiv.server.beecommunity.enums.UserEnums;
 import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Dto with information about new user
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class NewUserInfoDto {
     @NotEmpty(message = "Name can't be empty.")
     @NotBlank(message = "Name can't be blank.")

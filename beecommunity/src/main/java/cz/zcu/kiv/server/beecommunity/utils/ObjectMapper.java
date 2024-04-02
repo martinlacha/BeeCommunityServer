@@ -16,6 +16,7 @@ import cz.zcu.kiv.server.beecommunity.jpa.dto.user.NewUserDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.user.NewUserInfoDto;
 import cz.zcu.kiv.server.beecommunity.jpa.entity.*;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
@@ -105,8 +106,8 @@ public class ObjectMapper {
                 user.getEmail(),
                 user.getUserInfo().getName(),
                 user.getUserInfo().getSurname(),
-                user.getUserInfo().getAddress().getCountry(),
                 user.getUserInfo().getAddress().getState(),
+                user.getUserInfo().getAddress().getCountry(),
                 user.getUserInfo().getAddress().getTown());
     }
 
@@ -144,7 +145,7 @@ public class ObjectMapper {
                 .access(post.getAccess())
                 .date(post.getCreated().toString())
                 .type(post.getType())
-                .comments( convertCommentsEntityToDtoList(post.getComments()))
+                .comments(convertCommentsEntityToDtoList(post.getComments()))
                 .build();
     }
 
@@ -249,7 +250,7 @@ public class ObjectMapper {
                         .date(news.getDate().toString())
                         .build()
         ));
-        newsList.sort(Comparator.comparingLong(NewsEntity::getId));
+        list.sort(Comparator.comparing(NewsDto::getId));
         return list;
     }
 
@@ -310,15 +311,6 @@ public class ObjectMapper {
         var entity = modelMapper.map(event, EventEntity.class);
         entity.setDate(DateTimeUtils.getDateFromString(event.getDate()));
         return entity;
-    }
-
-    /**
-     * Convert event entity to dto
-     * @param event entity to convert
-     * @return event dto
-     */
-    public EventDto convertEventEntity(EventEntity event) {
-        return modelMapper.map(event, EventDto.class);
     }
 
     /**
@@ -391,6 +383,8 @@ public class ObjectMapper {
     public HiveEntity convertHiveDto(HiveDto hiveDto) {
         var hive = modelMapper.map(hiveDto, HiveEntity.class);
         var queen = modelMapper.map(hiveDto, QueenEntity.class);
+        queen.setName(hiveDto.getQueenName());
+        queen.setNotes(hiveDto.getQueenNotes());
         queen.setQueenHatch(DateTimeUtils.getDateFromString(hiveDto.getHatch()));
         queen.setColor(hiveDto.getQueenColor());
         hive.setEstablishment(DateTimeUtils.getDateFromString(hiveDto.getEstablishment()));
@@ -535,7 +529,7 @@ public class ObjectMapper {
                 .quantity(treatment.getQuantity())
                 .dose(treatment.getDose())
                 .startDate(treatment.getStartDate() != null ? treatment.getStartDate().toString() : "")
-                .endDate(treatment.getEndDate() != null ? treatment.getStartDate().toString() : "")
+                .endDate(treatment.getEndDate() != null ? treatment.getEndDate().toString() : "")
                 .build();
     }
 

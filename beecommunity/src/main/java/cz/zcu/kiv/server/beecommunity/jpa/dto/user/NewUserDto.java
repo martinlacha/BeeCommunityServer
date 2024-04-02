@@ -2,12 +2,14 @@ package cz.zcu.kiv.server.beecommunity.jpa.dto.user;
 
 
 import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
  * Dto for register new user
  */
 @Data
+@AllArgsConstructor
 public class NewUserDto {
 
     @NotEmpty(message = "Email can't be empty.")
