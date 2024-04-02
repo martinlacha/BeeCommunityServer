@@ -3,6 +3,7 @@ package cz.zcu.kiv.server.beecommunity.jpa.entity;
 import cz.zcu.kiv.server.beecommunity.enums.InspectionEnums;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,6 +13,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "HIVE_FEEDING", schema = "public")
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class HiveFeedingEntity {
@@ -32,7 +34,7 @@ public class HiveFeedingEntity {
     private InspectionEnums.EFoodRatio ratio;
 
     @Column(name = "quantity")
-    private int foodQuantity;
+    private double foodQuantity;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "unit")

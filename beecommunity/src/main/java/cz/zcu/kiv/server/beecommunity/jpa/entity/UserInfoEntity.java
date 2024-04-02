@@ -2,10 +2,7 @@ package cz.zcu.kiv.server.beecommunity.jpa.entity;
 
 import cz.zcu.kiv.server.beecommunity.enums.UserEnums;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 
@@ -16,6 +13,7 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "USER_INFO", schema = "public")
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserInfoEntity {
