@@ -44,7 +44,7 @@ public class UserEntity implements UserDetails {
     private String password;
 
     @Column(name = "login_attempts")
-    private int login_attempts;
+    private int loginAttempts;
 
     @Column(name = "suspended")
     private boolean suspended;
@@ -85,7 +85,7 @@ public class UserEntity implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return login_attempts < MAX_LOGIN_ATTEMPTS;
+        return loginAttempts < MAX_LOGIN_ATTEMPTS;
     }
 
     @Override

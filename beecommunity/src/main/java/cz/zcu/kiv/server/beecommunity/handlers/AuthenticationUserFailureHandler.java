@@ -38,7 +38,7 @@ public class AuthenticationUserFailureHandler implements AuthenticationFailureHa
 
         user.ifPresentOrElse(
             userEntity -> {
-                userEntity.setLogin_attempts(userEntity.getLogin_attempts() + 1);
+                userEntity.setLoginAttempts(userEntity.getLoginAttempts() + 1);
                 userRepository.saveAndFlush(userEntity);
                 if (!userEntity.isAccountNonLocked()) {
                     response.setStatus(ResponseStatusCodes.ACCOUNT_LOCKED_STATUS_CODE.getCode());
