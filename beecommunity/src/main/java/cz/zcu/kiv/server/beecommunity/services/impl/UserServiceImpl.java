@@ -202,7 +202,7 @@ public class UserServiceImpl implements UserDetailsService, IUserService {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         optionalUser.get().setPassword(bCryptPasswordEncoder.encode(updatePasswordDto.getNewPassword()));
-        optionalUser.get().setLogin_attempts(0);
+        optionalUser.get().setLoginAttempts(0);
         RESET_PASSWORD_CODES_MAP.remove(updatePasswordDto.getEmail());
         userRepository.save(optionalUser.get());
         return ResponseEntity.status(HttpStatus.OK).build();

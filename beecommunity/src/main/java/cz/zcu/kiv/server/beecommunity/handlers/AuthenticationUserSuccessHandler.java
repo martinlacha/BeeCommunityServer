@@ -38,7 +38,7 @@ public class AuthenticationUserSuccessHandler implements AuthenticationSuccessHa
             response.setStatus(ResponseStatusCodes.ACCOUNT_LOCKED_STATUS_CODE.getCode());
             return;
         }
-        user.setLogin_attempts(0);
+        user.setLoginAttempts(0);
         var token = jwtService.generateToken(user);
         response.setStatus(user.isNewAccount() ? HttpServletResponse.SC_CREATED : HttpServletResponse.SC_OK);
         response.setHeader("Authorization", token);
