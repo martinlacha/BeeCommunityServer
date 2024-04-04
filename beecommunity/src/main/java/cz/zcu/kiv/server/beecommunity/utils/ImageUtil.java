@@ -44,8 +44,8 @@ public class ImageUtil {
      * @return decompressed byte array
      */
     public static byte[] decompressImage(byte[] data) {
-        if (data == null) {
-            return new byte[0];
+        if (data == null || data.length == 0) {
+            return null;
         }
 
         Inflater inflater = new Inflater();

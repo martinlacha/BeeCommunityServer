@@ -1,12 +1,18 @@
 package cz.zcu.kiv.server.beecommunity.jpa.dto.user;
 
 import cz.zcu.kiv.server.beecommunity.enums.UserEnums;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Dto with address and personal user information
  */
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class GetUpdateUserInfoDto {
     private String name;
     private String surname;
