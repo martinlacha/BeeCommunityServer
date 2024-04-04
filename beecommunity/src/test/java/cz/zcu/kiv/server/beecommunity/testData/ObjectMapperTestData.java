@@ -7,6 +7,7 @@ import cz.zcu.kiv.server.beecommunity.jpa.dto.event.EventDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.hive.HiveDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.inspection.*;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.news.NewsDetailDto;
+import cz.zcu.kiv.server.beecommunity.jpa.dto.news.NewsDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.user.AddressDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.user.NewUserDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.user.NewUserInfoDto;
@@ -191,6 +192,33 @@ public class ObjectMapperTestData {
             .date(date)
             .author(user3)
             .titleImage(new byte[0])
+            .build();
+    NewsEntity news3 = NewsEntity
+            .builder()
+            .id(3L)
+            .title("Title with images")
+            .article("Images of current problems")
+            .date(date)
+            .author(user3)
+            .titleImage("Some title image".getBytes())
+            .firstImage("Example of first image data in article".getBytes())
+            .secondImage("Example of second image data".getBytes())
+            .build();
+    NewsDto newsDto1 = NewsDto
+            .builder()
+            .id(1L)
+            .title("News title 1")
+            .author(user2.getFullName())
+            .article("Article 1")
+            .date(date.toString())
+            .build();
+    NewsDto newsDto2 = NewsDto
+            .builder()
+            .id(2L)
+            .title("News title 2")
+            .author(user3.getFullName())
+            .article("Article 2")
+            .date(date.toString())
             .build();
     NewsDetailDto newsDetailDto1 = NewsDetailDto
             .builder()
