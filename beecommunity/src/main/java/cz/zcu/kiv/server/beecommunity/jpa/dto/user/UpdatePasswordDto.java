@@ -4,13 +4,17 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Dto to update password of user
  * Code is sent on email of user to authenticate
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class UpdatePasswordDto {
     @Email(message = "Not valid email address")
     @NotEmpty(message = "Name can't be empty.")

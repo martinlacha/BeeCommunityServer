@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserDetailsService, IUserService {
 
     private final JavaMailSender emailSender;
 
-    private final Map<String, String> RESET_PASSWORD_CODES_MAP = new HashMap<>();
+    private Map<String, String> RESET_PASSWORD_CODES_MAP = new HashMap<>();
 
 
     /**
@@ -304,6 +304,7 @@ public class UserServiceImpl implements UserDetailsService, IUserService {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
         account.get().setEmail(newEmail);
+        userRepository.saveAndFlush(account.get());
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

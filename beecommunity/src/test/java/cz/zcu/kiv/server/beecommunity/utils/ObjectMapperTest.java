@@ -25,7 +25,7 @@ class ObjectMapperTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    ObjectMapperTestData testData = new ObjectMapperTestData();
+    private ObjectMapperTestData testData = new ObjectMapperTestData();
 
     @Test
     void testConvertToNewUserEntity() {
