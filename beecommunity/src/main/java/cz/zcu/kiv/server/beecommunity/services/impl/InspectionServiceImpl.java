@@ -25,6 +25,7 @@ import java.util.List;
 @Transactional
 @RequiredArgsConstructor
 public class InspectionServiceImpl implements IInspectionService {
+
     private final InspectionRepository inspectionRepository;
 
     private final HiveRepository hiveRepository;
@@ -159,7 +160,7 @@ public class InspectionServiceImpl implements IInspectionService {
             case STRESSORS -> image = inspection.get().getStressorsImage();
             case DISEASE -> image = inspection.get().getDiseaseImage();
         }
-        if (image.length != 0) {
+        if (image != null && image.length != 0) {
             return ResponseEntity
                     .status(HttpStatus.OK)
                     .body(ImageUtil.decompressImage(inspection.get().getInspectionImage()));

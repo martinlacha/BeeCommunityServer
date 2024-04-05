@@ -38,8 +38,10 @@ class JwtServiceImplTest {
 
     @Test
     void testExtractUsernameFromToken() {
+        when(propertiesConfiguration.isEnableTokenExpiration()).thenReturn(true);
+        when(propertiesConfiguration.getTokenExpirationSeconds()).thenReturn(3600);
+        String token = jwtService.generateToken(user);
         // Token for user Martin Lacha
-        String token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqb2huQGV4YW1wbGUuY29tIiwiaWF0IjoxNzEyMzA4NTY4LCJleHAiOjE3MTIzMTIxNjh9.RDGzBKk_fQ8MSZtzKsS3pbDDlLXBqq6e_T8I9zktPZ0";
         String extractedUsername = jwtService.extractUsernameFromToken(token);
         assertEquals(extractedUsername, user.getEmail());
     }

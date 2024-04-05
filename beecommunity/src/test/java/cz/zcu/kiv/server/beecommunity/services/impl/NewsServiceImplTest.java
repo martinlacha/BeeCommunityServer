@@ -50,11 +50,7 @@ class NewsServiceImplTest {
         MockitoAnnotations.initMocks(this);
         when(securityContext.getAuthentication()).thenReturn(authentication);
         SecurityContextHolder.setContext(securityContext);
-        UserEntity user = UserEntity
-                .builder()
-                .id(1L)
-                .userInfo(UserInfoEntity.builder().build())
-                .build();
+        UserEntity user = data.getUser1();
         when(authentication.getPrincipal()).thenReturn(user);
     }
 
