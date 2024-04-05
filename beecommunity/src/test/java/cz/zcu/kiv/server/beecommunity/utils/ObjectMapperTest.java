@@ -9,7 +9,7 @@ import cz.zcu.kiv.server.beecommunity.jpa.entity.CommunityPostEntity;
 import cz.zcu.kiv.server.beecommunity.jpa.entity.FriendshipEntity;
 import cz.zcu.kiv.server.beecommunity.jpa.entity.UserEntity;
 import cz.zcu.kiv.server.beecommunity.jpa.entity.UserInfoEntity;
-import cz.zcu.kiv.server.beecommunity.testData.ObjectMapperTestData;
+import cz.zcu.kiv.server.beecommunity.testData.TestData;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,7 +25,7 @@ class ObjectMapperTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    private ObjectMapperTestData testData = new ObjectMapperTestData();
+    private TestData testData = new TestData();
 
     @Test
     void testConvertToNewUserEntity() {

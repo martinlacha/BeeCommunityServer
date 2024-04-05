@@ -6,7 +6,7 @@ import cz.zcu.kiv.server.beecommunity.jpa.entity.QueenEntity;
 import cz.zcu.kiv.server.beecommunity.jpa.entity.UserEntity;
 import cz.zcu.kiv.server.beecommunity.jpa.entity.UserInfoEntity;
 import cz.zcu.kiv.server.beecommunity.jpa.repository.HiveRepository;
-import cz.zcu.kiv.server.beecommunity.testData.ObjectMapperTestData;
+import cz.zcu.kiv.server.beecommunity.testData.TestData;
 import cz.zcu.kiv.server.beecommunity.utils.FriendshipUtils;
 import cz.zcu.kiv.server.beecommunity.utils.ImageUtil;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,7 +43,7 @@ class QueenServiceImplTest {
     @InjectMocks
     private QueenServiceImpl queenServiceImpl;
 
-    private ObjectMapperTestData testData = new ObjectMapperTestData();
+    private TestData testData = new TestData();
 
     private UserEntity user;
 

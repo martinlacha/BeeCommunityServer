@@ -18,13 +18,11 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @Data
 @NoArgsConstructor
-public class ObjectMapperTestData {
+public class TestData {
 
     NewUserDto newUserDto = new NewUserDto("test@example.com", "password");
     UserEntity expectedUserEntity = UserEntity.builder().email("test@example.com").password("password").build();
@@ -99,6 +97,7 @@ public class ObjectMapperTestData {
                             .town("Chlumany")
                             .build())
                     .build())
+            .roles(Set.of(RoleEntity.builder().role(UserEnums.ERoles.ADMIN.name()).build()))
             .build();
 
     // Community posts
