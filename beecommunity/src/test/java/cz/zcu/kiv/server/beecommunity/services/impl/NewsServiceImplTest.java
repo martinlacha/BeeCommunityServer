@@ -7,7 +7,7 @@ import cz.zcu.kiv.server.beecommunity.jpa.entity.NewsEntity;
 import cz.zcu.kiv.server.beecommunity.jpa.entity.UserEntity;
 import cz.zcu.kiv.server.beecommunity.jpa.entity.UserInfoEntity;
 import cz.zcu.kiv.server.beecommunity.jpa.repository.NewsRepository;
-import cz.zcu.kiv.server.beecommunity.testData.ObjectMapperTestData;
+import cz.zcu.kiv.server.beecommunity.testData.TestData;
 import cz.zcu.kiv.server.beecommunity.utils.ImageUtil;
 import cz.zcu.kiv.server.beecommunity.utils.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,7 +43,7 @@ class NewsServiceImplTest {
     @InjectMocks
     private NewsServiceImpl newsService;
 
-    private final ObjectMapperTestData data = new ObjectMapperTestData();
+    private final TestData data = new TestData();
 
     @BeforeEach
     void setUp() {
