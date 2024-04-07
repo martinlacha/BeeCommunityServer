@@ -347,6 +347,37 @@ public class TestData {
                     .build()
     );
 
+    List<HiveDto> hivesDto = List.of(
+            HiveDto
+                    .builder()
+                    .id(4L)
+                    .name("Hive near forest")
+                    .color(HiveEnums.EColor.YELLOW)
+                    .source(HiveEnums.EBeeSource.SWARM)
+                    .establishment("2022-06-12")
+                    .notes("New stable hive")
+                    .apiaryId(1L)
+                    .queenColor(QueenEnums.EColor.BLUE)
+                    .queenNotes("")
+                    .queenName("Anna")
+                    .breed("Australian")
+                    .build(),
+            HiveDto
+                    .builder()
+                    .id(6L)
+                    .name("Old field hive")
+                    .color(HiveEnums.EColor.NONE)
+                    .source(HiveEnums.EBeeSource.SPLIT)
+                    .establishment("2020-08-25")
+                    .notes("My first hive")
+                    .apiaryId(1L)
+                    .queenName("Lady")
+                    .queenColor(QueenEnums.EColor.WHITE)
+                    .queenNotes("")
+                    .breed("")
+                    .build()
+    );
+
     HiveDto hiveDto = HiveDto
             .builder()
             .id(9L)
