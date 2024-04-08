@@ -25,7 +25,7 @@ INSERT into AUTH_ROLE (role_name) values ('ADMIN');
 INSERT into AUTH_ROLE (role_name) values ('USER');
 
 INSERT into AUTH_USER(email, password, user_info_id, new_account)
-values('admin', '$2a$10$w8vrvSO5DOCuyMXoI3KHieiBrTf4YQ3.GEeaVGC/ynBtiK3vNdgsu', 5, false);
+values('admin@community.com', '$2a$10$w8vrvSO5DOCuyMXoI3KHieiBrTf4YQ3.GEeaVGC/ynBtiK3vNdgsu', 5, false);
 INSERT into AUTH_USER(email, password, user_info_id, new_account)
     values('martin.lacha@seznam.cz', '$2a$10$w8vrvSO5DOCuyMXoI3KHieiBrTf4YQ3.GEeaVGC/ynBtiK3vNdgsu', 1, false);
 INSERT into AUTH_USER(email, password, user_info_id, new_account)

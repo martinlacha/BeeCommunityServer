@@ -282,6 +282,8 @@ public class UserServiceImpl implements UserDetailsService, IUserService {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         } else if (!adminUser.get().hasRole(UserEnums.ERoles.ADMIN) || adminRole.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        } else if (adminUser.get().hasRole(UserEnums.ERoles.SUPER_ADMIN)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         adminUser.get().getRoles().remove(adminRole.get());
         userRepository.saveAndFlush(adminUser.get());
