@@ -18,6 +18,8 @@ public interface IUserService {
 
     ResponseEntity<GetUpdateUserInfoDto> getUserInfo();
 
+    ResponseEntity<GetUpdateUserInfoDto> getFriendUserInfo(String email);
+
     ResponseEntity<List<UserRolesDto>> getUsersRoles();
 
     ResponseEntity<Void> grantAdminRole(Long userId);
