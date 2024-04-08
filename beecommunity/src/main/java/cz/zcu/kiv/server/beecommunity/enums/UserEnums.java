@@ -28,6 +28,7 @@ public class UserEnums {
      */
     public enum ERoles {
         USER,
-        ADMIN
+        ADMIN,
+        SUPER_ADMIN
     }
 }

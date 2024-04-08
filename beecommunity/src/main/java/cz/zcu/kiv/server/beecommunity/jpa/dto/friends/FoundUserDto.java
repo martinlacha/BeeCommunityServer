@@ -2,6 +2,7 @@ package cz.zcu.kiv.server.beecommunity.jpa.dto.friends;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Dto with information about friend
@@ -9,6 +10,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class FoundUserDto {
     private String email;
     private String name;
