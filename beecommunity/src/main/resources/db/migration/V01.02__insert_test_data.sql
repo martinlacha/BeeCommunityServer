@@ -20,26 +20,29 @@ INSERT into USER_INFO(name, surname, date_of_birth, address_id)
 INSERT into USER_INFO(name, surname, date_of_birth, address_id)
 values ('Admin', '', CURRENT_DATE, 5);
 
+INSERT into AUTH_ROLE (role_name) values ('SUPER_ADMIN');
 INSERT into AUTH_ROLE (role_name) values ('ADMIN');
 INSERT into AUTH_ROLE (role_name) values ('USER');
 
-INSERT into AUTH_USER(email, password, user_info_id)
-values('admin@seznam.cz', '$2a$10$w8vrvSO5DOCuyMXoI3KHieiBrTf4YQ3.GEeaVGC/ynBtiK3vNdgsu', 5);
-INSERT into AUTH_USER(email, password, user_info_id)
-    values('martin.lacha@seznam.cz', '$2a$10$w8vrvSO5DOCuyMXoI3KHieiBrTf4YQ3.GEeaVGC/ynBtiK3vNdgsu', 1);
-INSERT into AUTH_USER(email, password, user_info_id)
-    values('vlastimil.lacha@gmail.com', '$2a$10$w8vrvSO5DOCuyMXoI3KHieiBrTf4YQ3.GEeaVGC/ynBtiK3vNdgsu', 2);
-INSERT into AUTH_USER(email, password, user_info_id)
-    values('random_email@seznam.cz', '$2a$10$w8vrvSO5DOCuyMXoI3KHieiBrTf4YQ3.GEeaVGC/ynBtiK3vNdgsu', 3);
-INSERT into AUTH_USER(email, password, user_info_id)
-    values('testing@gmail.com', '$2a$10$w8vrvSO5DOCuyMXoI3KHieiBrTf4YQ3.GEeaVGC/ynBtiK3vNdgsu', 4);
+INSERT into AUTH_USER(email, password, user_info_id, new_account)
+values('admin', '$2a$10$w8vrvSO5DOCuyMXoI3KHieiBrTf4YQ3.GEeaVGC/ynBtiK3vNdgsu', 5, false);
+INSERT into AUTH_USER(email, password, user_info_id, new_account)
+    values('martin.lacha@seznam.cz', '$2a$10$w8vrvSO5DOCuyMXoI3KHieiBrTf4YQ3.GEeaVGC/ynBtiK3vNdgsu', 1, false);
+INSERT into AUTH_USER(email, password, user_info_id, new_account)
+    values('vlastimil.lacha@gmail.com', '$2a$10$w8vrvSO5DOCuyMXoI3KHieiBrTf4YQ3.GEeaVGC/ynBtiK3vNdgsu', 2, false);
+INSERT into AUTH_USER(email, password, user_info_id, new_account)
+    values('random_email@seznam.cz', '$2a$10$w8vrvSO5DOCuyMXoI3KHieiBrTf4YQ3.GEeaVGC/ynBtiK3vNdgsu', 3, false);
+INSERT into AUTH_USER(email, password, user_info_id, new_account)
+    values('testing@gmail.com', '$2a$10$w8vrvSO5DOCuyMXoI3KHieiBrTf4YQ3.GEeaVGC/ynBtiK3vNdgsu', 4, false);
 
 INSERT INTO AUTH_USER_ROLE (user_id, role_id) VALUES (1, 1);
 INSERT INTO AUTH_USER_ROLE (user_id, role_id) VALUES (1, 2);
+INSERT INTO AUTH_USER_ROLE (user_id, role_id) VALUES (1, 3);
 INSERT INTO AUTH_USER_ROLE (user_id, role_id) VALUES (2, 1);
 INSERT INTO AUTH_USER_ROLE (user_id, role_id) VALUES (2, 2);
 INSERT INTO AUTH_USER_ROLE (user_id, role_id) VALUES (3, 2);
 INSERT INTO AUTH_USER_ROLE (user_id, role_id) VALUES (4, 2);
+INSERT INTO AUTH_USER_ROLE (user_id, role_id) VALUES (5, 1);
 INSERT INTO AUTH_USER_ROLE (user_id, role_id) VALUES (5, 2);
 
 INSERT into FRIENDSHIP(status, sender_id, receiver_id) values('FRIEND', 1, 2);
