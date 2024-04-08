@@ -82,6 +82,15 @@ public class UserController {
     }
 
     /**
+     * Find a return user info
+     * @return user info
+     */
+    @GetMapping("/friend-info")
+    ResponseEntity<GetUpdateUserInfoDto> getUserInfo(@RequestParam String email) {
+        return userService.getFriendUserInfo(email);
+    }
+
+    /**
      * Return list of users with roles assigned to them
      * @return users with roles
      */

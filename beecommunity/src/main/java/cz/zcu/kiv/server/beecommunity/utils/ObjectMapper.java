@@ -1,5 +1,6 @@
 package cz.zcu.kiv.server.beecommunity.utils;
 
+import cz.zcu.kiv.server.beecommunity.enums.FriendshipEnums;
 import cz.zcu.kiv.server.beecommunity.enums.InspectionEnums;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.apiary.ApiaryDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.community.CommunityPostDto;
@@ -68,6 +69,7 @@ public class ObjectMapper {
         infoDto.setTown(address.getTown());
         infoDto.setStreet(address.getStreet());
         infoDto.setNumber(address.getNumber());
+        infoDto.setExperience(userInfo.getExperience());
         return infoDto;
     }
 
@@ -102,13 +104,16 @@ public class ObjectMapper {
      * @return dto
      */
     private FoundUserDto getFriendFromFriendship(UserEntity user) {
-        return new FoundUserDto(
-                user.getEmail(),
-                user.getUserInfo().getName(),
-                user.getUserInfo().getSurname(),
-                user.getUserInfo().getAddress().getState(),
-                user.getUserInfo().getAddress().getCountry(),
-                user.getUserInfo().getAddress().getTown());
+        return FoundUserDto
+                .builder()
+                .email(user.getEmail())
+                .name(user.getUserInfo().getName())
+                .surname(user.getUserInfo().getSurname())
+                .country(user.getUserInfo().getAddress().getCountry())
+                .state(user.getUserInfo().getAddress().getState())
+                .town(user.getUserInfo().getAddress().getTown())
+                .experience(user.getUserInfo().getExperience())
+                .build();
     }
 
     /**

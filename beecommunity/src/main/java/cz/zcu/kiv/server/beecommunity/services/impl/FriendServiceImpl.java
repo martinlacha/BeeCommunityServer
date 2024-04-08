@@ -7,6 +7,7 @@ import cz.zcu.kiv.server.beecommunity.jpa.entity.UserEntity;
 import cz.zcu.kiv.server.beecommunity.jpa.repository.FriendshipRepository;
 import cz.zcu.kiv.server.beecommunity.jpa.repository.UserRepository;
 import cz.zcu.kiv.server.beecommunity.services.IFriendService;
+import cz.zcu.kiv.server.beecommunity.utils.FriendshipUtils;
 import cz.zcu.kiv.server.beecommunity.utils.ObjectMapper;
 import cz.zcu.kiv.server.beecommunity.utils.UserUtils;
 import jakarta.validation.constraints.NotNull;
@@ -32,6 +33,8 @@ public class FriendServiceImpl implements IFriendService {
 
     private final ObjectMapper modelMapper;
 
+    private final FriendshipUtils friendshipUtils;
+
     /**
      * Find all users that name, surname or email contain text ignoring case
      * Remove all users which don't have user info yet
@@ -46,7 +49,7 @@ public class FriendServiceImpl implements IFriendService {
                     name, name, name
                 ).stream()
                 .filter(userEntity -> (userEntity.getUserInfo() != null && !userEntity.getEmail().equals(user.getEmail()))).toList();
-        list = list.stream().filter(userEntity -> getFriendship(user.getId(), userEntity.getId()).isEmpty()).toList();
+        list = list.stream().filter(userEntity -> !friendshipUtils.isFriendshipStatus(userEntity.getId(), user.getId(), FriendshipEnums.EStatus.BLOCKED)).toList();
         return ResponseEntity.status(HttpStatus.OK).body(modelMapper.convertListUserEntity(list));
     }
 
@@ -94,10 +97,15 @@ public class FriendServiceImpl implements IFriendService {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         } else if (email.equals(user.getEmail())) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
-        } else if (friendshipRepository.existsBySenderIdAndReceiverId(newFriend.get().getId(), user.getId()) ||
-                friendshipRepository.existsBySenderIdAndReceiverId(user.getId(), newFriend.get().getId())) {
+        } else if (friendshipUtils.isFriendshipStatus(newFriend.get().getId(), user.getId(), FriendshipEnums.EStatus.FRIEND)) {
             // Some friendship already exists
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        } else if (friendshipUtils.isFriendshipStatus(newFriend.get().getId(), user.getId(), FriendshipEnums.EStatus.PENDING)) {
+            // Pending user
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
+        } else if (friendshipUtils.isFriendshipStatus(newFriend.get().getId(), user.getId(), FriendshipEnums.EStatus.BLOCKED)) {
+            // Blocked user
+            return ResponseEntity.status(HttpStatus.LOCKED).build();
         }
         FriendshipEntity pendingFriendship = new FriendshipEntity();
         pendingFriendship.setSender(user);

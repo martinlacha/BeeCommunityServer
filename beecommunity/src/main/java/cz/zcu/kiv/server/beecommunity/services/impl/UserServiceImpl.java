@@ -1,5 +1,6 @@
 package cz.zcu.kiv.server.beecommunity.services.impl;
 
+import cz.zcu.kiv.server.beecommunity.enums.FriendshipEnums;
 import cz.zcu.kiv.server.beecommunity.enums.UserEnums;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.user.*;
 import cz.zcu.kiv.server.beecommunity.jpa.entity.UserEntity;
@@ -7,10 +8,7 @@ import cz.zcu.kiv.server.beecommunity.jpa.entity.UserInfoEntity;
 import cz.zcu.kiv.server.beecommunity.jpa.repository.RoleRepository;
 import cz.zcu.kiv.server.beecommunity.jpa.repository.UserRepository;
 import cz.zcu.kiv.server.beecommunity.services.IUserService;
-import cz.zcu.kiv.server.beecommunity.utils.ConfirmCodeGenerator;
-import cz.zcu.kiv.server.beecommunity.utils.DateTimeUtils;
-import cz.zcu.kiv.server.beecommunity.utils.ObjectMapper;
-import cz.zcu.kiv.server.beecommunity.utils.UserUtils;
+import cz.zcu.kiv.server.beecommunity.utils.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -43,6 +41,8 @@ public class UserServiceImpl implements UserDetailsService, IUserService {
     private final ObjectMapper objectMapper;
 
     private final JavaMailSender emailSender;
+
+    private final FriendshipUtils friendshipUtils;
 
     private Map<String, String> RESET_PASSWORD_CODES_MAP = new HashMap<>();
 
@@ -220,6 +220,25 @@ public class UserServiceImpl implements UserDetailsService, IUserService {
         }
         var dto = objectMapper.convertUserInfoDto(user.getUserInfo());
         dto.setAdmin(user.hasRole(UserEnums.ERoles.ADMIN));
+        return ResponseEntity.status(HttpStatus.OK).body(dto);
+    }
+
+    /**
+     * Find and return friend info
+     * Check if user exist by email and if he has filled user info
+     * @param email address of friend
+     * @return friend info detail
+     */
+    @Override
+    public ResponseEntity<GetUpdateUserInfoDto> getFriendUserInfo(String email) {
+        UserEntity user = UserUtils.getUserFromSecurityContext();
+        var friend = userRepository.findByEmail(email);
+        if (friend.isEmpty() || friend.get().getUserInfo() == null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } else if (!friendshipUtils.isFriendshipStatus(user.getId(), friend.get().getId(), FriendshipEnums.EStatus.FRIEND)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        var dto = objectMapper.convertUserInfoDto(friend.get().getUserInfo());
         return ResponseEntity.status(HttpStatus.OK).body(dto);
     }
 

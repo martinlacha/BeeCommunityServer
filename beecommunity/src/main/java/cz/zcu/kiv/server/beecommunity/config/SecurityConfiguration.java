@@ -67,6 +67,7 @@ public class SecurityConfiguration implements WebMvcConfigurer {
                 .permitAll()
                 // Paths which has to be authenticated and which roles user must have
                 .requestMatchers("/api/v1/user/info").hasAnyAuthority(USER.name(), ADMIN.name())
+                .requestMatchers("/api/v1/user/friend-info").hasAnyAuthority(USER.name(), ADMIN.name())
                 .requestMatchers("/api/v1/friends/*").hasAnyAuthority(USER.name())
                 .requestMatchers("/api/v1/community-post/*").hasAnyAuthority(USER.name())
                 .requestMatchers(HttpMethod.GET, "/api/v1/user/roles-info").hasAuthority(ADMIN.name())

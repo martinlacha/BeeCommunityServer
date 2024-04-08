@@ -21,6 +21,11 @@ public class FriendshipEnums {
          * Requests send to another users
          */
         PENDING,
+
+        /**
+         * None relation between users
+         */
+        NONE
     }
 
 }

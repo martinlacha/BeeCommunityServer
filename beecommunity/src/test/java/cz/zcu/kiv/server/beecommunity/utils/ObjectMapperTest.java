@@ -72,8 +72,24 @@ class ObjectMapperTest {
         var user2 = testData.getUser2();
         List<UserEntity> userEntityList = List.of(user1, user2);
         List<FoundUserDto> expectedDtoList = new ArrayList<>();
-        expectedDtoList.add(new FoundUserDto("john@example.com", "John", "Doe", "NY", "US", "New York"));
-        expectedDtoList.add(new FoundUserDto("jane@example.com", "Jane", "Doe", "CA", "US", "Los Angeles"));
+        expectedDtoList.add(FoundUserDto
+                .builder()
+                .email("john@example.com")
+                .name("John")
+                .surname("Doe")
+                .country("US")
+                .state("NY")
+                .town("New York")
+                .build());
+        expectedDtoList.add(FoundUserDto
+                .builder()
+                .email("jane@example.com")
+                .name("Jane")
+                .surname("Doe")
+                .country("US")
+                .state("CA")
+                .town("Los Angeles")
+                .build());
         List<FoundUserDto> actualDtoList = objectMapper.convertListUserEntity(userEntityList);
         assertEquals(expectedDtoList.size(), actualDtoList.size());
         for (int i = 0; i < expectedDtoList.size(); i++) {
@@ -102,8 +118,24 @@ class ObjectMapperTest {
         List<FriendshipEntity> friendshipList = List.of(friendship1, friendship2);
 
         List<FoundUserDto> expectedDtoList = new ArrayList<>();
-        expectedDtoList.add(new FoundUserDto("jane@example.com", "Jane", "Doe", "CA", "US", "Los Angeles"));
-        expectedDtoList.add(new FoundUserDto("martin@example.com", "Martin", "Lacha", "CZ", "CZ", "Chlumany"));
+        expectedDtoList.add(FoundUserDto
+                .builder()
+                .email("jane@example.com")
+                .name("Jane")
+                .surname("Doe")
+                .country("US")
+                .state("CA")
+                .town("Los Angeles")
+                .build());
+        expectedDtoList.add(FoundUserDto
+                .builder()
+                .email("martin@example.com")
+                .name("Martin")
+                .surname("Lacha")
+                .country("CZ")
+                .state("CZ")
+                .town("Chlumany")
+                .build());
 
         List<FoundUserDto> actualDtoList = objectMapper.convertListFriendship(friendshipList, user1.getId());
 

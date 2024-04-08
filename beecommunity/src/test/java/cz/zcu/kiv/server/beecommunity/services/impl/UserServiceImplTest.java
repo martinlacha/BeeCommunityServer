@@ -1,5 +1,6 @@
 package cz.zcu.kiv.server.beecommunity.services.impl;
 
+import cz.zcu.kiv.server.beecommunity.enums.FriendshipEnums;
 import cz.zcu.kiv.server.beecommunity.enums.UserEnums;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.user.*;
 import cz.zcu.kiv.server.beecommunity.jpa.entity.AddressEntity;
@@ -8,6 +9,8 @@ import cz.zcu.kiv.server.beecommunity.jpa.entity.UserEntity;
 import cz.zcu.kiv.server.beecommunity.jpa.entity.UserInfoEntity;
 import cz.zcu.kiv.server.beecommunity.jpa.repository.RoleRepository;
 import cz.zcu.kiv.server.beecommunity.jpa.repository.UserRepository;
+import cz.zcu.kiv.server.beecommunity.testData.TestData;
+import cz.zcu.kiv.server.beecommunity.utils.FriendshipUtils;
 import cz.zcu.kiv.server.beecommunity.utils.ObjectMapper;
 import cz.zcu.kiv.server.beecommunity.utils.UserUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
@@ -56,8 +59,13 @@ class UserServiceImplTest {
     @Mock
     private JavaMailSender emailSender;
 
+    @Mock
+    private FriendshipUtils friendshipUtils;
+
     @InjectMocks
     private UserServiceImpl userService;
+
+    private final TestData testData = new TestData();
 
     @BeforeEach
     void setUp() {
@@ -307,6 +315,63 @@ class UserServiceImplTest {
         assertEquals("1998-11-11", returnedUserInfo.getDateOfBirth());
         // Check if the admin flag is correctly set
         assertFalse(returnedUserInfo.isAdmin());
+    }
+
+    @Test
+    void testGetFriendUserInfo_NotFound() {
+        String testEmail = "friendEmail@gmail.com";
+        when(userRepository.findByEmail(eq(testEmail))).thenReturn(Optional.empty());
+        // Call the method
+        ResponseEntity<GetUpdateUserInfoDto> response = userService.getFriendUserInfo(testEmail);
+
+        // Check the response status
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+
+        // Verify
+        verify(userRepository,times(1)).findByEmail(testEmail);
+        verifyNoInteractions(friendshipUtils, objectMapper);
+    }
+
+    @Test
+    void testGetFriendUserInfo_NotFriend_BadRequest() {
+        var friend = testData.getUser2();
+        var user = UserEntity
+                .builder()
+                .userInfo(new UserInfoEntity())
+                .roles(new HashSet<>())
+                .build();
+        when(authentication.getPrincipal()).thenReturn(user);
+        when(userRepository.findByEmail(eq(friend.getEmail()))).thenReturn(Optional.of(friend));
+        when(friendshipUtils.isFriendshipStatus(eq(user.getId()), eq(friend.getId()), eq(FriendshipEnums.EStatus.FRIEND))).thenReturn(false);
+
+        // Call the method
+        ResponseEntity<GetUpdateUserInfoDto> response = userService.getFriendUserInfo(friend.getEmail());
+
+        // Check the response status
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        // Verify
+        verify(userRepository,times(1)).findByEmail(friend.getEmail());
+        verify(friendshipUtils,times(1)).isFriendshipStatus(user.getId(), friend.getId(), FriendshipEnums.EStatus.FRIEND);
+        verifyNoInteractions(objectMapper);
+    }
+
+    @Test
+    void testGetFriendUserInfo_Success() {
+        var friend = testData.getUser2();
+        var user = UserEntity
+                .builder()
+                .userInfo(new UserInfoEntity())
+                .roles(new HashSet<>())
+                .build();
+        when(authentication.getPrincipal()).thenReturn(user);
+        when(userRepository.findByEmail(eq(friend.getEmail()))).thenReturn(Optional.of(friend));
+        when(friendshipUtils.isFriendshipStatus(eq(user.getId()), eq(friend.getId()), eq(FriendshipEnums.EStatus.FRIEND))).thenReturn(true);
+
+        // Call the method
+        ResponseEntity<GetUpdateUserInfoDto> response = userService.getFriendUserInfo(friend.getEmail());
+
+        // Check the response status
+        assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
