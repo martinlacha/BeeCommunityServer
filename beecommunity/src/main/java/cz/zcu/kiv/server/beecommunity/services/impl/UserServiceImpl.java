@@ -230,7 +230,7 @@ public class UserServiceImpl implements UserDetailsService, IUserService {
     @Override
     public ResponseEntity<List<UserRolesDto>> getUsersRoles() {
         var admin = UserUtils.getUserFromSecurityContext();
-        var users = userRepository.findAll();
+        var users = userRepository.findAll().stream().filter(userEntity -> !userEntity.hasRole(UserEnums.ERoles.SUPER_ADMIN)).toList();
         var rolesList = new ArrayList<UserRolesDto>();
         users.forEach(user -> {
                     if (!admin.getId().equals(user.getId())) {
