@@ -25,15 +25,15 @@ INSERT into AUTH_ROLE (role_name) values ('ADMIN');
 INSERT into AUTH_ROLE (role_name) values ('USER');
 
 INSERT into AUTH_USER(email, password, user_info_id, new_account)
-values('admin@community.com', '$2a$10$w8vrvSO5DOCuyMXoI3KHieiBrTf4YQ3.GEeaVGC/ynBtiK3vNdgsu', 5, false);
+values('admin@community.com', '$2a$12$YdOuL7mvd1iLv.FlfOw4tuLHBGbKlylLF.hWWUY7ASxXDdHfX9Y8a', 5, false);
 INSERT into AUTH_USER(email, password, user_info_id, new_account)
-    values('martin.lacha@seznam.cz', '$2a$10$w8vrvSO5DOCuyMXoI3KHieiBrTf4YQ3.GEeaVGC/ynBtiK3vNdgsu', 1, false);
+    values('martin.lacha@seznam.cz', '$2a$12$YdOuL7mvd1iLv.FlfOw4tuLHBGbKlylLF.hWWUY7ASxXDdHfX9Y8a', 1, false);
 INSERT into AUTH_USER(email, password, user_info_id, new_account)
-    values('vlastimil.lacha@gmail.com', '$2a$10$w8vrvSO5DOCuyMXoI3KHieiBrTf4YQ3.GEeaVGC/ynBtiK3vNdgsu', 2, false);
+    values('vlastimil.lacha@gmail.com', '$2a$12$YdOuL7mvd1iLv.FlfOw4tuLHBGbKlylLF.hWWUY7ASxXDdHfX9Y8a', 2, false);
 INSERT into AUTH_USER(email, password, user_info_id, new_account)
-    values('random_email@seznam.cz', '$2a$10$w8vrvSO5DOCuyMXoI3KHieiBrTf4YQ3.GEeaVGC/ynBtiK3vNdgsu', 3, false);
+    values('random_email@seznam.cz', '$2a$12$YdOuL7mvd1iLv.FlfOw4tuLHBGbKlylLF.hWWUY7ASxXDdHfX9Y8a', 3, false);
 INSERT into AUTH_USER(email, password, user_info_id, new_account)
-    values('testing@gmail.com', '$2a$10$w8vrvSO5DOCuyMXoI3KHieiBrTf4YQ3.GEeaVGC/ynBtiK3vNdgsu', 4, false);
+    values('testing@gmail.com', '$2a$12$YdOuL7mvd1iLv.FlfOw4tuLHBGbKlylLF.hWWUY7ASxXDdHfX9Y8a', 4, false);
 
 INSERT INTO AUTH_USER_ROLE (user_id, role_id) VALUES (1, 1);
 INSERT INTO AUTH_USER_ROLE (user_id, role_id) VALUES (1, 2);
