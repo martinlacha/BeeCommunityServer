@@ -328,7 +328,7 @@ public class StatsServiceImpl implements IStatsService {
                 hiveName = hive.getName();
             }
         }
-        return new HiveProductionInfo(hiveName, honey, total);
+        return new HiveProductionInfo(hiveName, roundNumber(honey), roundNumber(total));
     }
 
     /**
@@ -350,7 +350,7 @@ public class StatsServiceImpl implements IStatsService {
                 hiveName = hive.getName();
             }
         }
-        return new HiveProductionInfo(hiveName, mostHiveWeight, total);
+        return new HiveProductionInfo(hiveName, roundNumber(mostHiveWeight), roundNumber(total));
     }
 
     /**
@@ -373,7 +373,7 @@ public class StatsServiceImpl implements IStatsService {
                 case LITER -> honey += item.getProductQuantity() * 1.425;
             }
         }
-        return honey;
+        return roundNumber(honey);
     }
 
     /**
@@ -394,7 +394,7 @@ public class StatsServiceImpl implements IStatsService {
                 case KILOGRAM -> weight += item.getProductQuantity();
             }
         }
-        return weight;
+        return roundNumber(weight);
     }
 
     /**
@@ -412,7 +412,7 @@ public class StatsServiceImpl implements IStatsService {
         total += l == null ? 0 : (l * 1.425);
         var ml = inspectionRepository.sumQuantityByProductAndUnitTypeAndYear(year, EHarvestProduct.HONEY, EUnitsAndDoses.MILLILITER);
         total += ml == null ? 0 : (ml / 1000 * 1.425);
-        return total;
+        return roundNumber(total);
     }
 
     /**
@@ -427,7 +427,16 @@ public class StatsServiceImpl implements IStatsService {
         total += kg == null ? 0 : kg;
         var g = inspectionRepository.sumQuantityByProductAndUnitTypeAndYear(year, product, EUnitsAndDoses.GRAM);
         total += g == null ? 0 : (g / 1000);
-        return total;
+        return roundNumber(total);
+    }
+
+    /**
+     * Round double value to 3 decimal places
+     * @param value value to round
+     * @return rounded double number
+     */
+    private double roundNumber(double value) {
+        return Double.parseDouble(String.format("%.3f", value));
     }
 }
 
