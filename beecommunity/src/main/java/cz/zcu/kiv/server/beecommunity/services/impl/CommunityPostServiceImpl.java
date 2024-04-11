@@ -93,10 +93,10 @@ public class CommunityPostServiceImpl implements ICommunityPostService {
         var post = communityPostRepository.findById(postId);
         if (post.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        } else if (canSeePost(user.getId(), post.get().getAuthor().getId())) {
-            return ResponseEntity.status(HttpStatus.OK).body(ImageUtil.decompressImage(post.get().getImage()));
         } else if (post.get().getImage() == null) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        } else if (canSeePost(user.getId(), post.get().getAuthor().getId())) {
+            return ResponseEntity.status(HttpStatus.OK).body(ImageUtil.decompressImage(post.get().getImage()));
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
