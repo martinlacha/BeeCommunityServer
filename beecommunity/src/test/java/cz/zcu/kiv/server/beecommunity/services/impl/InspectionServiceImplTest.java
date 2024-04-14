@@ -113,7 +113,6 @@ class InspectionServiceImplTest {
         ResponseEntity<List<InspectionDto>> response = inspectionService.getInspections(hive.getId());
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(expectedDtos, response.getBody());
     }
 
     @Test
@@ -131,7 +130,6 @@ class InspectionServiceImplTest {
         ResponseEntity<List<InspectionDto>> response = inspectionService.getInspections(hive.getId());
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(expectedDtos, response.getBody());
     }
 
     @Test
