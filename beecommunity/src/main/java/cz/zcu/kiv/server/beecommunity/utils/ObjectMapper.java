@@ -595,7 +595,7 @@ public class ObjectMapper {
     }
 
     /**
-     * Conver list of entities from single hive into list of dto records
+     * Convert list of entities from single hive into list of dto records
      * @param entities list of measured data
      * @return list of converted entities
      */

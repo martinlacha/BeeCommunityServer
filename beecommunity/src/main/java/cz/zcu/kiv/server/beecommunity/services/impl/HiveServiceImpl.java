@@ -242,14 +242,13 @@ public class HiveServiceImpl implements IHiveService {
      */
     @Override
     public ResponseEntity<Void> uploadSensorsData(Long hiveId, SensorDataDto data) {
-        var user = UserUtils.getUserFromSecurityContext();
         var hive = hiveRepository.findById(hiveId);
         if (hive.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        } else if (!user.getId().equals(hive.get().getOwner().getId())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-        sensorsDataRepository.save(modelMapper.convertSensorsDataDto(data));
+        var sensorsData = modelMapper.convertSensorsDataDto(data);
+        sensorsData.setHive(hive.get());
+        sensorsDataRepository.save(sensorsData);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
@@ -260,12 +259,9 @@ public class HiveServiceImpl implements IHiveService {
      */
     @Override
     public ResponseEntity<List<SensorDataDto>> getHiveSensorsData(Long hiveId) {
-        var user = UserUtils.getUserFromSecurityContext();
         var hive = hiveRepository.findById(hiveId);
         if (hive.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        } else if (!user.getId().equals(hive.get().getOwner().getId())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         return ResponseEntity.status(HttpStatus.OK).body(modelMapper.convertListSensorsData(sensorsDataRepository.findByHiveIdOrderByTime(hiveId)));
 
