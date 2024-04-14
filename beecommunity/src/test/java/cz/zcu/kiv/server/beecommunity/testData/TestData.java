@@ -5,6 +5,7 @@ import cz.zcu.kiv.server.beecommunity.jpa.dto.apiary.ApiaryDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.community.CommunityPostDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.event.EventDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.hive.HiveDto;
+import cz.zcu.kiv.server.beecommunity.jpa.dto.hive.SensorDataDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.inspection.*;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.news.NewsDetailDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.news.NewsDto;
@@ -16,6 +17,7 @@ import cz.zcu.kiv.server.beecommunity.utils.DateTimeUtils;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -684,4 +686,45 @@ public class TestData {
         new Object[]{LocalDate.of(2023, 3, 16), 15L},
         new Object[]{LocalDate.of(2023, 3, 17), 20L});
 
+    List<SensorsDataEntity> sensorsDataEntities = List.of(
+            SensorsDataEntity
+                    .builder()
+                    .time(LocalDateTime.of(2024, 4, 14, 12, 0, 0))
+                    .weight(46.0)
+                    .hiveTemperature(24)
+                    .hiveHumidity(14)
+                    .outsideTemperature(26.5)
+                    .outsideHumidity(18)
+                    .build(),
+            SensorsDataEntity
+                    .builder()
+                    .time(LocalDateTime.of(2024, 4, 14, 13, 0, 0))
+                    .weight(45.0)
+                    .hiveTemperature(22)
+                    .hiveHumidity(12)
+                    .outsideTemperature(25)
+                    .outsideHumidity(14)
+                    .build()
+    );
+
+    List<SensorDataDto> sensorDataDtos = List.of(
+            SensorDataDto
+                    .builder()
+                    .time("2024-04-14 12:00:00")
+                    .weight(46.0)
+                    .hiveTemperature(24)
+                    .hiveHumidity(14)
+                    .outsideTemperature(26.5)
+                    .outsideHumidity(18)
+                    .build(),
+            SensorDataDto
+                    .builder()
+                    .time("2024-04-14 13:00:00")
+                    .weight(45.0)
+                    .hiveTemperature(22)
+                    .hiveHumidity(12)
+                    .outsideTemperature(25)
+                    .outsideHumidity(14)
+                    .build()
+    );
 }

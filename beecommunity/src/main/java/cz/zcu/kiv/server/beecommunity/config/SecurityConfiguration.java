@@ -62,7 +62,8 @@ public class SecurityConfiguration implements WebMvcConfigurer {
                         "/api/v1/user/sign-up",
                         "/api/v1/user/all",
                         "/api/v1/user/update-password",
-                        "/api/v1/user/reset-password"
+                        "/api/v1/user/reset-password",
+                        "/api/v1/hive/sensors"
                 )
                 .permitAll()
                 // Paths which has to be authenticated and which roles user must have

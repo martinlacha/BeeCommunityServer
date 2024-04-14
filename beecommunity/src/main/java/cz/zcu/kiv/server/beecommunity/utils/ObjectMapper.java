@@ -8,6 +8,7 @@ import cz.zcu.kiv.server.beecommunity.jpa.dto.community.PostCommentDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.event.EventDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.friends.FoundUserDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.hive.HiveDto;
+import cz.zcu.kiv.server.beecommunity.jpa.dto.hive.SensorDataDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.inspection.*;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.news.NewsDetailDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.news.NewsDto;
@@ -23,7 +24,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -577,6 +580,38 @@ public class ObjectMapper {
         users.forEach(user ->
                 timeline.add(
                         GraphOverviewItem.builder().date(((LocalDate) user[0]).toString()).count((Long) user[1]).build()));
+        return timeline;
+    }
+
+    /**
+     * Convert dto data from sensors monitoring into entity record
+     * @param data measured data from sensors monitoring
+     * @return converted entity of measured data from sensors
+     */
+    public SensorsDataEntity convertSensorsDataDto(SensorDataDto data) {
+        var entity =  modelMapper.map(data, SensorsDataEntity.class);
+        entity.setTime(LocalDateTime.now());
+        return entity;
+    }
+
+    /**
+     * Conver list of entities from single hive into list of dto records
+     * @param entities list of measured data
+     * @return list of converted entities
+     */
+    public List<SensorDataDto> convertListSensorsData(List<SensorsDataEntity> entities) {
+        List<SensorDataDto> timeline = new ArrayList<>();
+        entities.forEach(dataRecord ->
+                timeline.add(
+                        SensorDataDto
+                                .builder()
+                                .time(DateTimeUtils.getDateTimeFromString(dataRecord.getTime()))
+                                .weight(dataRecord.getWeight())
+                                .hiveTemperature(dataRecord.getHiveTemperature())
+                                .hiveHumidity(dataRecord.getHiveHumidity())
+                                .outsideTemperature(dataRecord.getOutsideTemperature())
+                                .outsideHumidity(dataRecord.getOutsideHumidity())
+                                .build()));
         return timeline;
     }
 }

@@ -2,8 +2,10 @@ package cz.zcu.kiv.server.beecommunity.services.impl;
 
 import cz.zcu.kiv.server.beecommunity.enums.FriendshipEnums;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.hive.HiveDto;
+import cz.zcu.kiv.server.beecommunity.jpa.dto.hive.SensorDataDto;
 import cz.zcu.kiv.server.beecommunity.jpa.repository.ApiaryRepository;
 import cz.zcu.kiv.server.beecommunity.jpa.repository.HiveRepository;
+import cz.zcu.kiv.server.beecommunity.jpa.repository.SensorsDataRepository;
 import cz.zcu.kiv.server.beecommunity.services.IHiveService;
 import cz.zcu.kiv.server.beecommunity.utils.*;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +26,8 @@ public class HiveServiceImpl implements IHiveService {
     private final ApiaryRepository apiaryRepository;
 
     private final HiveRepository hiveRepository;
+
+    private final SensorsDataRepository sensorsDataRepository;
 
     private final ObjectMapper modelMapper;
 
@@ -228,5 +232,42 @@ public class HiveServiceImpl implements IHiveService {
         hive.get().setStructure(structure);
         hiveRepository.saveAndFlush(hive.get());
         return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    /**
+     * Create new record with data from monitoring hive
+     * @param hiveId id of hive
+     * @param data measured data from sensors
+     * @return status co of operation result
+     */
+    @Override
+    public ResponseEntity<Void> uploadSensorsData(Long hiveId, SensorDataDto data) {
+        var user = UserUtils.getUserFromSecurityContext();
+        var hive = hiveRepository.findById(hiveId);
+        if (hive.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } else if (!user.getId().equals(hive.get().getOwner().getId())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        sensorsDataRepository.save(modelMapper.convertSensorsDataDto(data));
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    /**
+     * Get list of sensors data from single hive
+     * @param hiveId id of hive
+     * @return list of monitoring data from hive sensors
+     */
+    @Override
+    public ResponseEntity<List<SensorDataDto>> getHiveSensorsData(Long hiveId) {
+        var user = UserUtils.getUserFromSecurityContext();
+        var hive = hiveRepository.findById(hiveId);
+        if (hive.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } else if (!user.getId().equals(hive.get().getOwner().getId())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(modelMapper.convertListSensorsData(sensorsDataRepository.findByHiveIdOrderByTime(hiveId)));
+
     }
 }

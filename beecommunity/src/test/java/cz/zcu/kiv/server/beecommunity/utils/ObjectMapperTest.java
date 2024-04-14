@@ -617,4 +617,31 @@ class ObjectMapperTest {
         assertEquals(15, graphPoints.get(1).getCount());
         assertEquals(20, graphPoints.get(2).getCount());
     }
+
+    @Test
+    void testConvertSensorsDataDto() {
+        var data = objectMapper.convertSensorsDataDto(testData.getSensorDataDtos().get(0));
+        var expect = testData.getSensorsDataEntities().get(0);
+        assertEquals(expect.getWeight(), data.getWeight());
+        assertEquals(expect.getHiveTemperature(), data.getHiveTemperature());
+        assertEquals(expect.getHiveHumidity(), data.getHiveHumidity());
+        assertEquals(expect.getOutsideTemperature(), data.getOutsideTemperature());
+        assertEquals(expect.getOutsideHumidity(), data.getOutsideHumidity());
+    }
+
+    @Test
+    void testConvertListSensorsData() {
+        var sensorsData = objectMapper.convertListSensorsData(testData.getSensorsDataEntities());
+        var expectedData = testData.getSensorDataDtos();
+        assertEquals(2, sensorsData.size());
+        for (int i = 0; i < sensorsData.size(); i++) {
+            var data = sensorsData.get(i);
+            var expect = expectedData.get(i);
+            assertEquals(expect.getWeight(), data.getWeight());
+            assertEquals(expect.getHiveTemperature(), data.getHiveTemperature());
+            assertEquals(expect.getHiveHumidity(), data.getHiveHumidity());
+            assertEquals(expect.getOutsideTemperature(), data.getOutsideTemperature());
+            assertEquals(expect.getOutsideHumidity(), data.getOutsideHumidity());
+        }
+    }
 }
