@@ -110,7 +110,7 @@ public class HiveController {
      * @return status co of operation result
      */
     @PostMapping("/sensors")
-    ResponseEntity<Void> uploadSensorsData(@RequestParam Long hiveId, @RequestParam SensorDataDto data) {
+    ResponseEntity<Void> uploadSensorsData(@RequestParam Long hiveId, @RequestBody SensorDataDto data) {
         return hiveService.uploadSensorsData(hiveId, data);
     }
 
