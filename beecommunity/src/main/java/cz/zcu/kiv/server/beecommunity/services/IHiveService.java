@@ -1,6 +1,7 @@
 package cz.zcu.kiv.server.beecommunity.services;
 
 import cz.zcu.kiv.server.beecommunity.jpa.dto.hive.HiveDto;
+import cz.zcu.kiv.server.beecommunity.jpa.dto.hive.SensorDataDto;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -21,4 +22,8 @@ public interface IHiveService {
     ResponseEntity<String> getHiveStructure(Long hiveId);
 
     ResponseEntity<Void> createHiveStructure(Long hiveId, String structure);
+
+    ResponseEntity<Void> uploadSensorsData(Long hiveId, SensorDataDto data);
+
+    ResponseEntity<List<SensorDataDto>> getHiveSensorsData(Long hiveId);
 }

@@ -251,3 +251,15 @@ CREATE TABLE HIVE_INSPECTION (
     stressors_image bytea,
     disease_image bytea
 );
+
+CREATE TABLE SENSORS_DATA (
+    id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    hive_id INT NOT NULL REFERENCES HIVE(id),
+    time TIMESTAMP NOT NULL,
+    -- Measured data
+    weight DOUBLE PRECISION DEFAULT 0,
+    hive_temperature DOUBLE PRECISION DEFAULT 0,
+    hive_humidity DOUBLE PRECISION DEFAULT 0,
+    outside_temperature DOUBLE PRECISION DEFAULT 0,
+    outside_humidity DOUBLE PRECISION DEFAULT 0
+);
