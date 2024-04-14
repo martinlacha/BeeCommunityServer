@@ -49,7 +49,7 @@ public class InspectionServiceImpl implements IInspectionService {
                         FriendshipEnums.EStatus.FRIEND)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-        var entitiesList = inspectionRepository.findByHiveIdOrderById(hiveId);
+        var entitiesList = inspectionRepository.findByHiveIdOrderByInspectionDate(hiveId);
         return ResponseEntity.status(HttpStatus.OK).body(modelMapper.convertInspectionEntityList(entitiesList));
     }
 

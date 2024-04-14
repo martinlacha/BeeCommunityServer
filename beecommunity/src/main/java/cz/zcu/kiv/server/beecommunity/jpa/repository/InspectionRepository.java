@@ -11,6 +11,9 @@ import java.util.Optional;
 
 public interface InspectionRepository extends JpaRepository<InspectionEntity, Long> {
     List<InspectionEntity> findByHiveIdOrderById(Long hiveId);
+
+    List<InspectionEntity> findByHiveIdOrderByInspectionDate(Long hiveId);
+
     Optional<InspectionEntity> findByOwnerIdAndId(Long userId, Long hiveId);
 
     @Query("SELECT SUM(r.harvest.productQuantity) " +

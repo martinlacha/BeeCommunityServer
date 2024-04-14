@@ -81,7 +81,7 @@ class InspectionServiceImplTest {
         ResponseEntity<List<InspectionDto>> response = inspectionService.getInspections(hive.getId());
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         verify(hiveRepository, times(1)).findById(hive.getId());
-        verify(inspectionRepository, never()).findByHiveIdOrderById(hive.getId());
+        verify(inspectionRepository, never()).findByHiveIdOrderByInspectionDate(hive.getId());
     }
 
     @Test
