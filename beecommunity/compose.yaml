@@ -2,7 +2,7 @@ services:
   postgres:
     container_name: 'beecommunity_postgres_1'
     image: 'postgres:latest'
-    restart: always
+    restart: "no"
     networks:
       server-network:
         ipv4_address: 10.1.0.2
