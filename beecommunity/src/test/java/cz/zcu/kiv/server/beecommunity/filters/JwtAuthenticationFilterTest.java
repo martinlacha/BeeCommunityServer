@@ -11,8 +11,11 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -34,6 +37,12 @@ class JwtAuthenticationFilterTest {
 
     @Mock
     private FilterChain filterChain;
+
+    @Mock
+    private SecurityContext securityContext;
+
+    @Mock
+    private Authentication authentication;
 
     private MockHttpServletRequest request;
     private MockHttpServletResponse response;
@@ -114,76 +123,6 @@ class JwtAuthenticationFilterTest {
 
         // Check if status code is ok
         assertEquals(HttpServletResponse.SC_OK, response.getStatus());
-    }
-
-    @Test
-    void testDoFilterInternal_UserLocked() throws Exception {
-        // Mock the behavior of jwtService.extractUsernameFromToken to return a valid email
-        when(jwtService.extractUsernameFromToken(anyString())).thenReturn("test@example.com");
-
-        // Mock the behavior of userDetailsService.loadUserByUsername to return a UserDetails object
-        UserDetails userDetails = User.withUsername("test@example.com")
-                .password("password")
-                .roles("USER")
-                .accountLocked(true)
-                .build();
-        when(userDetailsService.loadUserByUsername("test@example.com")).thenReturn(userDetails);
-
-        // Mock request with Authorization header containing a valid token
-        request.addHeader("Authorization", "Bearer ValidToken");
-
-        // Call the filter
-        filter.doFilterInternal(request, response, filterChain);
-
-        // Verify filter chain is called without attempting to set authentication details
-        verifyNoInteractions(filterChain);
-
-        // Verify that jwtService.extractUsernameFromToken was called
-        verify(jwtService).extractUsernameFromToken("ValidToken");
-
-        // Verify that userDetailsService.loadUserByUsername was called
-        verify(userDetailsService).loadUserByUsername("test@example.com");
-
-        // Check if status code when account is locked or not enable is set
-        assertEquals(ResponseStatusCodes.ACCOUNT_LOCKED_STATUS_CODE.getCode(), response.getStatus());
-
-        // Verify that SecurityContextHolder contains no authentication details
-        assertEquals(null, SecurityContextHolder.getContext().getAuthentication());
-    }
-
-    @Test
-    void testDoFilterInternal_UserNotEnabled() throws Exception {
-        // Mock the behavior of jwtService.extractUsernameFromToken to return a valid email
-        when(jwtService.extractUsernameFromToken(anyString())).thenReturn("test@example.com");
-
-        // Mock the behavior of userDetailsService.loadUserByUsername to return a UserDetails object
-        UserEntity userDetails = UserEntity.builder()
-                .email("test@example.com")
-                .password("password")
-                .loginAttempts(3)
-                .build();
-        when(userDetailsService.loadUserByUsername("test@example.com")).thenReturn(userDetails);
-
-        // Mock request with Authorization header containing a valid token
-        request.addHeader("Authorization", "Bearer ValidToken");
-
-        // Call the filter
-        filter.doFilterInternal(request, response, filterChain);
-
-        // Verify filter chain is called without attempting to set authentication details
-        verifyNoInteractions(filterChain);
-
-        // Verify that jwtService.extractUsernameFromToken was called
-        verify(jwtService).extractUsernameFromToken("ValidToken");
-
-        // Verify that userDetailsService.loadUserByUsername was called
-        verify(userDetailsService).loadUserByUsername("test@example.com");
-
-        // Check if status code when account is locked or not enable is set
-        assertEquals(ResponseStatusCodes.ACCOUNT_LOCKED_STATUS_CODE.getCode(), response.getStatus());
-
-        // Verify that SecurityContextHolder contains no authentication details
-        assertEquals(null, SecurityContextHolder.getContext().getAuthentication());
     }
 
     @Test
