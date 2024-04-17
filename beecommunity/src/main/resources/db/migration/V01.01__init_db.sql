@@ -139,39 +139,6 @@ CREATE TABLE STRESSORS (
     hornet BOOLEAN DEFAULT FALSE
 );
 
-CREATE TABLE SYMPTOMS (
-    id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-
-    -- Body and behaviour
-    bees_cant_fly BOOLEAN DEFAULT FALSE,
-    deformed_wings BOOLEAN DEFAULT FALSE,
-    hyperactivity BOOLEAN DEFAULT FALSE,
-    poor_motor_coordination BOOLEAN DEFAULT FALSE,
-    deformed_abdomens BOOLEAN DEFAULT FALSE,
-    bees_fighting BOOLEAN DEFAULT FALSE,
-    trembling BOOLEAN DEFAULT FALSE,
-    shiny_black_bees BOOLEAN DEFAULT FALSE,
-
-    -- Brood
-    dead_larvae BOOLEAN DEFAULT FALSE,
-    chalky_larvae BOOLEAN DEFAULT FALSE,
-    discolored_larvae BOOLEAN DEFAULT FALSE,
-    mites_on_larvae BOOLEAN DEFAULT FALSE,
-    patchy_brood BOOLEAN DEFAULT FALSE,
-    punctured_capped_brood BOOLEAN DEFAULT FALSE,
-    ropey_larvae BOOLEAN DEFAULT FALSE,
-    saclike_larvae BOOLEAN DEFAULT FALSE,
-    sunken_cappings BOOLEAN DEFAULT FALSE,
-
-    -- Death
-    chalky_corpses BOOLEAN DEFAULT FALSE,
-    dead_bees BOOLEAN DEFAULT FALSE,
-    translucent_pale_corpses BOOLEAN DEFAULT FALSE,
-
-    -- Environment
-    bad_smell BOOLEAN DEFAULT FALSE,
-    fecal_markings BOOLEAN DEFAULT FALSE
-);
 
 CREATE TABLE HIVE_TREATMENT(
     id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,

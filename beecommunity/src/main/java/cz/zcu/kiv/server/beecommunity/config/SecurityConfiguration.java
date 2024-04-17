@@ -45,7 +45,6 @@ public class SecurityConfiguration implements WebMvcConfigurer {
 
     /**
      * Security filter chain to check every http request
-     * First
      * More info about CSRF on <a href="https://www.baeldung.com/spring-security-csrf"/>
      * @param http Http request received to filter
      * @return Filtered http request
@@ -60,7 +59,6 @@ public class SecurityConfiguration implements WebMvcConfigurer {
                         "/api-docs",
                         "/api/v1/server/test-connection",
                         "/api/v1/user/sign-up",
-                        "/api/v1/user/all",
                         "/api/v1/user/update-password",
                         "/api/v1/user/reset-password",
                         "/api/v1/hive/sensors"

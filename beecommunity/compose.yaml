@@ -8,8 +8,8 @@ services:
         ipv4_address: 10.1.0.2
     environment:
       - 'POSTGRES_DB=beecommunity_db'
-      - 'POSTGRES_PASSWORD=admin'
-      - 'POSTGRES_USER=admin'
+      - 'POSTGRES_PASSWORD=beecommunity_password'
+      - 'POSTGRES_USER=beecommunity_username'
       - 'TZ=Europe/Prague'
     ports:
       - '5432:5432'
