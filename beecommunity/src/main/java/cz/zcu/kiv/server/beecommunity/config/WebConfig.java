@@ -1,7 +1,6 @@
 package cz.zcu.kiv.server.beecommunity.config;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -49,7 +48,6 @@ public class WebConfig implements WebMvcConfigurer {
      * More info on <a href="https://www.baeldung.com/spring-cors"/>
      * @param registry - registry with mappings for cross-origin requests
      */
-    //TODO ke konci vyjmenovat endpointy a metody k nim
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**");
