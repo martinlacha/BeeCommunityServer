@@ -25,7 +25,7 @@ services:
   flyway:
     image: flyway/flyway
     command:
-      -url=jdbc:postgresql://10.1.0.2:5432/beecommunity_db -schemas=public -user=admin -password=admin migrate
+      -url=jdbc:postgresql://10.1.0.2:5432/beecommunity_db -schemas=public -user=beecommunity_username -password=beecommunity_password migrate
     volumes:
       - ./src/main/resources/db/migration:/flyway/sql
     depends_on:
