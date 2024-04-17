@@ -45,7 +45,9 @@ public class DatabaseBackupSchedule {
                 "sh",
                 "-c",
                 String.format("pg_dump -U %s %s > %s",
-                        propertiesConfiguration.getDatabaseUser(), propertiesConfiguration.getDatabaseName(), backupName));
+                        propertiesConfiguration.getDatabaseUser(),
+                        propertiesConfiguration.getDatabaseName(),
+                        backupName));
         // Exit code check
         if (!successExitCode) {
             log.error("Unable to backup database");

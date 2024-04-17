@@ -174,7 +174,7 @@ public class StatsServiceImpl implements IStatsService {
         var lastYear = LocalDate.now().getYear() - 1;
         return UserDetailStatisticsDto
                 .builder()
-                .countOfApiaries(apiaryRepository.countByOwnerId(userId))
+                .countOfApiaries(apiaryRepository.countById(userId))
                 .countOfHivesLastYear((long) hiveRepository.findByOwnerId(userId).stream().filter(hiveEntity -> hiveEntity.getEstablishment().getYear() <= lastYear).toList().size())
                 .countOfHivesCurrentYear((long) hiveRepository.findByOwnerId(userId).stream().filter(hiveEntity -> hiveEntity.getEstablishment().getYear() <= currentYear).toList().size())
                 .countSwarmHives(hiveRepository.countByOwnerIdAndSource(userId, EBeeSource.SWARM))
