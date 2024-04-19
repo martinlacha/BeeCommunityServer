@@ -271,7 +271,7 @@ class UserServiceImplTest {
     @Test
     void testUpdatePassword_Success() throws IllegalAccessException {
         String confirmCode = "ABCdef";
-        HashMap<String, String> map = (HashMap<String, String>) FieldUtils.readField(userService, "RESET_PASSWORD_CODES_MAP", true);
+        HashMap<String, String> map = (HashMap<String, String>) FieldUtils.readField(userService, "resetPasswordCodesMap", true);
         map.put("test@mail.com", confirmCode);
 
         UpdatePasswordDto updatePasswordDto = new UpdatePasswordDto("test@mail.com", confirmCode, "new_password");
