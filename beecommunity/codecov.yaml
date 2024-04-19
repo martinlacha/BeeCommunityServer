@@ -1,5 +1,5 @@
 ignore:
-  - "**/jpa/**"
-  - "**/controllers/**"
-  - "**/enums/**"
-  - "**/BeeCommunityApplication.java"
+  - "src/test"
+  - "src/main/java/cz/zcu/kiv/server/beecommunity/jpa"
+  - "src/main/java/cz/zcu/kiv/server/beecommunity/controllers/api/v1"
+  - "src/main/java/cz/zcu/kiv/server/beecommunity/BeeCommunityApplication.java"
