@@ -6,6 +6,8 @@ import cz.zcu.kiv.server.beecommunity.enums.InspectionEnums;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.friends.FoundUserDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.statistics.FriendsStatisticsDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.statistics.UserDetailStatisticsDto;
+import cz.zcu.kiv.server.beecommunity.jpa.entity.ApiaryEntity;
+import cz.zcu.kiv.server.beecommunity.jpa.entity.HiveEntity;
 import cz.zcu.kiv.server.beecommunity.jpa.entity.UserEntity;
 import cz.zcu.kiv.server.beecommunity.jpa.repository.*;
 import cz.zcu.kiv.server.beecommunity.services.IFriendService;
@@ -125,8 +127,17 @@ public class StatsServiceImplTest {
 
     @Test
     void testGetPersonalStatistics() {
+        var a1 = testData.getApiaryEntity1();
+        var a2 = testData.getApiaryEntity2();
+        a1.setOwner(user);
+        a2.setOwner(user);
+
+        List<ApiaryEntity> list = List.of(a1, a2);
+        List<HiveEntity> hives = testData.getHives();
+        when(apiaryRepository.findByOwnerIdOrderById(any())).thenReturn(list);
+        when(hiveRepository.findByOwnerIdAndApiaryIdOrderByEstablishmentAsc(any(), any())).thenReturn(hives);
+
         ResponseEntity<UserDetailStatisticsDto> response = statsService.getPersonalStatistics();
-        when(apiaryRepository.findByOwnerIdOrderById(any())).thenReturn(List.of(testData.getApiaryEntity1()));
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         verify(apiaryRepository, times(1)).countById(eq(user.getId()));
@@ -139,6 +150,13 @@ public class StatsServiceImplTest {
         verify(hiveRepository, times(1)).countByOwnerIdAndSource(eq(user.getId()), eq(HiveEnums.EBeeSource.OTHER));
         verify(apiaryRepository, times(1)).findByOwnerIdOrderById(eq(user.getId()));
 
+    }
+
+    @Test
+    void testGetFriendsStatistics_Success() {
+        when(friendService.getMyFriends()).thenReturn(ResponseEntity.status(HttpStatus.OK).body(null));
+        var response = statsService.getFriendsStatistics();
+        assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
