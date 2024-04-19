@@ -5,6 +5,7 @@ import cz.zcu.kiv.server.beecommunity.jpa.entity.UserEntity;
 import cz.zcu.kiv.server.beecommunity.services.IJwtService;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpHeaders;
+import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.core.Authentication;
@@ -21,7 +23,11 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.*;
 
 class JwtAuthenticationFilterTest {
@@ -56,72 +62,49 @@ class JwtAuthenticationFilterTest {
 
     @Test
     void testDoFilterInternal_ValidToken() throws Exception {
-        // Add header
         request.addHeader("Authorization", "Bearer valid_token");
 
-        // Mock UserDetails
         UserDetails userDetails = User.builder().username("test@example.com").password("password").build();
         when(userDetailsService.loadUserByUsername("test@example.com")).thenReturn(userDetails);
 
-        // Mock JWT service
         when(jwtService.extractUsernameFromToken("valid_token")).thenReturn("test@example.com");
         when(jwtService.isTokenValid("valid_token", userDetails)).thenReturn(true);
 
-        // Call the filter
         filter.doFilterInternal(request, response, filterChain);
 
-        // Verify authentication is set
         verify(filterChain).doFilter(request, response);
 
-        // Check if status code is ok
         assertEquals(HttpServletResponse.SC_OK, response.getStatus());
     }
 
     @Test
     void testDoFilterInternal_HeaderNull() throws Exception {
-        // Call the filter
         filter.doFilterInternal(request, response, filterChain);
 
-        // Verify filter chain is called without setting authentication
         verify(filterChain).doFilter(request, response);
 
-        // Check if status code is ok
         assertEquals(HttpServletResponse.SC_OK, response.getStatus());
     }
 
     @Test
     void testDoFilterInternal_TokenWithoutBearer() throws Exception {
-        // Mock Authorization header that not starts with "Bearer" string
         request.addHeader("Authorization", "InvalidTokenWithoutBearer");
 
-        // Call the filter
         filter.doFilterInternal(request, response, filterChain);
 
-        // Verify filter chain is called without attempting to authenticate
         verify(filterChain).doFilter(request, response);
-
-        // Check if status code is ok
         assertEquals(HttpServletResponse.SC_OK, response.getStatus());
     }
 
     @Test
     void testDoFilterInternal_NullEmail() throws Exception {
-        // Mock the behavior of jwtService.extractUsernameFromToken to return null
         when(jwtService.extractUsernameFromToken(anyString())).thenReturn(null);
-
-        // Mock request with Authorization header containing a valid token
         request.addHeader("Authorization", "Bearer ValidToken");
 
-        // Call the filter
         filter.doFilterInternal(request, response, filterChain);
 
-        // Verify filter chain is called without attempting to authenticate
         verify(filterChain).doFilter(request, response);
-
-        // Verify that jwtService.extractUsernameFromToken was called
         verify(jwtService).extractUsernameFromToken("ValidToken");
-
-        // Check if status code is ok
         assertEquals(HttpServletResponse.SC_OK, response.getStatus());
     }
 
@@ -134,29 +117,18 @@ class JwtAuthenticationFilterTest {
                 .loginAttempts(2)
                 .build();
         when(userDetailsService.loadUserByUsername("test@example.com")).thenReturn(userDetails);
-
-        // Mock the behavior of jwtService.extractUsernameFromToken to throw an exception for invalid token
         when(jwtService.extractUsernameFromToken(anyString())).thenThrow(ExpiredJwtException.class);
-
-        // Mock request with Authorization header containing an invalid token
         request.addHeader("Authorization", "Bearer ExpiredToken");
 
-        // Call the filter
         filter.doFilterInternal(request, response, filterChain);
 
-        // Verify filter chain is called without attempting to set authentication details
         verifyNoInteractions(filterChain);
-
-        // Verify that jwtService.extractUsernameFromToken was called
         verify(jwtService).extractUsernameFromToken("ExpiredToken");
-
-        // Check response status code
         assertEquals(HttpServletResponse.SC_UNAUTHORIZED, response.getStatus());
     }
 
     @Test
     void testDoFilterInternal_InvalidToken() throws Exception {
-        // Mock the behavior of userDetailsService.loadUserByUsername to return a UserDetails object
         UserEntity userDetails = UserEntity.builder()
                 .email("test@example.com")
                 .password("password")
@@ -164,23 +136,49 @@ class JwtAuthenticationFilterTest {
                 .build();
         when(userDetailsService.loadUserByUsername("test@example.com")).thenReturn(userDetails);
 
-        // Mock the behavior of jwtService.extractUsernameFromToken to throw an exception for invalid token
         when(jwtService.extractUsernameFromToken(anyString())).thenReturn(userDetails.getUsername());
         when(jwtService.isTokenValid(anyString(), eq(userDetails))).thenReturn(false);
 
-        // Mock request with Authorization header containing an invalid token
         request.addHeader("Authorization", "Bearer InvalidToken");
 
-        // Call the filter
         filter.doFilterInternal(request, response, filterChain);
 
-        // Verify filter chain is called without attempting to set authentication details
         verify(filterChain, times(1)).doFilter(request,response);
-
-        // Verify that jwtService.extractUsernameFromToken was called
         verify(jwtService).extractUsernameFromToken("InvalidToken");
-
-        // Check response status code
         assertEquals(HttpServletResponse.SC_OK, response.getStatus());
+    }
+
+    @Test
+    void testDoFilterInternal_Locked_AccountLocked() throws Exception {
+        UserEntity userDetails = UserEntity.builder()
+                .email("test@example.com")
+                .password("password")
+                .loginAttempts(4)
+                .build();
+        when(userDetailsService.loadUserByUsername("test@example.com")).thenReturn(userDetails);
+        when(jwtService.extractUsernameFromToken(anyString())).thenReturn(userDetails.getUsername());
+        when(jwtService.isTokenValid(anyString(), eq(userDetails))).thenReturn(false);
+
+        request.addHeader("Authorization", "Bearer InvalidToken");
+
+        filter.doFilterInternal(request, response, filterChain);
+
+        verify(jwtService).extractUsernameFromToken("InvalidToken");
+        assertEquals(ResponseStatusCodes.ACCOUNT_LOCKED_STATUS_CODE.getCode(), response.getStatus());
+    }
+
+    @Test
+    void testDoFilterInternal_ExpiredJwtException() {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        request.addHeader("Authorization", "Bearer expired-jwt-token");
+        request.setCharacterEncoding(StandardCharsets.UTF_8.name());
+        response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+
+        doThrow(new ExpiredJwtException(null, null, "JWT token has expired"))
+                .when(jwtService).extractUsernameFromToken("expired-jwt-token");
+
+        filter.doFilterInternal(request, response, new MockFilterChain());
+        assert response.getStatus() == HttpServletResponse.SC_UNAUTHORIZED;
     }
 }
