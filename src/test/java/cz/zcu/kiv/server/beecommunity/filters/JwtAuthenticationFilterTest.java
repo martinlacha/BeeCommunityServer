@@ -25,6 +25,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -63,8 +64,11 @@ class JwtAuthenticationFilterTest {
     @Test
     void testDoFilterInternal_ValidToken() throws Exception {
         request.addHeader("Authorization", "Bearer valid_token");
-
-        UserDetails userDetails = User.builder().username("test@example.com").password("password").build();
+        UserEntity userDetails = UserEntity.builder()
+                .email("test@example.com")
+                .password("password")
+                .roles(Set.of())
+                .build();
         when(userDetailsService.loadUserByUsername("test@example.com")).thenReturn(userDetails);
 
         when(jwtService.extractUsernameFromToken("valid_token")).thenReturn("test@example.com");
@@ -154,6 +158,7 @@ class JwtAuthenticationFilterTest {
                 .email("test@example.com")
                 .password("password")
                 .loginAttempts(4)
+                .suspended(true)
                 .build();
         when(userDetailsService.loadUserByUsername("test@example.com")).thenReturn(userDetails);
         when(jwtService.extractUsernameFromToken(anyString())).thenReturn(userDetails.getUsername());

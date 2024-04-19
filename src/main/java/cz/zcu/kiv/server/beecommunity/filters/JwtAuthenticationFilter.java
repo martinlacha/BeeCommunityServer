@@ -1,6 +1,7 @@
 package cz.zcu.kiv.server.beecommunity.filters;
 
 import cz.zcu.kiv.server.beecommunity.enums.ResponseStatusCodes;
+import cz.zcu.kiv.server.beecommunity.jpa.entity.UserEntity;
 import cz.zcu.kiv.server.beecommunity.services.IJwtService;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -14,6 +15,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -68,7 +70,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             userEmail = jwtService.extractUsernameFromToken(jwt);
             // Check user authentication record
             if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                UserDetails userDetails = userDetailsService.loadUserByUsername(userEmail);
+                UserEntity userDetails = (UserEntity) userDetailsService.loadUserByUsername(userEmail);
                 // Check is account is enabled and non-locked
                 if (!userDetails.isAccountNonLocked() || !userDetails.isEnabled()) {
                     log.warn("Account {} is locked: {}, enabled: {}",
