@@ -58,6 +58,7 @@ public class StatsServiceImpl implements IStatsService {
 
         // Apiary
         stats.setCountOfApiaries((int) apiaryRepository.count());
+        // Take only users there are activated (fill their personal information)
         var countApiariesByUsers = apiaryRepository.countApiariesGroupByOwner();
         if (!countApiariesByUsers.isEmpty()) {
             stats.setMaxApiaries(countApiariesByUsers.get(0));
