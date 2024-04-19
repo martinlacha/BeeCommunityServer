@@ -2,28 +2,30 @@ package cz.zcu.kiv.server.beecommunity.services.impl;
 
 import cz.zcu.kiv.server.beecommunity.enums.FriendshipEnums;
 import cz.zcu.kiv.server.beecommunity.enums.HiveEnums;
+import cz.zcu.kiv.server.beecommunity.enums.InspectionEnums;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.friends.FoundUserDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.statistics.FriendsStatisticsDto;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.statistics.UserDetailStatisticsDto;
 import cz.zcu.kiv.server.beecommunity.jpa.entity.UserEntity;
-import cz.zcu.kiv.server.beecommunity.jpa.repository.ApiaryRepository;
-import cz.zcu.kiv.server.beecommunity.jpa.repository.HiveRepository;
-import cz.zcu.kiv.server.beecommunity.jpa.repository.UserRepository;
+import cz.zcu.kiv.server.beecommunity.jpa.repository.*;
 import cz.zcu.kiv.server.beecommunity.services.IFriendService;
 import cz.zcu.kiv.server.beecommunity.testData.TestData;
 import cz.zcu.kiv.server.beecommunity.utils.FriendshipUtils;
-import cz.zcu.kiv.server.beecommunity.utils.UserUtils;
+import cz.zcu.kiv.server.beecommunity.utils.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -54,6 +56,18 @@ public class StatsServiceImplTest {
     @Mock
     private Authentication authentication;
 
+    @Mock
+    private ObjectMapper modelMapper;
+
+    @Mock
+    private NewsRepository newsRepository;
+
+    @Mock
+    private CommunityPostRepository communityPostRepository;
+
+    @Mock
+    private InspectionRepository inspectionRepository;
+
     @InjectMocks
     private StatsServiceImpl statsService;
 
@@ -71,18 +85,48 @@ public class StatsServiceImplTest {
     }
 
     @Test
-    void testGetFriendsStatistics() {
-        List<FoundUserDto> friends = Collections.emptyList();
-        when(friendService.getMyFriends()).thenReturn(ResponseEntity.status(HttpStatus.OK).body(friends));
-        ResponseEntity<FriendsStatisticsDto> response = statsService.getFriendsStatistics();
+    void testGetGeneralStatistics() {
+        when(modelMapper.convertObjectTimelineCounts(any())).thenReturn(Collections.emptyList());
+        when(newsRepository.count()).thenReturn(0L);
+        when(communityPostRepository.count()).thenReturn(0L);
+        when(inspectionRepository.sumQuantityByProductAndUnitTypeAndYear(anyInt(), any(), any())).thenReturn(0.0);
+        var response = statsService.getGeneralStatistics();
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(FriendsStatisticsDto.builder().friends(friends).build(), response.getBody());
-        verify(friendService, times(1)).getMyFriends();
+    }
+
+    @Test
+    void testGetGeneralStatistics_NotEmpty_Selects() {
+        List<Object[]> apiariesCount = Arrays.asList(
+                new Object[]{"Jack", 10},
+                new Object[]{"John", 3});
+        List<Object[]> hivesCount = Arrays.asList(
+                new Object[]{"Lane", 8},
+                new Object[]{"Lisa", 4});
+        List<Object[]> mostCommonDisease = Arrays.asList(
+                new Object[]{InspectionEnums.EDisease.VARROASIS, 8},
+                new Object[]{InspectionEnums.EDisease.NOSEMA, 4});
+        List<Object[]> mostCommonFood = Arrays.asList(
+                new Object[]{InspectionEnums.EFoodType.SUGAR, 8},
+                new Object[]{InspectionEnums.EFoodType.POLLEN, 4});
+        when(modelMapper.convertObjectTimelineCounts(any())).thenReturn(Collections.emptyList());
+        when(newsRepository.count()).thenReturn(0L);
+        when(communityPostRepository.count()).thenReturn(0L);
+        when(inspectionRepository.sumQuantityByProductAndUnitTypeAndYear(anyInt(), any(), any())).thenReturn(0.0);
+        when(apiaryRepository.countApiariesGroupByOwner()).thenReturn(apiariesCount);
+        when(hiveRepository.countHivesGroupByOwner()).thenReturn(apiariesCount);
+        when(newsRepository.countsDailyNews()).thenReturn(List.of(1, 2));
+        when(communityPostRepository.countsDailyPosts()).thenReturn(List.of(1, 2, 3));
+        when(apiaryRepository.countApiariesGroupByOwner()).thenReturn(apiariesCount);
+        when(inspectionRepository.getMostCommonDisease()).thenReturn(mostCommonDisease);
+        when(inspectionRepository.getMostCommonFoodType()).thenReturn(mostCommonFood);
+        var response = statsService.getGeneralStatistics();
+        assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
     void testGetPersonalStatistics() {
         ResponseEntity<UserDetailStatisticsDto> response = statsService.getPersonalStatistics();
+        when(apiaryRepository.findByOwnerIdOrderById(any())).thenReturn(List.of(testData.getApiaryEntity1()));
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         verify(apiaryRepository, times(1)).countById(eq(user.getId()));
@@ -94,6 +138,7 @@ public class StatsServiceImplTest {
         verify(hiveRepository, times(1)).countByOwnerIdAndSource(eq(user.getId()), eq(HiveEnums.EBeeSource.ACQUIRED));
         verify(hiveRepository, times(1)).countByOwnerIdAndSource(eq(user.getId()), eq(HiveEnums.EBeeSource.OTHER));
         verify(apiaryRepository, times(1)).findByOwnerIdOrderById(eq(user.getId()));
+
     }
 
     @Test

@@ -2,11 +2,14 @@ package cz.zcu.kiv.server.beecommunity.services.impl;
 
 import cz.zcu.kiv.server.beecommunity.enums.FriendshipEnums;
 import cz.zcu.kiv.server.beecommunity.jpa.dto.hive.HiveDto;
+import cz.zcu.kiv.server.beecommunity.jpa.dto.hive.SensorDataDto;
 import cz.zcu.kiv.server.beecommunity.jpa.entity.ApiaryEntity;
 import cz.zcu.kiv.server.beecommunity.jpa.entity.HiveEntity;
+import cz.zcu.kiv.server.beecommunity.jpa.entity.SensorsDataEntity;
 import cz.zcu.kiv.server.beecommunity.jpa.entity.UserEntity;
 import cz.zcu.kiv.server.beecommunity.jpa.repository.ApiaryRepository;
 import cz.zcu.kiv.server.beecommunity.jpa.repository.HiveRepository;
+import cz.zcu.kiv.server.beecommunity.jpa.repository.SensorsDataRepository;
 import cz.zcu.kiv.server.beecommunity.testData.TestData;
 import cz.zcu.kiv.server.beecommunity.utils.FriendshipUtils;
 import cz.zcu.kiv.server.beecommunity.utils.ImageUtil;
@@ -50,6 +53,9 @@ public class HiveServiceImplTest {
 
     @Mock
     private Authentication authentication;
+
+    @Mock
+    private SensorsDataRepository sensorsDataRepository;
 
     private UserEntity user;
 
@@ -225,7 +231,7 @@ public class HiveServiceImplTest {
         hive.setOwner(user);
         when(hiveRepository.findById(hiveDto.getId())).thenReturn(Optional.empty());
 
-        ResponseEntity<Void> response = hiveService.updateHive(hiveDto);
+        ResponseEntity<Void> response = hiveService.deleteHive(hiveDto.getId());
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         verify(hiveRepository, times(1)).findById(any());
@@ -237,7 +243,7 @@ public class HiveServiceImplTest {
         hive.setOwner(testData.getUser3());
         when(hiveRepository.findById(hiveDto.getId())).thenReturn(Optional.of(hive));
 
-        ResponseEntity<Void> response = hiveService.updateHive(hiveDto);
+        ResponseEntity<Void> response = hiveService.deleteHive(hive.getId());
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         verify(hiveRepository, times(1)).findById(hive.getId());
@@ -249,10 +255,12 @@ public class HiveServiceImplTest {
         hive.setOwner(user);
         when(hiveRepository.findById(hiveDto.getId())).thenReturn(Optional.of(hive));
 
-        ResponseEntity<Void> response = hiveService.updateHive(hiveDto);
+        ResponseEntity<Void> response = hiveService.deleteHive(hiveDto.getId());
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        verify(hiveRepository, times(1)).saveAndFlush(any());
+        verify(hiveRepository, times(1)).findById(hive.getId());
+        verify(hiveRepository, times(1)).deleteById(any());
+        verify(hiveRepository, times(1)).flush();
     }
 
     @Test
@@ -450,5 +458,51 @@ public class HiveServiceImplTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         verify(hiveRepository, times(1)).findById(hive.getId());
         verify(hiveRepository, times(1)).saveAndFlush(hive);
+    }
+
+    @Test
+    void testUploadSensorsData_NotFound() {
+        hive.setOwner(user);
+        when(hiveRepository.findById(hive.getId())).thenReturn(Optional.empty());
+
+        var response = hiveService.uploadSensorsData(hive.getId(), new SensorDataDto());
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        verify(hiveRepository, times(1)).findById(eq(hive.getId()));
+    }
+
+    @Test
+    void testUploadSensorsData_Success() {
+        hive.setOwner(user);
+        when(hiveRepository.findById(hive.getId())).thenReturn(Optional.of(hive));
+        when(modelMapper.convertSensorsDataDto(any())).thenReturn(new SensorsDataEntity());
+
+        var response = hiveService.uploadSensorsData(hive.getId(), new SensorDataDto());
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        verify(hiveRepository, times(1)).findById(hive.getId());
+        verify(sensorsDataRepository, times(1)).save(any());
+    }
+
+    @Test
+    void testGetSensorsData_Success() {
+        hive.setOwner(user);
+        when(hiveRepository.findById(hive.getId())).thenReturn(Optional.of(hive));
+
+        var response = hiveService.getHiveSensorsData(hive.getId());
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        verify(hiveRepository, times(1)).findById(hive.getId());
+    }
+
+    @Test
+    void testGetSensorsData_NotFound() {
+        hive.setOwner(user);
+        when(hiveRepository.findById(hive.getId())).thenReturn(Optional.empty());
+
+        var response = hiveService.getHiveSensorsData(hive.getId());
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        verify(hiveRepository, times(1)).findById(hive.getId());
     }
 }
