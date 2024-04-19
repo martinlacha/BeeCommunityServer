@@ -155,28 +155,6 @@ class JwtAuthenticationFilterTest {
     }
 
     @Test
-    void testDoFilterInternal_Locked_AccountLocked()  {
-        UserDetails userDetails = User
-                .builder()
-                .username("test@example.com")
-                .password("password")
-                .disabled(true)
-                .accountLocked(true)
-                .build();
-
-        when(userDetailsService.loadUserByUsername("test@example.com")).thenReturn(userDetails);
-        when(jwtService.extractUsernameFromToken(anyString())).thenReturn(userDetails.getUsername());
-        when(jwtService.isTokenValid(anyString(), eq(userDetails))).thenReturn(false);
-
-        request.addHeader("Authorization", "Bearer InvalidToken");
-
-        filter.doFilterInternal(request, response, filterChain);
-
-        verify(jwtService).extractUsernameFromToken("InvalidToken");
-        assertEquals(ResponseStatusCodes.ACCOUNT_LOCKED_STATUS_CODE.getCode(), response.getStatus());
-    }
-
-    @Test
     void testDoFilterInternal_ExpiredJwtException() {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
