@@ -59,8 +59,6 @@ public class HiveServiceImplTest {
 
     private HiveDto hiveDto;
 
-
-
     private final TestData testData = new TestData();
 
     private String structure;
