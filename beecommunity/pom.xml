@@ -172,6 +172,14 @@
 						</goals>
 					</execution>
 				</executions>
+				<configuration>
+					<excludes>
+						<exclude>cz.zcu.kiv.server.beecommunity.jpa**</exclude>
+						<exclude>cz.zcu.kiv.server.beecommunity.enums**</exclude>
+						<exclude>cz.zcu.kiv.server.beecommunity.testData**</exclude>
+						<exclude>cz.zcu.kiv.server.beecommunity.BeeCommunityApplication</exclude>
+					</excludes>
+				</configuration>
 			</plugin>
 		</plugins>
 		<finalName>BeeCommunity</finalName>
