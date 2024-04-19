@@ -70,7 +70,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             userEmail = jwtService.extractUsernameFromToken(jwt);
             // Check user authentication record
             if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                UserEntity userDetails = (UserEntity) userDetailsService.loadUserByUsername(userEmail);
+                UserDetails userDetails = userDetailsService.loadUserByUsername(userEmail);
                 // Check is account is enabled and non-locked
                 if (!userDetails.isAccountNonLocked() || !userDetails.isEnabled()) {
                     log.warn("Account {} is locked: {}, enabled: {}",

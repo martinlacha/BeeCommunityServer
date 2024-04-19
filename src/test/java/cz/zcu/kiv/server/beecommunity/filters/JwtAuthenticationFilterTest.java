@@ -3,6 +3,7 @@ package cz.zcu.kiv.server.beecommunity.filters;
 import cz.zcu.kiv.server.beecommunity.enums.ResponseStatusCodes;
 import cz.zcu.kiv.server.beecommunity.jpa.entity.UserEntity;
 import cz.zcu.kiv.server.beecommunity.services.IJwtService;
+import cz.zcu.kiv.server.beecommunity.services.impl.JwtServiceImpl;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -52,6 +53,7 @@ class JwtAuthenticationFilterTest {
     private Authentication authentication;
 
     private MockHttpServletRequest request;
+
     private MockHttpServletResponse response;
 
     @BeforeEach
@@ -113,7 +115,7 @@ class JwtAuthenticationFilterTest {
     }
 
     @Test
-    void testDoFilterInternal_ExpiredToken() throws Exception {
+    void testDoFilterInternal_ExpiredToken() {
         // Mock the behavior of userDetailsService.loadUserByUsername to return a UserDetails object
         UserEntity userDetails = UserEntity.builder()
                 .email("test@example.com")
@@ -153,13 +155,15 @@ class JwtAuthenticationFilterTest {
     }
 
     @Test
-    void testDoFilterInternal_Locked_AccountLocked() throws Exception {
-        UserEntity userDetails = UserEntity.builder()
-                .email("test@example.com")
+    void testDoFilterInternal_Locked_AccountLocked()  {
+        UserDetails userDetails = User
+                .builder()
+                .username("test@example.com")
                 .password("password")
-                .loginAttempts(4)
-                .suspended(true)
+                .disabled(true)
+                .accountLocked(true)
                 .build();
+
         when(userDetailsService.loadUserByUsername("test@example.com")).thenReturn(userDetails);
         when(jwtService.extractUsernameFromToken(anyString())).thenReturn(userDetails.getUsername());
         when(jwtService.isTokenValid(anyString(), eq(userDetails))).thenReturn(false);
@@ -185,5 +189,6 @@ class JwtAuthenticationFilterTest {
 
         filter.doFilterInternal(request, response, new MockFilterChain());
         assert response.getStatus() == HttpServletResponse.SC_UNAUTHORIZED;
+        verify(jwtService, times(1)).extractUsernameFromToken(any());
     }
 }
