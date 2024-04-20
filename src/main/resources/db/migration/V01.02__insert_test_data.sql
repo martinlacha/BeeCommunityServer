@@ -38,12 +38,12 @@ INSERT into AUTH_USER(email, password, user_info_id, new_account)
 INSERT INTO AUTH_USER_ROLE (user_id, role_id) VALUES (1, 1);
 INSERT INTO AUTH_USER_ROLE (user_id, role_id) VALUES (1, 2);
 INSERT INTO AUTH_USER_ROLE (user_id, role_id) VALUES (1, 3);
-INSERT INTO AUTH_USER_ROLE (user_id, role_id) VALUES (2, 1);
 INSERT INTO AUTH_USER_ROLE (user_id, role_id) VALUES (2, 2);
-INSERT INTO AUTH_USER_ROLE (user_id, role_id) VALUES (3, 2);
-INSERT INTO AUTH_USER_ROLE (user_id, role_id) VALUES (4, 2);
-INSERT INTO AUTH_USER_ROLE (user_id, role_id) VALUES (5, 1);
+INSERT INTO AUTH_USER_ROLE (user_id, role_id) VALUES (2, 3);
+INSERT INTO AUTH_USER_ROLE (user_id, role_id) VALUES (3, 3);
+INSERT INTO AUTH_USER_ROLE (user_id, role_id) VALUES (4, 3);
 INSERT INTO AUTH_USER_ROLE (user_id, role_id) VALUES (5, 2);
+INSERT INTO AUTH_USER_ROLE (user_id, role_id) VALUES (5, 3);
 
 INSERT into FRIENDSHIP(status, sender_id, receiver_id) values('FRIEND', 1, 2);
 INSERT into FRIENDSHIP(status, sender_id, receiver_id) values('FRIEND', 3, 1);
