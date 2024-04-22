@@ -78,7 +78,8 @@ public class CommunityPostServiceImpl implements ICommunityPostService {
         var post = communityPostRepository.findById(postId);
         if (post.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        } else if (canSeePost(user.getId(), post.get().getAuthor().getId())) {
+        } else if (CommunityEnums.EAccess.PUBLIC.equals(post.get().getAccess()) ||
+                canSeePost(user.getId(), post.get().getAuthor().getId())) {
             return ResponseEntity.status(HttpStatus.OK).body(modelMapper.convertPostEntityToDto(post.get()));
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
