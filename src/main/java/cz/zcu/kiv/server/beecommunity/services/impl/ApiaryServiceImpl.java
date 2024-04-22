@@ -129,19 +129,19 @@ public class ApiaryServiceImpl implements IApiaryService {
             apiary.get().setName(apiaryDto.getName());
         }
         if (apiaryDto.getEnvironment() != null) {
-            apiary.get().setEnvironment(apiary.get().getEnvironment());
+            apiary.get().setEnvironment(apiaryDto.getEnvironment());
         }
         if (apiaryDto.getTerrain() != null) {
-            apiary.get().setTerrain(apiary.get().getTerrain());
+            apiary.get().setTerrain(apiaryDto.getTerrain());
         }
         if (Double.parseDouble(apiaryDto.getLatitude()) != 0) {
-            apiary.get().setLatitude(apiary.get().getLatitude());
+            apiary.get().setLatitude(Double.parseDouble(apiaryDto.getLatitude()));
         }
         if (Double.parseDouble(apiaryDto.getLongitude()) != 0) {
-            apiary.get().setLongitude(apiary.get().getLongitude());
+            apiary.get().setLongitude(Double.parseDouble(apiaryDto.getLongitude()));
         }
         if (apiaryDto.getNotes() != null) {
-            apiary.get().setNotes(apiary.get().getNotes());
+            apiary.get().setNotes(apiaryDto.getNotes());
         }
         try {
             if (apiaryDto.getImage() != null) {
