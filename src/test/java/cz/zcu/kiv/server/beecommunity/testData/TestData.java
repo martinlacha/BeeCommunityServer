@@ -17,7 +17,6 @@ import cz.zcu.kiv.server.beecommunity.utils.DateTimeUtils;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;

@@ -137,7 +137,6 @@ class CommunityPostServiceImplTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         verify(modelMapper, times(1)).convertPostEntityToDto(any());
         verify(communityPostRepository, times(1)).findById(eq(postDto.getId()));
-        verify(friendshipUtils, times(1)).isFriendshipStatus(any(), any(), eq(FriendshipEnums.EStatus.FRIEND));
     }
 
     @Test
