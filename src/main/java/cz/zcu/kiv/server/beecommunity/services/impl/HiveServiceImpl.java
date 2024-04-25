@@ -236,19 +236,20 @@ public class HiveServiceImpl implements IHiveService {
 
     /**
      * Create new record with data from monitoring hive
-     * @param hiveId id of hive
      * @param data measured data from sensors
      * @return status co of operation result
      */
     @Override
-    public ResponseEntity<Void> uploadSensorsData(Long hiveId, SensorDataDto data) {
-        var hive = hiveRepository.findById(hiveId);
+    public ResponseEntity<Void> uploadSensorsData(SensorDataDto data) {
+        var hive = hiveRepository.findByName(data.getHiveName());
         if (hive.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
         var sensorsData = modelMapper.convertSensorsDataDto(data);
         sensorsData.setHive(hive.get());
         sensorsDataRepository.save(sensorsData);
+        log.info("\nData from sensors: \n{}\nWeight: {}\nHive temperature: {}\nHive humidity: {}\n",
+                sensorsData.getTime(), sensorsData.getWeight(), sensorsData.getHiveTemperature(), sensorsData.getHiveHumidity());
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 

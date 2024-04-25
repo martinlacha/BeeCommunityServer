@@ -23,7 +23,7 @@ public interface IHiveService {
 
     ResponseEntity<Void> createHiveStructure(Long hiveId, String structure);
 
-    ResponseEntity<Void> uploadSensorsData(Long hiveId, SensorDataDto data);
+    ResponseEntity<Void> uploadSensorsData(SensorDataDto data);
 
     ResponseEntity<List<SensorDataDto>> getHiveSensorsData(Long hiveId);
 }

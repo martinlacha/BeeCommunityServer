@@ -105,13 +105,12 @@ public class HiveController {
 
     /**
      * Create new record with data from monitoring hive
-     * @param hiveId id of hive
      * @param data measured data from sensors
      * @return status co of operation result
      */
     @PostMapping("/sensors")
-    ResponseEntity<Void> uploadSensorsData(@RequestParam Long hiveId, @RequestBody SensorDataDto data) {
-        return hiveService.uploadSensorsData(hiveId, data);
+    ResponseEntity<Void> uploadSensorsData(@RequestBody SensorDataDto data) {
+        return hiveService.uploadSensorsData(data);
     }
 
     /**

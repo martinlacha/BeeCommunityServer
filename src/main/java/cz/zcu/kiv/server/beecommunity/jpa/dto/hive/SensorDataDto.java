@@ -13,6 +13,10 @@ public class SensorDataDto {
 
     private String time;
 
+    private Long hive;
+
+    private String hiveName;
+
     private double weight;
 
     private double hiveTemperature;

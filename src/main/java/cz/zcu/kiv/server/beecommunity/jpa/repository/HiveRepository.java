@@ -7,12 +7,15 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface HiveRepository extends JpaRepository<HiveEntity, Long> {
     List<HiveEntity> findByApiaryIdOrderById(Long apiaryId);
 
     List<HiveEntity> findByOwnerId(Long userId);
+
+    Optional<HiveEntity> findByName(String name);
 
     @Query("SELECT COUNT(h.owner.id) FROM HiveEntity h WHERE YEAR(h.establishment) = :year AND h.owner.id = :userId GROUP BY h.owner.id")
     Object countByOwnerIdAndEstablishmentYear(Long userId, Integer year);

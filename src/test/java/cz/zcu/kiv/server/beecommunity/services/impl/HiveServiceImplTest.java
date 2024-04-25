@@ -14,7 +14,6 @@ import cz.zcu.kiv.server.beecommunity.testData.TestData;
 import cz.zcu.kiv.server.beecommunity.utils.FriendshipUtils;
 import cz.zcu.kiv.server.beecommunity.utils.ImageUtil;
 import cz.zcu.kiv.server.beecommunity.utils.ObjectMapper;
-import cz.zcu.kiv.server.beecommunity.utils.UserUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
@@ -463,24 +462,26 @@ class HiveServiceImplTest {
     @Test
     void testUploadSensorsData_NotFound() {
         hive.setOwner(user);
-        when(hiveRepository.findById(hive.getId())).thenReturn(Optional.empty());
+        var sensorsData = SensorDataDto.builder().hive(hive.getId()).hiveName(hive.getName()).build();
+        when(hiveRepository.findByName(hive.getName())).thenReturn(Optional.empty());
 
-        var response = hiveService.uploadSensorsData(hive.getId(), new SensorDataDto());
+        var response = hiveService.uploadSensorsData(sensorsData);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        verify(hiveRepository, times(1)).findById(eq(hive.getId()));
+        verify(hiveRepository, times(1)).findByName(eq(hive.getName()));
     }
 
     @Test
     void testUploadSensorsData_Success() {
         hive.setOwner(user);
-        when(hiveRepository.findById(hive.getId())).thenReturn(Optional.of(hive));
+        var sensorsData = SensorDataDto.builder().hive(hive.getId()).hiveName(hive.getName()).build();
+        when(hiveRepository.findByName(hive.getName())).thenReturn(Optional.of(hive));
         when(modelMapper.convertSensorsDataDto(any())).thenReturn(new SensorsDataEntity());
 
-        var response = hiveService.uploadSensorsData(hive.getId(), new SensorDataDto());
+        var response = hiveService.uploadSensorsData(sensorsData);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        verify(hiveRepository, times(1)).findById(hive.getId());
+        verify(hiveRepository, times(1)).findByName(hive.getName());
         verify(sensorsDataRepository, times(1)).save(any());
     }
 
