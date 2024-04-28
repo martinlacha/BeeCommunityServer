@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface SensorsDataRepository extends JpaRepository<SensorsDataEntity, Long> {
     List<SensorsDataEntity> findByHiveIdOrderByTime(Long hiveId);
+    void deleteAllByHiveId(Long hiveId);
 }

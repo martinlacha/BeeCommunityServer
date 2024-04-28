@@ -259,6 +259,7 @@ class HiveServiceImplTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         verify(hiveRepository, times(1)).findById(hive.getId());
         verify(hiveRepository, times(1)).deleteById(any());
+        verify(sensorsDataRepository, times(1)).deleteAllByHiveId(any());
         verify(hiveRepository, times(1)).flush();
     }
 

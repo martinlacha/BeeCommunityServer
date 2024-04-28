@@ -153,6 +153,7 @@ public class HiveServiceImpl implements IHiveService {
         } else if (!user.getId().equals(hive.get().getOwner().getId())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
+        sensorsDataRepository.deleteAllByHiveId(hiveId);
         hiveRepository.deleteById(hiveId);
         hiveRepository.flush();
         return ResponseEntity.status(HttpStatus.OK).build();
