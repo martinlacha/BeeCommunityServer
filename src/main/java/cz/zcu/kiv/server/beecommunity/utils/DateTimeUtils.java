@@ -16,7 +16,7 @@ import java.util.Locale;
 public class DateTimeUtils {
     private DateTimeUtils(){}
     static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-    static DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("hh:mm:ss dd-MM-yyyy");
+    static DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss dd-MM-yyyy");
 
     static Locale czechLocale = Locale.forLanguageTag("cs_CZ");
 
@@ -48,7 +48,7 @@ public class DateTimeUtils {
             if (date == null) {
                 return null;
             }
-            formatter = formatter.withLocale(czechLocale);
+            dateTimeFormatter = dateTimeFormatter.withLocale(czechLocale);
             return date.format(dateTimeFormatter);
         } catch (DateTimeParseException exception) {
             log.warn("Wrong date time format: {}", date);
