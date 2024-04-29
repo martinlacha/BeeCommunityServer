@@ -18,7 +18,7 @@ public class DateTimeUtils {
     static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     static DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("hh:mm:ss dd-MM-yyyy");
 
-    static Locale czechLocale = Locale.of("cs", "CZ");
+    static Locale czechLocale = Locale.forLanguageTag("cs_CZ");
 
     /**
      * Convert string value of date into localdate
