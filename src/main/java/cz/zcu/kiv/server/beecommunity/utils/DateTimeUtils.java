@@ -18,6 +18,8 @@ public class DateTimeUtils {
     static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     static DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("hh:mm:ss dd-MM-yyyy");
 
+    static Locale czechLocale = Locale.of("cs", "CZ");
+
     /**
      * Convert string value of date into localdate
      * @param date string value of date
@@ -28,7 +30,7 @@ public class DateTimeUtils {
             if (date == null || date.isBlank()) {
                 return null;
             }
-            formatter = formatter.withLocale(Locale.getDefault());  // Locale specifies human language for translating, and cultural norms for lowercase/uppercase and abbreviations and such. Example: Locale.US or Locale.CANADA_FRENCH
+            formatter = formatter.withLocale(Locale.getDefault());
             return LocalDate.parse(date, formatter);
         } catch (DateTimeParseException exception) {
             log.warn("Wrong date time format: {}", date);
@@ -46,7 +48,7 @@ public class DateTimeUtils {
             if (date == null) {
                 return null;
             }
-            formatter = formatter.withLocale(Locale.getDefault());  // Locale specifies human language for translating, and cultural norms for lowercase/uppercase and abbreviations and such. Example: Locale.US or Locale.CANADA_FRENCH
+            formatter = formatter.withLocale(czechLocale);
             return date.format(dateTimeFormatter);
         } catch (DateTimeParseException exception) {
             log.warn("Wrong date time format: {}", date);
