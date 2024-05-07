@@ -70,6 +70,7 @@ public class SecurityConfiguration implements WebMvcConfigurer {
                 .requestMatchers("/api/v1/friends/*").hasAnyAuthority(USER.name())
                 .requestMatchers("/api/v1/community-post/*").hasAnyAuthority(USER.name())
                 .requestMatchers(HttpMethod.GET, "/api/v1/user/roles-info").hasAuthority(ADMIN.name())
+                .requestMatchers(HttpMethod.GET, "/api/v1/user/admin").hasAuthority(USER.name())
                 .requestMatchers(HttpMethod.DELETE, "/api/v1/user/admin").hasAuthority(ADMIN.name())
                 .requestMatchers(HttpMethod.POST, "/api/v1/user/admin").hasAuthority(ADMIN.name())
                 .requestMatchers(HttpMethod.GET, "/api/v1/news", "/api/v1/news/detail").hasAnyAuthority(USER.name(), ADMIN.name())

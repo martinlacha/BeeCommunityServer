@@ -269,6 +269,19 @@ public class UserServiceImpl implements UserDetailsService, IUserService {
     }
 
     /**
+     * Check admin role of current user
+     * @return status code by user role
+     */
+    @Override
+    public ResponseEntity<Void> hasAdminRole() {
+        var user = UserUtils.getUserFromSecurityContext();
+        if (user.hasRole(UserEnums.ERoles.ADMIN) || user.hasRole(UserEnums.ERoles.SUPER_ADMIN)) {
+            return ResponseEntity.status(HttpStatus.OK).build();
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    }
+
+    /**
      * Grant user with admin role.
      * User has to be admin to grant other user.
      * @param userId id of user that will be granted admin role

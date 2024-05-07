@@ -100,6 +100,15 @@ public class UserController {
     }
 
     /**
+     * Check admin role of current user
+     * @return status code by user role
+     */
+    @GetMapping("/admin")
+    ResponseEntity<Void> hasAdminRole() {
+        return userService.hasAdminRole();
+    }
+
+    /**
      * Grant user with admin role
      * @return status code of operation result
      */

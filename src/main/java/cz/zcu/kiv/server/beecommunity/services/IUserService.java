@@ -22,6 +22,8 @@ public interface IUserService {
 
     ResponseEntity<List<UserRolesDto>> getUsersRoles();
 
+    ResponseEntity<Void> hasAdminRole();
+
     ResponseEntity<Void> grantAdminRole(Long userId);
 
     ResponseEntity<Void> revokeAdminRole(Long userId);
