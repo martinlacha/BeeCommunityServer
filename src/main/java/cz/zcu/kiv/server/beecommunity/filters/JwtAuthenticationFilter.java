@@ -43,7 +43,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      * @param request request from user
      * @param response response return to user
      * @param filterChain filter chain
-     * @throws IOException exception
      */
     @Override
     protected void doFilterInternal(

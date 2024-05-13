@@ -45,7 +45,6 @@ public class WebConfig implements WebMvcConfigurer {
 
     /**
      * Enable Cross origin requests for all controlers
-     * More info on <a href="https://www.baeldung.com/spring-cors"/>
      * @param registry - registry with mappings for cross-origin requests
      */
     @Override
